@@ -124,16 +124,16 @@ Une valeur hors univers doit être ajoutée à `config/univers.csv`. Pour un ETF
 G.A.R.P sert d'abord à **trouver la bonne action au bon prix**. Votre portefeuille, importé de votre courtier, est analysé avec les mêmes outils ; l'équilibre n'y est qu'un onglet de propositions.
 
 - **Tableau de bord** : les actions de qualité au bon prix aujourd'hui, le verdict de vos lignes, les points de vigilance.
-- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
-- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles).
-- **Explorer** : Actualités, Risques, Quatre regards, Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
+- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, classement selon votre style, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict ; ouvrir une fiche ou ajouter à la watchlist depuis le tableau), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
+- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Risques, Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles), Mon style d'investisseur (questionnaire qui propose l'un des cinq styles : qualité, croissance, GARP, valeur, momentum ; comparaison des styles).
+- **Explorer** : Actualités, Quatre regards (lus un par un, hors score), Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
 
 Les quantités de vos lignes viennent du dernier import (photo du portefeuille, `profil/positions.csv`), remplacée à chaque réimport : rien à saisir à la main. Performance et fiscalité restent chez le courtier ; l'ancien journal des opérations (`data/transactions.csv`) n'est plus tenu par l'interface, mais reste lu s'il n'y a pas encore de photo.
 
 ## Pages ajoutées en novembre 2026
 
 - **Actualités** (espace « Explorer ») : presse française, déclarations officielles à la SEC, dates de résultats et signaux de l'outil pour vos lignes et votre watchlist. Les 5 dernières figurent au tableau de bord.
-- **Risques** (espace « Explorer » ; la concentration est aussi dans l'onglet « Équilibre » du portefeuille) : concentration, devises, secteurs, part du risque, corrélations, pertes passées et scénarios de choc (marché -30 %, dollar -10 %, or -20 %).
+- **Risques** (espace « Mon portefeuille » ; la concentration est aussi dans l'onglet « Équilibre » du portefeuille) : concentration, devises, secteurs, part du risque, corrélations, pertes passées et scénarios de choc (marché -30 %, dollar -10 %, or -20 %).
 - **Fiche valeur** en sections (Résumé, Prix juste, Activité, Historique, Valorisation, Thèse) : seule la section choisie se calcule. Valorisation : scénarios à 5 ans. Thèse : conditions de vente chiffrées.
 - **Backtest**, second mode « Méthodes de notation : test à date » : les méthodes testées sans regarder l'avenir.
 - **Recherche** dans la barre latérale : tapez un nom ou un ticker pour ouvrir sa fiche depuis n'importe quelle page.

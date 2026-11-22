@@ -1,10 +1,12 @@
-"""La bonne action au bon prix : les entreprises de qualité (filtres et score) dont le cours est sous votre prix
-d'achat (pf/prix_achat.py). Dans tout l'univers, dans votre portefeuille ou dans votre watchlist."""
+"""La bonne action au bon prix : les entreprises de qualité (filtres), classées selon votre style (pf/styles.py),
+dont le cours est sous votre prix d'achat (pf/prix_achat.py). Dans tout l'univers, dans votre portefeuille ou dans
+votre watchlist."""
 import math
 
 import streamlit as st
 
 from pf import prix_achat as pa
+from pf import styles as sty
 from pf import ui
 from pf import watchlist as wl
 from pf.config import load_strategy
@@ -16,8 +18,8 @@ regl = pa.reglages(strat)
 
 st.title("La bonne action au bon prix")
 st.markdown(
-    "Deux questions. **La bonne action** : l'entreprise passe-t-elle les filtres de qualité, et quel est son "
-    "score ? **Au bon prix** : son cours est-il sous votre **prix d'achat**, c'est-à-dire le **prix juste** (le cours "
+    "Deux questions. **La bonne action** : l'entreprise passe-t-elle les filtres de qualité, et comment la classe "
+    "votre style ? **Au bon prix** : son cours est-il sous votre **prix d'achat**, c'est-à-dire le **prix juste** (le cours "
     "qui vous rapporterait votre rendement exigé si la croissance attendue se réalise) moins votre marge de sécurité ?")
 
 c = st.columns([1.2, 1.2, 2.6])
@@ -31,6 +33,21 @@ ou = c[2].segmented_control("Où chercher", ["Toutes les actions de qualité", "
 if (rendement / 100, marge / 100) != (regl["rendement"], regl["marge"]):
     pa.enregistrer_reglages(rendement / 100, marge / 100)  # retenus pour les prochaines ouvertures
 
+# Classement selon le style : celui du profil, ou un autre pour comparer. Le prix d'achat et le verdict n'en
+# dépendent pas.
+profil_style = sty.style_choisi()
+cs = st.columns([2.6, 2.4])
+style = cs[0].segmented_control(
+    "Classer selon le style", list(sty.STYLES), format_func=lambda k: sty.STYLES[k].libelle, default=profil_style,
+    key="bon_prix_style", help="Votre style se choisit dans « Mon style d'investisseur » (questionnaire).",
+) or profil_style
+cs[1].caption(f"**{sty.STYLES[style].libelle}** : {sty.STYLES[style].devise}"
+              + ("" if sty.profil() else " Style par défaut : faites le questionnaire de « Mon style d'investisseur ».")
+              + ("" if style == profil_style or not sty.profil() else " (votre style : "
+                 f"{sty.STYLES[profil_style].libelle})"))
+actions = sc[sc["statut"] != "Fonds"]
+note_style = sty.note(actions, style)
+
 suivies = wl.load_watchlist()
 univers = ou == "Toutes les actions de qualité"
 if univers:
@@ -40,7 +57,7 @@ elif ou == "Mon portefeuille":
 else:
     sources = {t: "Watchlist" for t in suivies.index}
 prix_vises = {t: float(v) for t, v in suivies["prix_cible"].items() if isinstance(v, (int, float)) and math.isfinite(v)}
-tab = pa.tableau(sc, sources, vcfg, rendement / 100, marge / 100, prix_vises)
+tab = pa.tableau(sc, sources, vcfg, rendement / 100, marge / 100, prix_vises, note=note_style)
 if tab.empty:
     st.info("Aucune valeur à évaluer : importez votre portefeuille, ou ajoutez des valeurs à la watchlist depuis le "
             "screener ou une fiche.", icon=":material/info:")
@@ -73,7 +90,8 @@ for col, v in zip(m, pa.VERDICTS.values()):
     col.metric(v, int(nb.get(v, 0)), border=True, help=pa.EXPLICATIONS[v])
 MAX = 150
 st.markdown(f"**{len(vue)} valeurs** retenues par les filtres" + (f", les {MAX} premières affichées" if len(vue) > MAX
-                                                                    else "") + " : au bon prix d'abord, puis par score.")
+                                                                    else "") + " : au bon prix d'abord, puis selon "
+            f"la note du style {sty.STYLES[style].libelle}.")
 
 vue = vue.head(MAX).copy()
 vue.insert(0, "symbole", vue.index)
@@ -84,7 +102,10 @@ vue["tri_implicite"] = vue["tri_implicite"].astype(float) * 100
 vue["prix_vise"] = [("—" if not math.isfinite(v) else ui.num(v, 2) + (" · atteint" if a else ""))
                     for v, a in zip(vue["prix_vise"], vue["vise_atteint"])]
 vue["verdict"] = ui.pastilles_verdict(vue["verdict"])
-colonnes = ["symbole", "nom", "verdict", "ecart_achat", "cours", "prix_achat", "prix_juste", "devise", "score", "moat",
+# Barre d'actions au-dessus du tableau (remplie après lui, une fois la sélection connue).
+barre = st.container()
+colonnes = ["symbole", "nom", "verdict", "ecart_achat", "cours", "prix_achat", "prix_juste", "devise", "note_style",
+            "moat",
             "criteres", "tri_implicite", "croissance_attendue", "secteur", "enveloppe", "prix_vise"]
 selection = ui.tableau(
     vue[colonnes], hide_index=True, width="stretch", height=min(720, 35 * len(vue) + 38), on_select="rerun",
@@ -99,7 +120,8 @@ selection = ui.tableau(
                                                     help="Prix juste moins votre marge de sécurité."),
         "prix_juste": st.column_config.NumberColumn("Prix juste", format="%.2f"),
         "devise": "Devise",
-        "score": ui.SCORE("Score", "Qualité de l'entreprise et de son action : moyenne des analyses, chacune sur 100."),
+        "note_style": ui.SCORE(f"Note {sty.STYLES[style].libelle}",
+                               "Rang de l'entreprise selon le style choisi, de 0 à 100 (100 : la mieux classée)."),
         "moat": st.column_config.TextColumn("Moat estimé"),
         "criteres": st.column_config.TextColumn("Critères", help="Critères de qualité remplis sur critères évalués."),
         "tri_implicite": ui.PCT("TRI au cours actuel", "Rendement annuel si la croissance retenue se réalise."),
@@ -108,20 +130,31 @@ selection = ui.tableau(
         "prix_vise": st.column_config.TextColumn("Votre prix visé", help="Fixé dans la watchlist."),
     })
 choisies = [vue.index[i] for i in (selection.selection.rows if selection else [])]
-b = st.columns([1.3, 2, 2.7])
-if b[0].button("Ouvrir la fiche", icon=":material/query_stats:", disabled=len(choisies) != 1, width="stretch"):
-    st.session_state["fiche_ticker"] = choisies[0]
-    st.switch_page("vues/fiche.py")
-fixables = [t for t in choisies if math.isfinite(tab.loc[t, "prix_achat"])]
-if b[1].button(f"Suivre au prix d'achat ({len(fixables)})", icon=":material/flag:", disabled=not fixables,
-               width="stretch", help="Ajoute à la watchlist avec le prix d'achat comme prix visé : le tableau de bord "
-                                     "vous prévient quand le cours y passe."):
-    for t in fixables:
-        wl.fixer_cible(t, tab.loc[t, "prix_achat"],
-                       f"Prix d'achat : rendement {ui.num(rendement, 1)} %, marge {marge} %", cours=tab.loc[t, "cours"])
-    st.toast(f"{len(fixables)} valeur(s) suivie(s) au prix d'achat.", icon=":material/flag:")
-    st.rerun()
-b[2].caption("Cochez des lignes à gauche pour ouvrir une fiche ou suivre leur prix d'achat.")
+with barre:
+    b = st.columns([1.2, 1.5, 1.8, 2.5])
+    if b[0].button("Ouvrir la fiche", icon=":material/query_stats:", disabled=len(choisies) != 1, width="stretch",
+                   help="Cochez une seule ligne."):
+        st.session_state["fiche_ticker"] = choisies[0]
+        st.switch_page("vues/fiche.py")
+    nouvelles = [t for t in choisies if not wl.contient(t)]
+    if b[1].button(f"Ajouter à la watchlist ({len(nouvelles)})", icon=":material/star:", disabled=not nouvelles,
+                   width="stretch", help="Ajoute les lignes cochées à la watchlist, sans prix visé."):
+        for t in nouvelles:
+            cours = tab.loc[t, "cours"]
+            wl.ajouter(t, cours=cours if math.isfinite(cours) else None, note="Depuis « La bonne action au bon prix »")
+        st.toast(f"{len(nouvelles)} valeur(s) ajoutée(s) à la watchlist.", icon=":material/star:")
+        st.rerun()
+    fixables = [t for t in choisies if math.isfinite(tab.loc[t, "prix_achat"])]
+    if b[2].button(f"Suivre au prix d'achat ({len(fixables)})", icon=":material/flag:", disabled=not fixables,
+                   width="stretch", help="Ajoute à la watchlist avec le prix d'achat comme prix visé : le tableau de "
+                                         "bord vous prévient quand le cours y passe."):
+        for t in fixables:
+            wl.fixer_cible(t, tab.loc[t, "prix_achat"],
+                           f"Prix d'achat : rendement {ui.num(rendement, 1)} %, marge {marge} %", cours=tab.loc[t, "cours"])
+        st.toast(f"{len(fixables)} valeur(s) suivie(s) au prix d'achat.", icon=":material/flag:")
+        st.rerun()
+    b[3].caption("Cochez une ligne (case à gauche du tableau) pour ouvrir sa fiche, ou plusieurs pour les ajouter à la "
+                 "watchlist." if not choisies else f"{len(choisies)} ligne(s) cochée(s).")
 st.caption(
     f"Modèle : croissance retenue pendant {vcfg['annees_croissance']} ans, puis ralentissement en "
     f"{vcfg['annees_convergence']} ans vers {ui.pct(vcfg['croissance_terminale'], 0)} par an ; rentabilité des "

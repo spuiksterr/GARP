@@ -49,6 +49,8 @@ METHODES = {
     "Valeur": {"valeur": 1},
     "Croissance": {"croissance": 1},
     "Momentum": {"momentum": 1},
+    # Le style GARP de pf/styles.py : la croissance d'abord, sans la surpayer.
+    "GARP (croissance, valeur, qualité)": {"croissance": 0.4, "valeur": 0.35, "qualite": 0.25},
 }
 RAPPORTS_DIVISION = [1.5, 2, 3, 4, 5, 6, 7, 8, 10, 15, 20, 25, 30, 40, 50]
 

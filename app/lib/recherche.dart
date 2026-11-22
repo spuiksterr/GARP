@@ -112,5 +112,5 @@ String methodeConseillee({required String priorite, required String horizon, req
   if (priorite == 'solidite') return 'munger';
   if (priorite == 'prix') return prix == 'strict' ? 'valeur' : 'buffett';
   if (priorite == 'qualite') return prix == 'strict' ? 'buffett' : 'smith';
-  return 'regards';
+  return 'garp'; // la moyenne des quatre regards n'est plus une méthode (22/11/2026)
 }

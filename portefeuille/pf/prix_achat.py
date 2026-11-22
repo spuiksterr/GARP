@@ -72,8 +72,11 @@ def verdict(cours: float, juste: float, achat: float) -> str:
 
 
 def tableau(sc: pd.DataFrame, sources: dict[str, str], vcfg: dict, rendement: float, marge: float,
-            prix_vises: dict[str, float] | None = None) -> pd.DataFrame:
-    """Une ligne par valeur de `sources` (ticker -> « Portefeuille », « Watchlist »…) présente dans le screener."""
+            prix_vises: dict[str, float] | None = None, note: pd.Series | None = None) -> pd.DataFrame:
+    """Une ligne par valeur de `sources` (ticker -> « Portefeuille », « Watchlist »…) présente dans le screener.
+
+    `note` (note du style de l'utilisateur, pf/styles.py) classe les valeurs à verdict égal ; sans elle, le score
+    composite. Le prix d'achat et le verdict n'en dépendent pas : ils jugent le prix, pas l'entreprise."""
     prix_vises = prix_vises or {}
     lignes = []
     for t, source in sources.items():
@@ -95,12 +98,13 @@ def tableau(sc: pd.DataFrame, sources: dict[str, str], vcfg: dict, rendement: fl
             "score": r.get("score"), "secteur": r.get("secteur"), "enveloppe": r.get("enveloppe"),
             "moat": r.get("moat"), "criteres": r.get("criteres"), "criteres_ok": r.get("criteres_ok"),
             "statut": r.get("statut"),
+            "note_style": float(note[t]) if note is not None and t in note.index and pd.notna(note[t]) else math.nan,
         })
     out = pd.DataFrame(lignes)
     if out.empty:
         return out
-    # Au bon prix d'abord ; à verdict égal, la meilleure entreprise (score) en premier.
+    # Au bon prix d'abord ; à verdict égal, la mieux notée selon le style (à défaut, le score) en premier.
     ordre = {v: i for i, v in enumerate(VERDICTS.values())}
-    score = pd.to_numeric(out["score"], errors="coerce").fillna(-1)
+    score = pd.to_numeric(out["note_style" if note is not None else "score"], errors="coerce").fillna(-1)
     return (out.assign(_o=out["verdict"].map(ordre), _s=-score).sort_values(["_o", "_s", "ecart_achat"])
             .drop(columns=["_o", "_s"]).set_index("ticker"))

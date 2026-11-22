@@ -119,8 +119,9 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `homme_cle` | Risque homme-clé (0 à 10) : dirigeants Yahoo gardés dans le cache des fondamentaux (`info.dirigeants`), part des initiés, risque du conseil ISS ; corrections dans `config/homme_cle.csv` ; `pf homme-cle` relit les dirigeants sans attendre le renouvellement des fiches |
 | `moat` | Moat estimé |
 | `criteres` | Six critères de qualité remplis ou non |
-| `regards` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith) |
+| `regards` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith), lus un par un : hors du score composite (`config.load_strategy` force leur poids à 0) |
 | `scoring` | Filtres d'exclusion, piliers, score composite, alertes, `build_screener` |
+| `styles` | Cinq styles d'investisseur (qualité, croissance, GARP, valeur, momentum), chacun relié à une notation de `portfolio.NOTATIONS` et à une méthode de `backtest_pit` ; questionnaire de huit questions (`proposer`, `explication`), style retenu dans `profil/style.json` ; note par style, actions retenues, recoupements (page « Mon style d'investisseur », classement de « La bonne action au bon prix ») |
 | `prix_juste` | Prix d'achat juste à un multiple jugé raisonnable |
 | `positions` | Photo du portefeuille : quantités par ligne prises au dernier import (`profil/positions.csv`, remplacée à chaque import) ; valorisée au dernier cours pour les poids réels (onglet Équilibre, tableau de bord, risques). À défaut, positions du journal `data/transactions.csv` (lecture seule) |
 | `prix_achat` | Prix juste au rendement exigé (modèle du TRI implicite, entrées de `export_app._valorisation`), prix d'achat après marge de sécurité, verdict ; réglages dans `profil/prix_achat.json` ; page « La bonne action au bon prix », analyse du portefeuille, en-tête de la fiche et tableau de bord |
@@ -158,7 +159,7 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 
 ## Pages (`vues/`)
 
-Déclarées dans `app.py` : Tableau de bord, « Trouver » (la bonne action au bon prix, screener, fiche, watchlist), « Mon portefeuille » (analyse, import), « Explorer » pour le reste ; tous dépliés (`st.navigation(expanded=True)`). Chaque page est un script Streamlit qui lit ses données par `pf.ui` (jamais directement les fichiers du cache). La plus grosse est `fiche.py` (~630 lignes, sections Résumé, Prix juste, Activité, Historique, Valorisation, Thèse).
+Déclarées dans `app.py` : Tableau de bord, « Trouver » (la bonne action au bon prix, screener, fiche, watchlist), « Mon portefeuille » (analyse, risques, import, style d'investisseur), « Explorer » pour le reste ; tous dépliés (`st.navigation(expanded=True)`). Chaque page est un script Streamlit qui lit ses données par `pf.ui` (jamais directement les fichiers du cache). La plus grosse est `fiche.py` (~630 lignes, sections Résumé, Prix juste, Activité, Historique, Valorisation, Thèse).
 
 ## Recettes
 

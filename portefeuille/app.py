@@ -31,7 +31,8 @@ st.html("""<style>
 </style>""")
 
 # L'outil sert d'abord à trouver la bonne action au bon prix ; votre portefeuille, importé du courtier, est analysé
-# avec les mêmes outils (l'équilibre n'y est qu'un onglet de propositions). « Explorer » pour le reste. Tout est
+# avec les mêmes outils (l'équilibre n'y est qu'un onglet de propositions), avec ses risques et votre style
+# d'investisseur, qui classe « La bonne action au bon prix ». « Explorer » pour le reste. Tout est
 # affiché : rien n'est caché derrière « View more ».
 pages = {
     "": [
@@ -45,11 +46,12 @@ pages = {
     ],
     "Mon portefeuille": [
         st.Page("vues/modele.py", title="Analyse de mon portefeuille", icon=":material/pie_chart:"),
+        st.Page("vues/risques.py", title="Risques", icon=":material/shield:"),
         st.Page("vues/importer.py", title="Importer mon portefeuille", icon=":material/upload_file:"),
+        st.Page("vues/style.py", title="Mon style d'investisseur", icon=":material/psychology:"),
     ],
     "Explorer": [
         st.Page("vues/actualites.py", title="Actualités", icon=":material/newspaper:"),
-        st.Page("vues/risques.py", title="Risques", icon=":material/shield:"),
         st.Page("vues/regards.py", title="Quatre regards", icon=":material/visibility:"),
         st.Page("vues/investisseurs.py", title="Grands investisseurs", icon=":material/groups:"),
         st.Page("vues/construction.py", title="Construction automatique", icon=":material/tune:"),

@@ -155,8 +155,11 @@ if section == "Résumé":
             ui.show(fig)
             st.caption("Rangs centiles dans l'univers (100 = meilleur). Banques, assureurs et holdings sont comparés entre eux "
                        "sur la qualité et la valorisation.")
-            st.markdown(f"**Quatre regards : {int(r['regards_total'])} / 20**  \nBuffett {int(r['buffett'])} · Munger {int(r['munger'])} · "
-                        f"Fisher {int(r['fisher'])} · Smith {int(r['smith'])}")
+            # Quatre avis à lire un par un : ni additionnés, ni comptés dans le score (22/11/2026).
+            st.markdown("**Quatre regards**, sur 5, hors score", help="Chacun juge selon sa propre grille : un écart "
+                        "entre eux (Fisher enthousiaste, Buffett réservé sur le prix) est instructif.")
+            st.markdown(f"Buffett **{int(r['buffett'])}** · Munger **{int(r['munger'])}** · "
+                        f"Fisher **{int(r['fisher'])}** · Smith **{int(r['smith'])}**")
             if r.get("regards_correction"):
                 st.caption(f"Correction manuelle : {r['regards_correction']}.")
         with b:

@@ -1,6 +1,6 @@
 /// Méthodes d'évaluation des actions : même règle que l'application de bureau (pf/portfolio.py, note_construction).
 ///
-/// Chaque méthode pondère des composantes (score composite, regards de Buffett, Munger, Fisher, Terry Smith, six
+/// Chaque méthode pondère des composantes (score composite, regard de Buffett, Munger, Fisher ou Terry Smith, six
 /// critères, piliers qualité, croissance, valorisation, momentum). Chaque composante est ramenée à son rang centile
 /// dans l'univers (0 à 100), pour qu'une note de 1 à 5 et un score sur 100 se combinent ; une composante absente est
 /// ignorée et son poids reporté sur les autres. Le score composite départage les ex aequo.
@@ -28,7 +28,7 @@ class Methode {
 
 /// Méthode par défaut, et seule disponible avec un fichier de données publié avant la liste des méthodes.
 const composite = Methode('composite', 'Score composite',
-    'La note de l\'outil : piliers, valorisation, quatre regards, Piotroski, Altman, Beneish.', {'score': 1});
+    'La note de l\'outil : piliers, valorisation, Piotroski, Altman, Beneish.', {'score': 1});
 
 /// Les six critères de qualité (pf/criteres.py), avec le seuil en vigueur.
 class Critere {

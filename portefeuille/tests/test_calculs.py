@@ -380,12 +380,16 @@ def test_signaux_absents_pour_les_financieres_et_alertes_seuils():
 
 # ------------------------------------------------------------------ score composite
 
-def test_le_score_est_la_moyenne_des_cinq_analyses():
+def test_le_score_est_la_moyenne_des_analyses_sans_les_regards():
     df = pd.DataFrame({"score_piliers": [60.0, 40.0], "regards_total": [16.0, 8.0], "piotroski": [9.0, 0.0],
                        "altman_z": [5.0, 1.0], "beneish_m": [-3.0, -1.0]}, index=["BON", "MAUVAIS"])
     s = composite_score(df)["score"]
-    assert s["BON"] == pytest.approx((60 + 80 + 100 + 100 + 100) / 5)
-    assert s["MAUVAIS"] == pytest.approx((40 + 40 + 0 + 0 + 0) / 5)
+    # Les quatre regards se lisent à part : leur total (16 et 8 sur 20) ne compte pas.
+    assert s["BON"] == pytest.approx((60 + 100 + 100 + 100) / 4)
+    assert s["MAUVAIS"] == pytest.approx((40 + 0 + 0 + 0) / 4)
+    # Ancien réglage, toujours possible en passant les poids : les regards comme cinquième analyse.
+    avec = composite_score(df, {"piliers": 1, "regards": 1, "piotroski": 1, "altman": 1, "beneish": 1})["score"]
+    assert avec["BON"] == pytest.approx((60 + 80 + 100 + 100 + 100) / 5)
     # Les poids sont réglables : seul le bloc Piliers compté, on retrouve l'ancien score.
     assert composite_score(df, {"piliers": 1})["score"]["BON"] == pytest.approx(60)
 

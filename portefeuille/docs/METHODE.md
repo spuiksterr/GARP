@@ -52,20 +52,21 @@ Inspirés des sept critères « anti-médiocrité » du framework ai-berkshire :
 
 ## 3. Le score composite (0 à 100)
 
-Le score final est la moyenne de six analyses, chacune ramenée sur 100 :
+Le score final est la moyenne de cinq analyses, chacune ramenée sur 100 :
 
 | Analyse | Conversion sur 100 |
 |---|---|
 | **Piliers** | Le bloc décrit ci-dessous (colonne « Piliers » du screener) |
 | **Valorisation** | Le pilier valorisation seul : rang centile du rendement du FCF, du rendement des bénéfices, du TRI implicite et du PER prospectif |
-| **Quatre regards** | Total sur 20, multiplié par 5 |
 | **Piotroski** | Note sur 9 ramenée sur 100 |
 | **Altman** | 0 sous 1,81, 100 au-dessus de 2,99, progression linéaire entre les deux |
 | **Beneish** | 0 au-dessus de -1,78, 100 à -2,22 ou moins, progression linéaire entre les deux |
 
-Les poids sont égaux par défaut (0 pour les six critères) et se règlent dans `config/strategie.json` (`poids_score`). Un signal absent, comme Piotroski pour une banque, reçoit la médiane de l'univers : la société n'a ni bonus ni malus. Sans cela, les financières seraient pénalisées d'office.
+Les poids sont égaux par défaut (0 pour les six critères) et se règlent dans `config/strategie.json` (`poids_score`), sauf celui des quatre regards, toujours nul. Un signal absent, comme Piotroski pour une banque, reçoit la médiane de l'univers : la société n'a ni bonus ni malus. Sans cela, les financières seraient pénalisées d'office.
 
-**Pourquoi un bloc Valorisation à part.** L'audit du 04/11/2026 a montré que, dans le seul bloc Piliers, la valorisation ne pesait que 5 % du score (25 % d'un bloc sur cinq), alors que Piotroski, Altman et Beneish mesurent la santé financière et que les regards recoupent le pilier qualité (corrélation de rang de 0,59). Pour une stratégie « qualité à prix raisonnable », le prix ne passait donc presque que par les filtres. Compté aussi à part, il pèse environ 21 % du score. Momentum et croissance ne comptent que dans le bloc Piliers. La grille des six critères peut devenir un septième bloc (`criteres` dans `poids_score`, 0 par défaut).
+**Pourquoi un bloc Valorisation à part.** L'audit du 04/11/2026 a montré que, dans le seul bloc Piliers, la valorisation ne pesait que 5 % du score (25 % d'un bloc sur cinq), alors que Piotroski, Altman et Beneish mesurent la santé financière et que les regards recoupent le pilier qualité (corrélation de rang de 0,59). Pour une stratégie « qualité à prix raisonnable », le prix ne passait donc presque que par les filtres. Compté aussi à part, il pèse environ 25 % du score. Momentum et croissance ne comptent que dans le bloc Piliers. La grille des six critères peut devenir un sixième bloc (`criteres` dans `poids_score`, 0 par défaut).
+
+**Pourquoi les quatre regards ne comptent plus (22/11/2026).** Buffett, Munger, Fisher et Terry Smith sont quatre grilles cohérentes, mais de la même famille, « qualité, temps long » : additionnées, elles comptaient la qualité une seconde fois (corrélation de rang de 0,59 avec le pilier qualité), et leur moyenne effaçait ce qui les rend utiles, leurs désaccords. Ils se lisent désormais un par un, dans la fiche et sur leur page, sans total. Le poids `regards` est forcé à 0 au chargement de la stratégie, y compris dans un ancien `strategie.json`.
 
 ### Le bloc Piliers
 
@@ -126,13 +127,31 @@ La section « Prix juste » de la fiche répond à une question simple : à quel
 
 ## La bonne action au bon prix
 
-La page « La bonne action au bon prix » et l'en-tête de la fiche répondent à la question « à quel prix acheter ? » par un autre chemin que les multiples : le rendement que l'on exige. La page cherche par défaut dans toutes les actions qui passent les filtres de qualité, et montre d'abord celles qui sont au bon prix ou à un prix correct, classées par score ; on peut aussi y analyser son portefeuille ou sa watchlist, et filtrer par compte, critères et moat.
+La page « La bonne action au bon prix » et l'en-tête de la fiche répondent à la question « à quel prix acheter ? » par un autre chemin que les multiples : le rendement que l'on exige. La page cherche par défaut dans toutes les actions qui passent les filtres de qualité, et montre d'abord celles qui sont au bon prix ou à un prix correct, classées selon votre style d'investisseur (section suivante) ; on peut aussi y analyser son portefeuille ou sa watchlist, et filtrer par compte, critères et moat.
 
 - **Prix juste.** C'est le cours auquel l'action rapporterait exactement votre rendement exigé (9 % par an par défaut), si sa croissance attendue se réalise. Le modèle est celui du TRI implicite (« value drivers », section 4) : croissance retenue pendant 5 ans, ralentissement en 5 ans vers 3 %, rentabilité des nouveaux investissements bornée. Il est aussi utilisé par la page « Pour moi » de l'application du téléphone. Au rendement égal au TRI implicite, le prix juste est le cours actuel : les deux mesures disent la même chose.
 - **Prix d'achat.** C'est le prix juste diminué de la marge de sécurité (20 % par défaut), qui couvre l'erreur d'estimation : une croissance surestimée de quelques points suffit à faire baisser fortement le prix juste.
 - **Verdict.** « Au bon prix » quand le cours est au plus au prix d'achat ; « prix correct » entre le prix d'achat et le prix juste ; « à attendre » au-dessus du prix juste ; « non évalué » pour une holding, une société en perte ou un fonds.
 - **Réglages.** Rendement exigé et marge se règlent sur la page et sont retenus (`profil/prix_achat.json`). « Viser le prix d'achat » ou « Suivre à ce prix » l'inscrit comme prix visé dans la watchlist : le tableau de bord prévient quand le cours y passe.
+- **Classement.** À verdict égal, la note de votre style (de 0 à 100) range les valeurs ; un autre style se choisit sur la page pour comparer. Le prix d'achat et le verdict n'en dépendent pas : ils jugent le prix, pas l'entreprise. Le tableau de bord classe ses occasions de la même façon.
+- **Actions.** Cocher une ligne ouvre sa fiche ; en cocher plusieurs permet de les ajouter à la watchlist, avec ou sans le prix d'achat comme prix visé.
 - **Limite.** Le prix juste dépend surtout de la croissance retenue, qui reste une estimation. C'est un repère pour comparer et attendre son prix, pas un signal d'achat : la thèse et l'analyse qualitative décident.
+
+## Votre style d'investisseur
+
+La méthode qui marche le mieux est souvent celle que l'on arrive à tenir dans les mauvaises années. La page « Mon style d'investisseur » (espace « Mon portefeuille ») propose l'un des cinq styles à partir de huit questions (ce que l'on cherche, durée de détention, réaction à une baisse de 30 %, prix accepté, entreprises mal aimées, retard sur le marché, temps de suivi, regret le plus redouté), et explique le choix : les réponses qui ont pesé, et le style le plus proche quand les réponses hésitent. On peut en retenir un autre. Le choix est enregistré dans `profil/style.json` ; sans questionnaire, le style par défaut est GARP.
+
+| Style | Ce qu'il cherche | Note (rangs centiles combinés) |
+|---|---|---|
+| **Qualité** | Payer pour l'excellence et la durabilité | Pilier qualité 60 %, six critères 40 % |
+| **Croissance** | Accepter un prix élevé pour une croissance forte | Pilier croissance |
+| **GARP** | La croissance, sans la surpayer | Croissance 40 %, valorisation 35 %, qualité 25 % |
+| **Valeur** | Acheter ce qui est décoté | Valorisation 70 %, qualité 30 % |
+| **Momentum** | Suivre la tendance | Momentum 12-1 mois |
+
+Le second onglet compare les styles. Un style **retient** une action quand elle passe les filtres de qualité, figure dans la tête de son classement (le quart le mieux noté des éligibles par défaut) et se trouve au bon prix ou à un prix correct. On y voit combien d'actions chacun retient, combien deux styles ont en commun, celles que plusieurs styles retiennent et celles qu'un seul retient. Un rappel du comportement passé suit : les mauvaises années connues de chaque style et, à la demande, le backtest à date de chacun depuis 2012 (section « Backtest à date »), avec ses limites.
+
+Un questionnaire reste grossier et aucun style ne garantit un résultat : G.A.R.P propose un style et l'explique, le choix reste celui de l'utilisateur. Ce n'est pas un conseil personnalisé.
 
 ## Équilibre du portefeuille (proposition)
 
@@ -172,8 +191,8 @@ La page « Construction automatique » (espace « Explorer ») construit un port
 
 - **Méthode de notation.** Elle classe les candidats. Chaque note est ramenée à son rang dans l'univers (0 à 100) pour rester comparable, et le score composite départage les ex aequo. Méthodes proposées :
   - **Score composite** : la note de l'outil ;
-  - **Quatre regards** : leur moyenne ;
-  - **un regard seul** : Buffett, Munger, Fisher ou Terry Smith ;
+  - **un regard seul** : Buffett, Munger, Fisher ou Terry Smith (leur moyenne n'est plus proposée : voir section 3) ;
+  - **GARP** : croissance 40 %, valorisation 35 %, qualité 25 % ;
   - **Qualité d'abord** : pilier qualité 60 %, six critères 40 % ;
   - **Croissance** ;
   - **Valeur** : valorisation 70 %, qualité 30 % ;
@@ -208,6 +227,7 @@ Le backtest du portefeuille note les actions avec les comptes d'aujourd'hui : il
 
   Les quatre regards et les critères ne sont pas reconstitués.
 - **Capitalisation d'époque.** Elle est déduite de celle d'aujourd'hui, avec les divisions d'actions repérées et neutralisées : la SEC publie les nombres d'actions d'origine.
+- **Méthodes.** Qualité, croissance, valeur, momentum, leurs combinaisons, et GARP (croissance 40 %, valeur 35 %, qualité 25 %) : les cinq styles d'investisseur ont chacun la leur, reprise dans la comparaison des styles.
 - **Simulation.** Les valeurs choisies sont gardées un an à poids égaux, en euros. La comparaison se fait avec toutes les valeurs testables à poids égaux et avec le S&P 500.
 - **Ce que montre le test (novembre 2026, 20 lignes, 2012-2026).** Qualité et valeur n'ont pas battu l'ensemble des valeurs à poids égaux (environ 1,5 à 2 points de moins par an). Elles l'ont fait avec moins de volatilité et des pertes maximales plus faibles pour la qualité. Croissance et momentum ont fait beaucoup mieux, mais avec un biais : l'univers d'aujourd'hui contient les sociétés qui ont réussi à grossir, ce qui avantage précisément ces méthodes.
 - **Limite principale : le biais du survivant.** Il gonfle toutes les courbes ; seule la comparaison au sein du même univers est juste.
@@ -314,7 +334,7 @@ Les dirigeants arrivent avec le renouvellement des fiches de fondamentaux, en un
 
 ## Le crible des quatre regards
 
-La page « Quatre regards » note chaque action de la base de 1 à 5, exclues comprises, pour décider lesquelles méritent une analyse complète. Les notes figurent aussi dans le screener, la fiche valeur et l'export Excel. Les fonds ne sont pas notés. Les notes viennent de règles fixes :
+La page « Quatre regards » note chaque action de la base de 1 à 5, exclues comprises, pour décider lesquelles méritent une analyse complète. Les notes figurent aussi dans le screener, la fiche valeur et l'export Excel ; elles se lisent une par une, sans total, et ne comptent pas dans le score composite. La page les trie selon un regard au choix. Les fonds ne sont pas notés. Les notes viennent de règles fixes :
 
 - **Buffett** : 1 point de base, puis 1 point pour une rentabilité d'au moins 15 %, 1 pour 30 %, 1 pour un TRI implicite d'au moins 10 %, 1 pour 14 %.
 - **Munger** : 5 points, moins 1 pour chaque fragilité : volatilité au-dessus de 45 %, perte de plus de 50 % en 3 ans, dette nette au-dessus de 2 fois l'EBITDA, marge instable, hausse de plus de 100 % sur un an, ou société financière.
@@ -352,6 +372,7 @@ Une ligne qui dépasse le double de son poids cible peut être allégée, de pr�
 
 | Fréquence | Durée | Quoi |
 |---|---|---|
+| Une fois, puis chaque année | 5 min | Questionnaire de « Mon style d'investisseur » : le style retenu classe « La bonne action au bon prix » |
 | Chaque mois | 15 min | Mise à jour complète (les mises à jour rapides suffisent entre-temps), regarder le tableau de bord et « La bonne action au bon prix », voir la proposition d'apport (onglet « Équilibre » de « Analyse de mon portefeuille »), réimporter son portefeuille après des achats |
 | Chaque trimestre | 1 h | Après les publications : relire les conditions de vente, noter les faits marquants dans les fiches (commande Claude `/revue-portefeuille`) |
 | Chaque semestre | 1 h | Revoir la poche opportunités au regard du score et du TRI implicite ; étudier les meilleurs scores hors portefeuille (`/analyse-valeur`) |

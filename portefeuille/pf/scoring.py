@@ -146,8 +146,10 @@ def pillar_scores(df: pd.DataFrame) -> pd.DataFrame:
 
 # La valorisation a son propre bloc : dans le seul bloc Piliers, elle ne pesait que 5 % du score (25 % d'un
 # bloc sur cinq), alors que les autres blocs mesurent surtout la qualité. La grille des six critères
-# (criteres.py) recoupe les piliers qualité et croissance : poids nul par défaut.
-POIDS_SCORE = {"piliers": 1, "valorisation": 1, "regards": 1, "piotroski": 1, "altman": 1, "beneish": 1, "criteres": 0}
+# (criteres.py) recoupe les piliers qualité et croissance : poids nul par défaut. Les quatre regards non plus ne
+# comptent pas (22/11/2026) : quatre grilles « qualité » additionnées doublaient le pilier qualité (corrélation de
+# rang de 0,59) ; ils se lisent un par un (config.load_strategy force leur poids à 0).
+POIDS_SCORE = {"piliers": 1, "valorisation": 1, "regards": 0, "piotroski": 1, "altman": 1, "beneish": 1, "criteres": 0}
 LIBELLES_BLOCS = {"piliers": "Piliers", "valorisation": "Valorisation", "regards": "Regards", "piotroski": "Piotroski",
                   "altman": "Altman", "beneish": "Beneish", "criteres": "Six critères"}
 CRITERES_MIN_EVALUES = 4  # en dessous (banques, assureurs, holdings), le bloc reçoit la médiane

@@ -123,6 +123,33 @@ def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
     assert at.segmented_control[0].value == "Toutes les actions de qualité" or any(
         s.value == "Toutes les actions de qualité" for s in at.get("segmented_control"))
     assert any(m.label == "Au bon prix" for m in at.metric)
+    # Classement selon le style (GARP sans profil), boutons d'action au-dessus du tableau.
+    style = [s for s in at.get("segmented_control") if s.label == "Classer selon le style"][0]
+    assert style.value == "garp"
+    style.set_value("valeur")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert any("note_style" in df.value.columns for df in at.dataframe)
+    libelles = [b.label for b in at.button]
+    assert "Ouvrir la fiche" in libelles and "Ajouter à la watchlist (0)" in libelles
+
+
+def test_mon_style_questionnaire_et_comparaison():
+    """Le questionnaire propose un style et l'explique ; la comparaison compte les actions retenues par style."""
+    from pf import styles as sty
+
+    at = _app("style")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert len([m for m in at.metric if m.label.split(" (")[0] in {s.libelle for s in sty.STYLES.values()}]) == 5
+    for q in sty.QUESTIONS:  # réponses « valeur » partout
+        cle = max(q.reponses, key=lambda k, q=q: q.reponses[k][1].get("valeur", 0))
+        at.radio(key=f"style_q_{q.cle}").set_value(cle)
+    [b for b in at.button if b.label == "Voir le style proposé"][0].click()
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert any("**Valeur**" in m.value for m in at.markdown)
+    assert any(b.label == "Retenir ce style" for b in at.button)
 
 
 def test_barre_laterale_de_la_version_installee(monkeypatch):

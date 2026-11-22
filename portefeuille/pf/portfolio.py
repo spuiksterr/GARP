@@ -37,10 +37,11 @@ COMPOSANTES = {
 }
 # Méthodes de notation proposées : (libellé, description, poids des composantes).
 NOTATIONS = {
-    "composite": ("Score composite", "La note de l'outil : piliers, valorisation, quatre regards, Piotroski, Altman, "
-                  "Beneish. Équilibrée, mais sensible aux valeurs bon marché.", {"score": 1}),
-    "regards": ("Quatre regards", "La moyenne des regards de Buffett, Munger, Fisher et Terry Smith : des entreprises "
-                "durables, bien gérées, achetées à un prix raisonnable.", {"pts_regards": 1}),
+    "composite": ("Score composite", "La note de l'outil : piliers, valorisation, Piotroski, Altman, Beneish. "
+                  "Équilibrée, mais sensible aux valeurs bon marché.", {"score": 1}),
+    # Plus de moyenne des quatre regards (22/11/2026) : chacun reste une méthode à part, sans être additionné.
+    "garp": ("GARP", "La croissance, sans la surpayer : croissance, valorisation et qualité, la croissance d'abord.",
+             {"croissance": 0.4, "valorisation": 0.35, "qualite": 0.25}),
     "buffett": ("Buffett", "Avantage durable, rentabilité élevée sans dette excessive, prix raisonnable.", {"buffett": 1}),
     "munger": ("Munger", "Éviter les erreurs : solidité financière, simplicité, pas de comptabilité douteuse.",
                {"munger": 1}),
