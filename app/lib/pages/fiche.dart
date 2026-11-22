@@ -68,7 +68,7 @@ class _FicheState extends State<Fiche> {
         final d = etat.donnees;
         final v = d?.valeurs[widget.ticker];
         if (d == null || v == null) {
-          return PageClimax(avantTitre: const SelecteurValeur(null), titre: widget.ticker, enfants: const [
+          return PageGarp(avantTitre: const SelecteurValeur(null), titre: widget.ticker, enfants: const [
             Encadre('Valeur absente des données de la nuit.'),
           ]);
         }
@@ -85,7 +85,7 @@ class _FicheState extends State<Fiche> {
           ('Notes', (context) => _notes(context, d, v)),
         ];
         final suivie = etat.suivie(v.ticker);
-        return PageClimax(
+        return PageGarp(
           avantTitre: SelecteurValeur(v),
           titre: v.nom,
           actions: [
@@ -920,7 +920,7 @@ class PageFicheValeur extends StatelessWidget {
         builder: (context, choisi, _) {
           final d = etat.donnees;
           if (d == null) {
-            return const PageClimax(titre: 'Fiche valeur', enfants: [
+            return const PageGarp(titre: 'Fiche valeur', enfants: [
               Encadre('Aucune donnée : configurez l\'accès dans la rubrique Réglages.'),
             ]);
           }
@@ -929,7 +929,7 @@ class PageFicheValeur extends StatelessWidget {
               lignes.map((l) => l.ticker).where(d.valeurs.containsKey).firstOrNull ??
               d.triees.firstOrNull?.ticker;
           if (ticker == null) {
-            return const PageClimax(titre: 'Fiche valeur', avantTitre: SelecteurValeur(null), enfants: []);
+            return const PageGarp(titre: 'Fiche valeur', avantTitre: SelecteurValeur(null), enfants: []);
           }
           return Fiche(key: ValueKey(ticker), ticker: ticker);
         },

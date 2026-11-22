@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "fr.climax" "\0"
-            VALUE "FileDescription", "Climax" "\0"
+            VALUE "CompanyName", "G.A.R.P" "\0"
+            VALUE "FileDescription", "G.A.R.P" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Climax" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 fr.climax. All rights reserved." "\0"
-            VALUE "OriginalFilename", "climax.exe" "\0"
-            VALUE "ProductName", "Climax" "\0"
+            VALUE "InternalName", "garp" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 G.A.R.P. All rights reserved." "\0"
+            VALUE "OriginalFilename", "garp.exe" "\0"
+            VALUE "ProductName", "G.A.R.P" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

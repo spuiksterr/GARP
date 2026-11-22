@@ -63,7 +63,7 @@ const orange = Color(0xFFE07B00);
 
 const police = 'SourceSans3';
 
-ThemeData themeClimax(Brightness luminosite) {
+ThemeData themeGarp(Brightness luminosite) {
   final t = luminosite == Brightness.dark ? Teintes.sombre : Teintes.clair;
   final schema = ColorScheme.fromSeed(seedColor: t.primaire, brightness: luminosite).copyWith(
     primary: t.primaire,
@@ -214,8 +214,8 @@ EdgeInsets margesPage(double largeur, {double largeurMax = 1180}) {
 }
 
 /// Une page de l'outil : grand titre (st.title), légende, puis le contenu.
-class PageClimax extends StatelessWidget {
-  const PageClimax({
+class PageGarp extends StatelessWidget {
+  const PageGarp({
     required this.enfants,
     this.titre,
     this.legende,

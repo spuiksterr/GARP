@@ -1,27 +1,27 @@
 # G.A.R.P : application Android et installateur Windows
 
-Sur Windows, `Climax-Setup` installe l'outil du PC lui-même (celui de `lancer.bat`, voir [portefeuille/README.md](../portefeuille/README.md)), avec son propre Python : rien d'autre à installer, et l'affichage est exactement celui de l'outil. Le reste de cette page décrit surtout l'application Android.
+Sur Windows, `GARP-Setup` installe l'outil du PC lui-même (celui de `lancer.bat`, voir [portefeuille/README.md](../portefeuille/README.md)), avec son propre Python : rien d'autre à installer, et l'affichage est exactement celui de l'outil. Le reste de cette page décrit surtout l'application Android.
 
 L'application affiche les données que GitHub calcule chaque nuit (screener, fiches, rangs), sans PC allumé. Votre portefeuille et votre watchlist restent sur l'appareil. Elle se met à jour depuis les Releases du dépôt, comme CloudStream.
 
 ```
 Chaque nuit, GitHub (flux « Données de l'application ») : pf maj → pf export-app → release « donnees »
                                                                                       │
-Téléphone (application) ── jeton en lecture seule ──▶ télécharge climax-donnees.json.gz
-PC (outil installé)     ── sans jeton (public) ───▶ télécharge climax-outil.zip (pf export-outil)
+Téléphone (application) ── jeton en lecture seule ──▶ télécharge garp-donnees.json.gz
+PC (outil installé)     ── sans jeton (public) ───▶ télécharge garp-outil.zip (pf export-outil)
 Les deux proposent, sur demande, la dernière version « app-b<n> »
 ```
 
 ## Télécharger
 
-Page de téléchargement : https://github.com/spuiksterr/Climax/releases/latest. Le dépôt est public : la page s'ouvre sans compte GitHub.
+Page de téléchargement : https://github.com/spuiksterr/GARP/releases/latest. Le dépôt est public : la page s'ouvre sans compte GitHub.
 
 Le QR code de [assets/qr-telechargement.png](assets/qr-telechargement.png) ouvre cette page sur le téléphone.
 
 | Appareil | Fichier |
 |---|---|
-| Android | `Climax-b<n>.apk` |
-| Windows 11 | `Climax-Setup-b<n>.exe` (l'outil du PC complet, environ 150 Mo) |
+| Android | `GARP-b<n>.apk` |
+| Windows 11 | `GARP-Setup-b<n>.exe` (l'outil du PC complet, environ 150 Mo) |
 
 ## Installer
 
@@ -31,7 +31,7 @@ Le QR code de [assets/qr-telechargement.png](assets/qr-telechargement.png) ouvre
 3. Les versions suivantes s'installent depuis l'application : Réglages > Rechercher une mise à jour.
 
 **Windows 11**
-1. Lancez `Climax-Setup-b<n>.exe`. Il installe G.A.R.P pour votre compte seulement, sans droits d'administrateur, dans `%LOCALAPPDATA%\Programs\Climax`, avec un raccourci dans le menu Démarrer et, si vous le cochez, sur le Bureau.
+1. Lancez `GARP-Setup-b<n>.exe`. Il installe G.A.R.P pour votre compte seulement, sans droits d'administrateur, dans `%LOCALAPPDATA%\Programs\G.A.R.P`, avec un raccourci dans le menu Démarrer et, si vous le cochez, sur le Bureau.
 2. L'installateur n'est pas signé : SmartScreen affiche « Windows a protégé votre ordinateur ». Choisissez « Informations complémentaires », puis « Exécuter quand même ».
 3. Au premier lancement, les données de la nuit se téléchargent d'elles-mêmes (environ 55 Mo), sans jeton : le dépôt est public. Ensuite, à chaque ouverture, G.A.R.P s'affiche aussitôt avec les données déjà installées, cherche les nouvelles et les télécharge en arrière-plan ; la barre latérale propose alors « Charger les nouvelles données » (quelques secondes). Elles vont dans `%LOCALAPPDATA%\Climax\donnees`, avec votre portefeuille.
 4. « Importer mon portefeuille » (espace « Construire ») reprend vos lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`, `.xlsm` ; un ancien `.xls` est à réenregistrer en `.xlsx`), ou depuis un tableau collé.
@@ -45,7 +45,7 @@ Sur PC, le jeton ne sert que si GitHub limite les requêtes sans jeton (60 par h
 
 1. Réglages de l'application (ou, sur PC, « Jeton GitHub (facultatif) ») > « Créer un jeton sur GitHub » (ou https://github.com/settings/personal-access-tokens/new).
 2. **Token name** : `G.A.R.P téléphone` ; **Expiration** : 1 an.
-3. **Repository access** : *Public repositories* (lecture seule des dépôts publics, dont `spuiksterr/Climax`).
+3. **Repository access** : *Public repositories* (lecture seule des dépôts publics, dont `spuiksterr/GARP`).
 4. *Generate token*, copiez-le (`github_pat_…`), collez-le dans l'application, puis « Enregistrer et télécharger les données ».
 
 Le jeton ne permet que de lire les dépôts publics. Il est stocké chiffré sur l'appareil (sur PC, par Windows pour votre session : `%LOCALAPPDATA%\Climax\jeton.dat`) et n'est envoyé qu'à `api.github.com`.
@@ -106,4 +106,4 @@ Restent sur le PC seulement : la mise à jour à la demande, les analyses avec C
 
 ## Développement
 
-L'installateur Windows est décrit par `windows/installateur/climax.iss` (Inno Setup), et son contenu assemblé par `windows/installateur/preparer_outil.ps1` : Python 3.12 du serveur de construction, les bibliothèques de `portefeuille/requirements.txt` (sans pytest), le code de l'outil et `autonome.json` (numéro de version). Le script vérifie que le serveur de l'outil démarre. Son identifiant `AppId` ne doit jamais changer, sinon les mises à jour s'installeraient à côté ; il a remplacé sans réinstallation l'ancienne version Flutter pour Windows. Le code Flutter garde la cible Windows, qui n'est plus publiée. Code Flutter dans `lib/` (import du portefeuille : `lib/import_portefeuille.dart`, sans réseau ; méthodes d'évaluation : `lib/methodes.dart`, même calcul que `pf/portfolio.py` `note_construction`), tests dans `test/`. Le logo et les icônes viennent de `portefeuille/assets/composer_icones.py` (voir `portefeuille/docs/MARQUE.md`). Pas besoin d'outils sur le PC : le flux « Application » (`.github/workflows/app.yml`) analyse, teste, construit l'APK signé et l'installateur Windows, et publie une release à chaque envoi sur `main`. Le dépôt privé n'a que 2 000 minutes de calcul par mois (Windows compte double) : hors de `main`, les installateurs se construisent à la demande (`gh workflow run app.yml --ref <branche> -f plateformes=windows`), les tests des demandes de fusion tournent sous Linux seulement, et les données de la nuit ne passent que sur `main` (mise à jour complète chaque semaine, rapide les autres nuits). La clé de signature Android est dans `portefeuille/profil/` (hors Git) et dans les secrets du dépôt `ANDROID_CLE_B64` et `ANDROID_CLE_MOT_DE_PASSE`.
+L'installateur Windows est décrit par `windows/installateur/garp.iss` (Inno Setup), et son contenu assemblé par `windows/installateur/preparer_outil.ps1` : Python 3.12 du serveur de construction, les bibliothèques de `portefeuille/requirements.txt` (sans pytest), le code de l'outil et `autonome.json` (numéro de version). Le script vérifie que le serveur de l'outil démarre. Son identifiant `AppId` ne doit jamais changer, sinon les mises à jour s'installeraient à côté ; il a remplacé sans réinstallation l'ancienne version Flutter pour Windows. Le code Flutter garde la cible Windows, qui n'est plus publiée. Code Flutter dans `lib/` (import du portefeuille : `lib/import_portefeuille.dart`, sans réseau ; méthodes d'évaluation : `lib/methodes.dart`, même calcul que `pf/portfolio.py` `note_construction`), tests dans `test/`. Le logo et les icônes viennent de `portefeuille/assets/composer_icones.py` (voir `portefeuille/docs/MARQUE.md`). Pas besoin d'outils sur le PC : le flux « Application » (`.github/workflows/app.yml`) analyse, teste, construit l'APK signé et l'installateur Windows, et publie une release à chaque envoi sur `main`. Le dépôt privé n'a que 2 000 minutes de calcul par mois (Windows compte double) : hors de `main`, les installateurs se construisent à la demande (`gh workflow run app.yml --ref <branche> -f plateformes=windows`), les tests des demandes de fusion tournent sous Linux seulement, et les données de la nuit ne passent que sur `main` (mise à jour complète chaque semaine, rapide les autres nuits). La clé de signature Android est dans `portefeuille/profil/` (hors Git) et dans les secrets du dépôt `ANDROID_CLE_B64` et `ANDROID_CLE_MOT_DE_PASSE`.

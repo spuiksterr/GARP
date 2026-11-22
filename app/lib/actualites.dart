@@ -81,7 +81,7 @@ Future<List<Article>> presse(String nom, {String? ticker, int jours = 30}) async
   final client = HttpClient()..connectionTimeout = const Duration(seconds: 20);
   try {
     final requete = await client.getUrl(uri);
-    requete.headers.set('User-Agent', 'Mozilla/5.0 (compatible; climax-app/1.0)');
+    requete.headers.set('User-Agent', 'Mozilla/5.0 (compatible; garp-app/1.0)');
     final reponse = await requete.close();
     if (reponse.statusCode != 200) return [];
     final xml = await utf8.decoder.bind(reponse).join();

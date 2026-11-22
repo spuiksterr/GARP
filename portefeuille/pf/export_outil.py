@@ -12,7 +12,7 @@ from pathlib import Path
 
 from .config import CACHE_DIR, CONFIG_DIR, DATA_DIR, DOSSIER
 
-NOM = "climax-outil.zip"
+NOM = "garp-outil.zip"
 # Formats déjà compressés : stockés tels quels, plus rapide sans perte de place.
 DEJA_COMPRESSES = {".parquet", ".gz", ".zip"}
 EXCLUS = {".tmp", ".lock"}

@@ -17,7 +17,7 @@ import sys
 import time
 from pathlib import Path
 
-DEPOT = "spuiksterr/Climax"
+DEPOT = "spuiksterr/GARP"
 FEUILLE = Path(__file__).resolve().parent.parent / "FEUILLE_DE_ROUTE.md"
 URL_FEUILLE = f"https://github.com/{DEPOT}/blob/main/FEUILLE_DE_ROUTE.md"
 ECARTES = {"D-10", "D-11"}  # § 6 « Écarté pour l'instant »

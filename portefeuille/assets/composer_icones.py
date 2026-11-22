@@ -1,10 +1,10 @@
-"""Icônes de G.A.R.P (anciennement Climax) à partir de l'emblème rendu par Blender (assets/blender/logo.py). Depuis portefeuille/ :
+"""Icônes de G.A.R.P à partir de l'emblème rendu par Blender (assets/blender/logo.py). Depuis portefeuille/ :
 
     .venv/Scripts/python.exe assets/composer_icones.py planche <dossier des rendus> <planche.png>
     .venv/Scripts/python.exe assets/composer_icones.py icones <embleme.png>
 
 « planche » compare les concepts rendus (grande icône et petites tailles). « icones » écrit toutes les icônes :
-application de bureau (assets/climax.png, climax.ico, logo.png), application Flutter (app/assets/logo.png,
+application de bureau (assets/garp.png, garp.ico, logo.png), application Flutter (app/assets/logo.png,
 icônes Android adaptatives et monochromes, icône Windows) et le bandeau du README (docs/bandeau.png).
 """
 import sys
@@ -163,8 +163,8 @@ def icones(source: Path) -> None:
     entete(e).save(ICI / "entete.png", optimize=True)
 
     # Application de bureau (Streamlit, fenêtre, raccourcis) et documentation.
-    grande.resize((512, 512), Image.LANCZOS).save(ICI / "climax.png", optimize=True)
-    grande.save(ICI / "climax.ico", sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
+    grande.resize((512, 512), Image.LANCZOS).save(ICI / "garp.png", optimize=True)
+    grande.save(ICI / "garp.ico", sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
     bandeau(e).convert("RGB").save(ICI.parent / "docs" / "bandeau.png", optimize=True)
 
     # Application Flutter : logo affiché dans l'application, icône Windows.
@@ -199,7 +199,7 @@ def icones(source: Path) -> None:
         silhouette(e, t, 0.50).save(m / "ic_launcher_monochrome.png", optimize=True)
 
 
-PAGE_TELECHARGEMENT = "https://github.com/spuiksterr/Climax/releases/latest"
+PAGE_TELECHARGEMENT = "https://github.com/spuiksterr/GARP/releases/latest"
 
 
 def qr(source: Path) -> None:

@@ -1,8 +1,8 @@
 name: Données de l'application
 
 # Chaque nuit après la clôture américaine : mise à jour sur les serveurs de GitHub (cache conservé d'une nuit à
-# l'autre), puis publication dans la release « donnees » : climax-*.json.gz pour l'application du téléphone,
-# climax-outil.zip pour l'outil du PC installé (pf export-outil).
+# l'autre), puis publication dans la release « donnees » : garp-*.json.gz pour l'application du téléphone,
+# garp-outil.zip pour l'outil du PC installé (pf export-outil).
 # Aucune donnée personnelle : le profil est celui d'exemple. Les sources SEC (recoupement des comptes, 13F,
 # dirigeants, ventilation du chiffre d'affaires) ne sont lues que si le secret SEC_CONTACT du dépôt donne
 # l'adresse de contact que la SEC exige ; les transactions des élus se lisent sans.
@@ -62,7 +62,7 @@ jobs:
       - name: Export pour l'application (avec 10 minutes de lecture des sources SEC des fiches)
         run: pf export-app --vers ../sortie --sources-sec 10
 
-      - name: Archive pour l'outil du PC installé (Climax-Setup)
+      - name: Archive pour l'outil du PC installé (GARP-Setup)
         run: pf export-outil --vers ../sortie
 
       - name: Garder le cache pour la nuit suivante
@@ -78,4 +78,4 @@ jobs:
           gh release view donnees >/dev/null 2>&1 || gh release create donnees --prerelease \
             --title "Données de l'application" \
             --notes "Fichier mis à jour chaque nuit par le flux « Données de l'application ». Ne pas supprimer."
-          gh release upload donnees sortie/climax-*.json.gz sortie/climax-outil.zip --clobber
+          gh release upload donnees sortie/garp-*.json.gz sortie/garp-outil.zip --clobber

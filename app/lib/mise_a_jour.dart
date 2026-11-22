@@ -11,8 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'github.dart';
 
-/// Page des téléchargements (dernière version de l'application ; il faut être connecté à GitHub).
-const pageTelechargement = 'https://github.com/spuiksterr/Climax/releases/latest';
+/// Page des téléchargements (dernière version de l'application, dépôt public).
+const pageTelechargement = 'https://github.com/spuiksterr/GARP/releases/latest';
 
 class NouvelleVersion {
   NouvelleVersion(this.release, this.asset, this.actuelle);
@@ -27,7 +27,7 @@ Future<int> numeroInstalle() async => int.tryParse((await PackageInfo.fromPlatfo
 /// Fichier à télécharger : l'APK sur Android ; sur Windows l'installateur, sinon le zip portable.
 Asset? fichierPourCetAppareil(Release r) {
   if (Platform.isAndroid) return r.asset((nom) => nom.endsWith('.apk'));
-  return r.asset((nom) => nom.startsWith('Climax-Setup') && nom.endsWith('.exe')) ??
+  return r.asset((nom) => nom.startsWith('GARP-Setup') && nom.endsWith('.exe')) ??
       r.asset((nom) => nom.endsWith('.zip'));
 }
 

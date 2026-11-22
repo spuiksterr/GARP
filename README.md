@@ -2,7 +2,7 @@
 
 # G.A.R.P
 
-*Growth at a reasonable price* : la croissance, au juste prix. Le projet s'appelait Climax jusqu'au 18/11/2026 ; le dépôt, les fichiers et les dossiers techniques gardent ce nom.
+*Growth at a reasonable price* : la croissance, au juste prix. Le projet s'appelait Climax jusqu'au 18/11/2026.
 
 Application personnelle d'analyse d'actions et de construction de portefeuille de long terme, pensée pour un investisseur français (PEA et compte-titres).
 

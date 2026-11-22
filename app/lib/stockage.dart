@@ -176,7 +176,10 @@ class Profil {
 
 class Stockage {
   static const _securise = FlutterSecureStorage();
-  static const depotParDefaut = 'spuiksterr/Climax';
+  static const depotParDefaut = 'spuiksterr/GARP';
+
+  /// Adresses enregistrées par les versions d'avant le dépôt public, remplacées par celle par défaut.
+  static const _anciensDepots = {'spuiksterr/Climax', 'spuiksterr/Climax-public'};
 
   /// Clés des données personnelles (hors jeton), effacées par « Tout effacer ».
   static const _cles = [
@@ -188,7 +191,10 @@ class Stockage {
 
   Future<void> enregistrerJeton(String jeton) => _securise.write(key: 'jeton_github', value: jeton.trim());
 
-  Future<String> depot() async => (await SharedPreferences.getInstance()).getString('depot') ?? depotParDefaut;
+  Future<String> depot() async {
+    final enregistre = (await SharedPreferences.getInstance()).getString('depot');
+    return enregistre == null || _anciensDepots.contains(enregistre) ? depotParDefaut : enregistre;
+  }
 
   Future<void> enregistrerDepot(String depot) async =>
       (await SharedPreferences.getInstance()).setString('depot', depot.trim());

@@ -15,9 +15,9 @@ import 'import_portefeuille.dart';
 import 'stockage.dart';
 import 'valorisation.dart';
 
-const nomFichierDonnees = 'climax-donnees.json.gz';
-const nomFichierFiches = 'climax-fiches.json.gz';
-const nomFichierInvestisseurs = 'climax-investisseurs.json.gz';
+const nomFichierDonnees = 'garp-donnees.json.gz';
+const nomFichierFiches = 'garp-fiches.json.gz';
+const nomFichierInvestisseurs = 'garp-investisseurs.json.gz';
 
 class Etat extends ChangeNotifier {
   final stockage = Stockage();

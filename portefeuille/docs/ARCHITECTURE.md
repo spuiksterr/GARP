@@ -26,7 +26,7 @@ config/univers.csv, config/strategie.json, config/cas_particuliers.csv ───
                               vues/*.py (15 pages, app.py)
 
 Application autonome : chaque nuit, .github/workflows/donnees.yml lance pf maj sur GitHub (cache conservé),
-puis pf export-app (pf/export_app.py) publie climax-donnees.json.gz dans la release « donnees » ; l'application
+puis pf export-app (pf/export_app.py) publie garp-donnees.json.gz dans la release « donnees » ; l'application
 Flutter (app/) le télécharge avec un jeton en lecture seule (l'outil du PC installé, sans jeton : le dépôt est public). Aucune donnée personnelle n'y est exportée.
 Le portefeuille de l'application s'importe dans l'appareil (app/lib/import_portefeuille.dart : export de
 courtier, tableau collé ou saisie ; reconnaissance par ISIN retenu, ticker, puis nom ; poids d'après les
@@ -34,8 +34,8 @@ montants ou les quantités × cours_eur de l'export). L'export publie aussi les 
 (`NOTATIONS` de pf/portfolio.py, avec leurs poids) et les six critères avec leurs seuils : app/lib/methodes.dart
 recalcule les notes à l'identique (rangs centiles pondérés). Ajouter une méthode dans `NOTATIONS` suffit pour
 qu'elle apparaisse dans l'application, si ses composantes sont dans `COLONNES` de l'export.
-Deux fichiers complémentaires (pf/export_fiches.py) : `climax-fiches.json.gz` (historique financier, repères
-et séries des multiples, description, dirigeants, ventilation) et `climax-investisseurs.json.gz` (13F, élus).
+Deux fichiers complémentaires (pf/export_fiches.py) : `garp-fiches.json.gz` (historique financier, repères
+et séries des multiples, description, dirigeants, ventilation) et `garp-investisseurs.json.gz` (13F, élus).
 Les calculs de l'application reprennent ceux de `pf/` : app/lib/valorisation.dart (valuation.py, prix_juste.py,
 scenarios.py), risques.dart (risques.py, simulation.py, backtest.py, en hebdomadaire), construction.dart
 (portfolio.py), suivi.dart (contribution_plan de tracker.py, regles.py), actualites.dart (actualites.py) ;
@@ -45,10 +45,10 @@ L'interface de l'application imite celle de Streamlit : app/lib/interface.dart r
 `.streamlit/config.toml` et les briques de pf/ui.py (titres, st.metric, encadrés, onglets, tableaux), et
 app/lib/navigation.dart les rubriques de app.py (barre latérale). Une page ajoutée au PC s'ajoute à `Rubrique`.
 
-Outil du PC installé (Climax-Setup, Windows) : cet outil lui-même, avec son Python
-(app/windows/installateur/preparer_outil.ps1). Climax.pyw → pf/autonome.py (autonome.json présent) :
+Outil du PC installé (GARP-Setup, Windows) : cet outil lui-même, avec son Python
+(app/windows/installateur/preparer_outil.ps1). GARP.pyw → pf/autonome.py (autonome.json présent) :
 PF_DOSSIER = %LOCALAPPDATA%\Climax\donnees, PF_AUTONOME=1. Chaque nuit, pf export-outil publie
-climax-outil.zip (config/, data/cache/, data/historique/) ; la barre latérale le télécharge et l'installe
+garp-outil.zip (config/, data/cache/, data/historique/) ; la barre latérale le télécharge et l'installe
 fichier par fichier, sans toucher au profil ni au journal des transactions. Pas de pf maj sur ce poste.
 L'archive contient aussi le screener tout prêt (data/cache/screener.parquet, scoring.enregistrer_screener) avec son
 empreinte (stratégie, indicateurs, corrections des regards, code du calcul) : ui.screener le lit en 0,05 s si
@@ -148,9 +148,9 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `ui` | Briques Streamlit communes : thème, graphiques, tableaux, données en cache, barre latérale |
 | `contexte` | Synthèses texte pour la CLI et les commandes Claude |
 | `__main__` | Ligne de commande `pf <commande>` |
-| `bureau` | Version bureau : fenêtre pywebview ouverte aussitôt sur un écran d'attente en trois étapes (moteur, outil et données, interface, avec le temps écoulé), puis branchée au serveur sans console (`pf bureau`, `Climax.pyw`, raccourcis par `creer_raccourcis.ps1`) ; serveur sur 127.0.0.1 |
+| `bureau` | Version bureau : fenêtre pywebview ouverte aussitôt sur un écran d'attente en trois étapes (moteur, outil et données, interface, avec le temps écoulé), puis branchée au serveur sans console (`pf bureau`, `GARP.pyw`, raccourcis par `creer_raccourcis.ps1`) ; serveur sur 127.0.0.1 |
 | `serveur` | Lanceur du serveur de la fenêtre (`python -m pf.serveur app.py …`) : charge pf.ui puis démarre Streamlit dans le même processus, pour que la première page trouve les modules en mémoire |
-| `autonome` | Version installée par `Climax-Setup` (repérée par `autonome.json` à côté du code) : données dans `%LOCALAPPDATA%\Climax\donnees`, accès anonyme au dépôt public (jeton GitHub facultatif, chiffré par Windows), téléchargement et installation de `climax-outil.zip`, nouvelles versions |
+| `autonome` | Version installée par `GARP-Setup` (repérée par `autonome.json` à côté du code) : données dans `%LOCALAPPDATA%\Climax\donnees`, accès anonyme au dépôt public (jeton GitHub facultatif, chiffré par Windows), téléchargement et installation de `garp-outil.zip`, nouvelles versions |
 | `export_outil` | Archive des données publiques (configuration, cache, historique des scores) pour la version installée : `pf export-outil`, publiée chaque nuit |
 | `import_portefeuille` | Import d'un portefeuille (export du courtier en CSV ou classeur Excel, tableau collé, liste tapée ; chaque feuille Excel avec une ligne d'en-tête reconnue devient un tableau tabulé, `textes_fichier`) : mêmes règles que `app/lib/import_portefeuille.dart` ; page `vues/importer.py` |
 | `export_app` | Fichier de données de l'application (`pf export-app`) : valeurs (avec le cours en euros), cours hebdomadaires, rangs, sans donnée personnelle |

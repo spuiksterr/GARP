@@ -1359,8 +1359,13 @@ def test_sauvegarde_archive_datee_et_rotation(tmp_path, monkeypatch):
     monkeypatch.setattr(sauvegarde, "GARDER", 2)
     for jour in (2, 3, 4):
         sauvegarde.creer(maintenant=datetime(2026, 1, jour))
-    assert sorted(p.name for p in dest.glob("*.zip")) == ["climax-donnees-2026-01-03.zip",
-                                                          "climax-donnees-2026-01-04.zip"]
+    assert sorted(p.name for p in dest.glob("*.zip")) == ["garp-donnees-2026-01-03.zip",
+                                                          "garp-donnees-2026-01-04.zip"]
+    # Sauvegardes de l'ancien nom : comptées dans la rotation, par date.
+    (dest / "climax-donnees-2026-01-05.zip").write_bytes(b"")
+    sauvegarde.creer(maintenant=datetime(2026, 1, 6))
+    assert sorted(p.name for p in dest.glob("*.zip")) == ["climax-donnees-2026-01-05.zip",
+                                                          "garp-donnees-2026-01-06.zip"]
 
 
 def test_simulation_ajout_retrait_d_une_ligne():
@@ -1432,11 +1437,11 @@ def test_export_application_sans_donnee_personnelle(tmp_path):
     assert len(d["changes"]["USD"]["c"]) > 200 and 0.5 < d["changes"]["USD"]["c"][-1] < 1.2
     assert d["strategie"]["garde_fous"]["ligne_max"] > 0 and "notation" not in d["strategie"]["construction"]
     # Fichiers complémentaires : fiches (historique, repères des multiples) et investisseurs.
-    fiches = json.load(gzip.open(tmp_path / "climax-fiches.json.gz", "rt", encoding="utf-8"))["fiches"]
+    fiches = json.load(gzip.open(tmp_path / "garp-fiches.json.gz", "rt", encoding="utf-8"))["fiches"]
     h = fiches["ADBE"]["h"]
     assert len(h["an"]) == len(h["chiffre_affaires"]) >= 4 and h["chiffre_affaires"][-1] > 1e9
     assert fiches["ADBE"]["r"]["PER"]["actuel"] > 0 and len(fiches["ADBE"]["r"]["PER"]["v"]) >= 4
-    inv = json.load(gzip.open(tmp_path / "climax-investisseurs.json.gz", "rt", encoding="utf-8"))
+    inv = json.load(gzip.open(tmp_path / "garp-investisseurs.json.gz", "rt", encoding="utf-8"))
     assert {"investisseurs", "partages", "elus", "operations"} <= set(inv)
     texte = gzip.open(chemin, "rt", encoding="utf-8").read()
     for interdit in ("poids_cible", "transactions", "quantite", "contact_sec", "Exemple fictif"):

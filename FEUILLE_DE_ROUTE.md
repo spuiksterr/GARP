@@ -2,7 +2,7 @@
 
 Trame des améliorations du projet, rédigée le 13 novembre 2026 après une analyse du code. Chaque ticket est écrit pour être confié tel quel à un agent (Claude Opus) : il dit pourquoi, quoi, où, et à quoi on reconnaît que c'est fini.
 
-**Tickets sur GitHub :** https://github.com/spuiksterr/Climax/issues (titre `[X-00]`, étiquettes de phase, priorité et taille, un jalon par phase). Ce fichier reste la référence ; `.github/creer_tickets.py --envoyer` crée les tickets ajoutés ici, sans doublon.
+**Tickets sur GitHub :** https://github.com/spuiksterr/GARP/issues (titre `[X-00]`, étiquettes de phase, priorité et taille, un jalon par phase). Ce fichier reste la référence ; `.github/creer_tickets.py --envoyer` crée les tickets ajoutés ici, sans doublon.
 
 **Objectif du propriétaire :** une application d'analyse d'actions et de construction de portefeuille, gérée depuis GitHub (code, tickets, vérifications automatiques, travail des agents).
 
@@ -50,7 +50,7 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 |---|---|---|---|
 | DEC-1 | Où tourne l'application ? | **Tranché le 14/11/2026 :** A, sur le PC ; le téléphone y accède par le réseau privé Tailscale (U-11), et une fenêtre dédiée sert de version bureau (U-10) | G-05, D-08, U-08 |
 | DEC-2 | Données personnelles dans le dépôt privé, ou séparées du code ? | **Tranché le 14/11/2026 :** séparées, dans `portefeuille/profil/` exclu du dépôt | G-05 |
-| DEC-3 | Nom de l'application et du dépôt | Dépôt nommé **Climax** le 14/11/2026 ; reste à confirmer si l'application porte le même nom (autres propositions du 12/11 : Futaie, Tronçais, Chênaie) | G-03, U-01 |
+| DEC-3 | Nom de l'application et du dépôt | **Tranché :** application nommée **G.A.R.P** le 18/11/2026 (d'abord Climax, le 14/11) ; dépôt public `spuiksterr/GARP` le 22/11/2026, le dépôt privé `spuiksterr/Climax` gardé en archive | G-03, U-01 |
 | DEC-4 | Qui fusionne les demandes des agents ? | **Tranché le 14/11/2026 :** relecture et fusion par le propriétaire, jamais de fusion automatique | K-01 |
 | DEC-5 | Pseudo GitHub, adresse anonyme et nom d'auteur des commits | **Tranché le 14/11/2026 :** pseudo et auteur `spuiksterr`, adresse `264869162+spuiksterr@users.noreply.github.com` | G-01, G-03 |
 | DEC-6 | Accords en attente sur des fichiers protégés | Voir la liste ci-dessous | – |

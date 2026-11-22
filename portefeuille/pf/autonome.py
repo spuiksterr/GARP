@@ -1,12 +1,12 @@
-"""Version autonome : l'outil installé par Climax-Setup, sans Python ni projet sur le poste, alimenté par GitHub.
+"""Version autonome : l'outil installé par GARP-Setup, sans Python ni projet sur le poste, alimenté par GitHub.
 
 La construction (.github/workflows/app.yml) pose `autonome.json` à côté du code, avec le numéro de version.
-Climax.pyw appelle alors `preparer()` avant tout le reste :
+GARP.pyw appelle alors `preparer()` avant tout le reste :
 - les données vont dans %LOCALAPPDATA%\\Climax\\donnees (PF_DOSSIER), hors du dossier d'installation ;
 - la configuration livrée (univers, stratégie…) y est copiée au premier lancement ;
 - PF_AUTONOME=1 : la barre latérale remplace les mises à jour Yahoo et SEC par « Données de la nuit ».
 
-Les données viennent de la release « donnees » du dépôt public (archive `climax-outil.zip`, préparée chaque nuit par
+Les données viennent de la release « donnees » du dépôt public (archive `garp-outil.zip`, préparée chaque nuit par
 `pf export-outil`) : aucun jeton n'est nécessaire. Un jeton GitHub facultatif (lecture seule) lève la limite de
 GitHub sur les requêtes anonymes ; il est chiffré par Windows pour l'utilisateur courant (DPAPI) et n'est envoyé
 qu'à api.github.com : les téléchargements sont redirigés vers un stockage de GitHub, suivi sans jeton.
@@ -30,9 +30,9 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-DEPOT = "spuiksterr/Climax"
+DEPOT = "spuiksterr/GARP"
 RELEASE_DONNEES = "donnees"
-ARCHIVE = "climax-outil.zip"
+ARCHIVE = "garp-outil.zip"
 MARQUEUR = "autonome.json"
 API = "https://api.github.com"
 # Contenu admis dans l'archive : rien d'autre n'est écrit sur le poste.
@@ -114,7 +114,7 @@ def _dpapi(octets: bytes, chiffrer: bool) -> bytes:
     crypt32, kernel32 = ctypes.windll.crypt32, ctypes.windll.kernel32
     fonction = crypt32.CryptProtectData if chiffrer else crypt32.CryptUnprotectData
     if chiffrer:
-        ok = fonction(ctypes.byref(entree), "Climax", None, None, None, 0, ctypes.byref(sortie))
+        ok = fonction(ctypes.byref(entree), "G.A.R.P", None, None, None, 0, ctypes.byref(sortie))
     else:
         ok = fonction(ctypes.byref(entree), None, None, None, None, 0, ctypes.byref(sortie))
     if not ok:
@@ -146,7 +146,7 @@ def oublier_jeton() -> None:
 
 def _ouvrir(chemin: str, jeton_: str | None, accept: str = "application/vnd.github+json", timeout: float = 30):
     req = urllib.request.Request(f"{API}/repos/{DEPOT}{chemin}", headers={
-        "Accept": accept, "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "Climax"})
+        "Accept": accept, "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "GARP"})
     # Dépôt public : sans jeton, requête anonyme. En-tête « non redirigé » : le jeton ne suit pas la redirection
     # vers le stockage des fichiers.
     if jeton_:
@@ -157,7 +157,7 @@ def _ouvrir(chemin: str, jeton_: str | None, accept: str = "application/vnd.gith
         if e.code == 401:
             raise ErreurGitHub("Jeton refusé par GitHub : il a peut-être expiré. Saisissez-en un nouveau.") from e
         if e.code == 404:
-            raise ErreurGitHub("Introuvable sur GitHub : dépôt Climax ou données de la nuit absents.") from e
+            raise ErreurGitHub("Introuvable sur GitHub : dépôt GARP ou données de la nuit absents.") from e
         if e.code in (403, 429) and not jeton_:
             raise ErreurGitHub("GitHub limite les requêtes sans jeton (60 par heure) : réessayez plus tard, ou "
                                "ajoutez un jeton (bas de la barre latérale).") from e
@@ -360,7 +360,7 @@ def derniere_version(jeton_: str | None) -> dict | None:
         if not tag.startswith("app-b") or not tag[5:].isdigit():
             continue
         numero = int(tag[5:])
-        setup = next((a for a in rel.get("assets", []) if str(a.get("name", "")).startswith("Climax-Setup")), None)
+        setup = next((a for a in rel.get("assets", []) if str(a.get("name", "")).startswith("GARP-Setup")), None)
         if setup and (meilleure is None or numero > meilleure["numero"]):
             meilleure = {"numero": numero, "id": setup["id"], "nom": setup["name"], "taille": setup.get("size", 0)}
     return meilleure

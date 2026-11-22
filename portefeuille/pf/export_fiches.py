@@ -1,10 +1,10 @@
-"""Fichiers complémentaires de l'application G.A.R.P, publiés avec climax-donnees.json.gz (pf/export_app.py).
+"""Fichiers complémentaires de l'application G.A.R.P, publiés avec garp-donnees.json.gz (pf/export_app.py).
 
-- `climax-fiches.json.gz` : le détail de chaque valeur, lu à l'ouverture d'une fiche : historique financier
+- `garp-fiches.json.gz` : le détail de chaque valeur, lu à l'ouverture d'une fiche : historique financier
   (historique.py), repères des multiples et leur série trimestrielle (prix_juste.py), description de l'activité,
   et, quand ils sont en cache, achats et ventes des dirigeants (dirigeants.py) et ventilation du chiffre
   d'affaires (ventilation.py).
-- `climax-investisseurs.json.gz` : portefeuilles 13F des investisseurs suivis, titres les plus partagés,
+- `garp-investisseurs.json.gz` : portefeuilles 13F des investisseurs suivis, titres les plus partagés,
   transactions des élus américains (investisseurs.py, congres.py).
 
 Aucune donnée personnelle. Aucun accès réseau ici : on publie ce que les mises à jour ont mis en cache
@@ -17,8 +17,8 @@ import time
 
 import pandas as pd
 
-NOM_FICHES = "climax-fiches.json.gz"
-NOM_INVESTISSEURS = "climax-investisseurs.json.gz"
+NOM_FICHES = "garp-fiches.json.gz"
+NOM_INVESTISSEURS = "garp-investisseurs.json.gz"
 ANNEES_MULTIPLES = 12
 TRANSACTIONS_DIRIGEANTS = 20
 LIGNES_13F = 80

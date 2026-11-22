@@ -16,12 +16,12 @@ const ivoire = Color(0xFFEDE6D8);
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ClimaxApp());
+  runApp(const GarpApp());
   etat.demarrer();
 }
 
-class ClimaxApp extends StatelessWidget {
-  const ClimaxApp({super.key});
+class GarpApp extends StatelessWidget {
+  const GarpApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,8 @@ class ClimaxApp extends StatelessWidget {
       title: 'G.A.R.P',
       debugShowCheckedModeBanner: false,
       // Toujours en sombre, avec les couleurs du thème sombre de l'outil du PC (.streamlit/config.toml).
-      theme: themeClimax(Brightness.dark),
-      darkTheme: themeClimax(Brightness.dark),
+      theme: themeGarp(Brightness.dark),
+      darkTheme: themeGarp(Brightness.dark),
       themeMode: ThemeMode.dark,
       home: const Demarrage(),
     );

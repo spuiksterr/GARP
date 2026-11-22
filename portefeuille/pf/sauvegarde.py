@@ -15,7 +15,8 @@ from pathlib import Path
 
 from .config import DATA_DIR, DOSSIER, PRIVE_JSON, PROFIL_DIR, THESES_DIR, ecrire_json, load_prive
 
-PREFIXE = "climax-donnees-"
+PREFIXE = "garp-donnees-"
+ANCIEN_PREFIXE = "climax-donnees-"  # sauvegardes faites avant le 22/11/2026
 GARDER = 30
 
 
@@ -64,6 +65,8 @@ def creer(dossier: Path | None = None, maintenant: datetime | None = None) -> Pa
         for p in elements():
             z.write(p, _arcname(p))
     tmp.replace(cible)
-    for ancienne in sorted(dossier.glob(f"{PREFIXE}*.zip"))[:-GARDER]:
+    # Rotation par date, anciennes archives « climax-donnees-… » comprises.
+    archives = [*dossier.glob(f"{PREFIXE}*.zip"), *dossier.glob(f"{ANCIEN_PREFIXE}*.zip")]
+    for ancienne in sorted(archives, key=lambda f: f.name.rsplit("-donnees-", 1)[1])[:-GARDER]:
         ancienne.unlink()
     return cible

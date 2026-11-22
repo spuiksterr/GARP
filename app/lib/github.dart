@@ -66,7 +66,7 @@ class GitHub {
     final client = HttpClient()..connectionTimeout = const Duration(seconds: 20);
     final requete = await client.getUrl(uri);
     requete.followRedirects = false;
-    requete.headers.set('User-Agent', 'climax-app');
+    requete.headers.set('User-Agent', 'garp-app');
     if (avecJeton && uri.host == _api) requete.headers.set('Authorization', 'Bearer $jeton');
     entetes.forEach(requete.headers.set);
     return requete.close();

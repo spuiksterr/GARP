@@ -2,7 +2,7 @@
 
 # Marque G.A.R.P
 
-Le projet s'appelle **G.A.R.P** depuis le 18/11/2026. Il s'appelait auparavant Climax. Le dépôt GitHub, les noms de fichiers (`Climax-Setup`, `Climax.pyw`, `climax-*.json.gz`), les dossiers (`%LOCALAPPDATA%\Climax`) et les identifiants techniques gardent l'ancien nom. Ils assurent la continuité des mises à jour, de la signature Android et des données déjà installées ; l'utilisateur ne les voit pas.
+Le projet s'appelle **G.A.R.P** depuis le 18/11/2026. Il s'appelait auparavant Climax. Depuis le 22/11/2026, le dépôt public (`spuiksterr/GARP`), les fichiers publiés (`GARP-Setup`, `GARP-b<n>.apk`, `garp-*.json.gz`), le lanceur (`GARP.pyw`) et les icônes (`garp.png`, `garp.ico`) portent aussi le nouveau nom. Gardent l'ancien, invisible à l'usage : l'identifiant Android `fr.climax.climax` et l'alias de la clé de signature (sinon le téléphone refuserait la mise à jour), le dossier de données `%LOCALAPPDATA%\Climax` (portefeuille et données déjà installés) et le dépôt privé d'origine `spuiksterr/Climax`, archive de l'historique.
 
 ## Positionnement
 
@@ -41,7 +41,7 @@ La piste « points qui montent » a servi un jour, le 18/11/2026. Le logo rempla
 | Fichier | Usage |
 |---|---|
 | `assets/blender/embleme.png` | Emblème seul, fond transparent, 1024 px : la source de tout le reste |
-| `assets/climax.png`, `assets/climax.ico` | Icône arrondie : fenêtre de l'outil, raccourcis Windows, onglet du navigateur |
+| `assets/garp.png`, `assets/garp.ico` | Icône arrondie : fenêtre de l'outil, raccourcis Windows, onglet du navigateur |
 | `app/assets/logo.png`, `app/assets/embleme.png` | Logo dans l'application Android |
 | `app/android/.../mipmap-*` | Icônes Android : classique, adaptative (fond et premier plan), monochrome (Android 13) |
 | `app/windows/runner/resources/app_icon.ico` | Icône de l'installateur Windows |
@@ -52,7 +52,7 @@ La piste « points qui montent » a servi un jour, le 18/11/2026. Le logo rempla
 Règles d'usage :
 - **Fond** : l'emblème se pose sur le dégradé anthracite → graphite, ou sur une couleur unie sombre. Pas de fond blanc : la pousse ivoire disparaît.
 - **Marge** : garder autour de l'emblème au moins un quart de sa largeur.
-- **Taille** : en dessous de 24 px, préférer l'icône arrondie (`climax.ico` a ses propres tailles).
+- **Taille** : en dessous de 24 px, préférer l'icône arrondie (`garp.ico` a ses propres tailles).
 - **Interdits** : ne pas déformer, recolorer, faire pivoter ni ajouter d'effets ; ne pas séparer la pousse de sa pièce.
 
 Pour refaire les images, depuis `portefeuille/` :

@@ -1,10 +1,10 @@
 ﻿# Assemble la version installée de l'outil du PC (Streamlit), sans rien demander au poste de l'utilisateur :
 #   <Sortie>\python : Python 3.12 et les bibliothèques de portefeuille/requirements.txt (sans les outils de test) ;
-#   <Sortie>\climax : le code (pf, vues, app.py, Climax.pyw), le thème, la configuration livrée, autonome.json.
+#   <Sortie>\garp : le code (pf, vues, app.py, GARP.pyw), le thème, la configuration livrée, autonome.json.
 # Appelé par .github/workflows/app.yml sur un serveur Windows, après actions/setup-python. Vérifie ensuite que
 # le serveur de l'outil démarre et répond.
 param(
-    [string]$Sortie = "build\climax-pc",
+    [string]$Sortie = "build\garp-pc",
     [int]$Numero = 0
 )
 $ErrorActionPreference = "Stop"
@@ -14,7 +14,7 @@ if (Test-Path $Sortie) { Remove-Item $Sortie -Recurse -Force }
 New-Item -ItemType Directory -Force $Sortie | Out-Null
 $Sortie = (Resolve-Path $Sortie).Path
 $python = Join-Path $Sortie "python"
-$code = Join-Path $Sortie "climax"
+$code = Join-Path $Sortie "garp"
 
 # 1. Python : copie de l'installation du serveur, sans tests, éditeur, Tk ni fichiers de développement.
 $pyDir = Split-Path (Get-Command python).Source
@@ -45,17 +45,17 @@ foreach ($d in "pf", "vues", ".streamlit", "static", "config", "profil.exemple")
     if ($LASTEXITCODE -ge 8) { throw "copie de $d impossible" }
 }
 New-Item -ItemType Directory -Force (Join-Path $code "assets") | Out-Null
-Copy-Item (Join-Path $source "assets\climax.png"), (Join-Path $source "assets\climax.ico"),
+Copy-Item (Join-Path $source "assets\garp.png"), (Join-Path $source "assets\garp.ico"),
     (Join-Path $source "assets\entete.png") (Join-Path $code "assets")
-Copy-Item (Join-Path $source "app.py"), (Join-Path $source "Climax.pyw") $code
+Copy-Item (Join-Path $source "app.py"), (Join-Path $source "GARP.pyw") $code
 # Documents lus par l'interface (page « Méthode et routine »).
 New-Item -ItemType Directory -Force (Join-Path $code "docs") | Out-Null
 Copy-Item (Join-Path $source "docs\METHODE.md") (Join-Path $code "docs")
-@{ version = $Numero; depot = "spuiksterr/Climax" } | ConvertTo-Json | Set-Content (Join-Path $code "autonome.json") -Encoding utf8
+@{ version = $Numero; depot = "spuiksterr/GARP" } | ConvertTo-Json | Set-Content (Join-Path $code "autonome.json") -Encoding utf8
 & $py -m compileall -q -j 0 (Join-Path $code "pf") (Join-Path $code "vues") | Out-Null
 
 # 4. Contrôle : l'outil s'importe et son serveur répond, avec des données vides dans un dossier temporaire.
-$env:PF_DOSSIER = Join-Path $env:RUNNER_TEMP "climax-essai"
+$env:PF_DOSSIER = Join-Path $env:RUNNER_TEMP "garp-essai"
 $env:PF_AUTONOME = "1"
 & $py -c "import sys; sys.path.insert(0, r'$code'); import pf.ui, pf.bureau, pf.import_portefeuille, webview, clr"
 if ($LASTEXITCODE -ne 0) { throw "l'outil ne s'importe pas" }

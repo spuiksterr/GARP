@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Couleurs de la marque Climax (portefeuille/docs/MARQUE.md). -->
-    <color name="climax_fond">#18191C</color>
+    <!-- Couleurs de la marque G.A.R.P (portefeuille/docs/MARQUE.md). -->
+    <color name="garp_fond">#18191C</color>
 </resources>

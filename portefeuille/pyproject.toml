@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "climax-pf"
+name = "garp-pf"
 version = "0.1.0"
 description = "Analyse d'actions et construction de portefeuille de long terme (screener, fiches, suivi)"
 readme = "README.md"

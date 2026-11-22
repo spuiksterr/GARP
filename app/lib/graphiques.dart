@@ -356,7 +356,7 @@ class PageDefilante extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      PageClimax(titre: titre, legende: legende, actions: actions, largeurMax: largeurMax, enfants: enfants);
+      PageGarp(titre: titre, legende: legende, actions: actions, largeurMax: largeurMax, enfants: enfants);
 }
 
 /// Message d'attente ou d'absence, centré.

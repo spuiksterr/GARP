@@ -357,7 +357,7 @@ def cmd_export_app(a):
         from .scoring import build_screener
         print(f"Sources SEC des fiches ({a.sources_sec:g} min au plus) : {prechauffer(build_screener(), a.sources_sec)}")
     chemin = exporter(Path(a.vers))
-    for f in sorted(chemin.parent.glob("climax-*.json.gz")):
+    for f in sorted(chemin.parent.glob("garp-*.json.gz")):
         print(f"Données de l'application : {f} ({f.stat().st_size / 1e6:.1f} Mo)")
 
 
@@ -377,7 +377,7 @@ def cmd_sauvegarde(a):
         sauvegarde.memoriser_dossier(Path(a.vers).resolve())
     if not sauvegarde.dossier_configure():
         print("Aucun dossier de sauvegarde. Choisissez-en un hors de ce disque ou synchronisé, par exemple :\n"
-              "  pf sauvegarde --vers \"C:\\Users\\<vous>\\OneDrive\\Sauvegardes Climax\"\n"
+              "  pf sauvegarde --vers \"C:\\Users\\<vous>\\OneDrive\\Sauvegardes G.A.R.P\"\n"
               "Il est mémorisé dans profil/prive.json et resservira à chaque mise à jour.")
         return 1
     n = len(sauvegarde.elements())

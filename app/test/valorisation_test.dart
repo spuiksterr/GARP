@@ -2,14 +2,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:climax/construction.dart';
-import 'package:climax/donnees.dart';
-import 'package:climax/formats.dart';
-import 'package:climax/recherche.dart';
-import 'package:climax/risques.dart';
-import 'package:climax/stockage.dart';
-import 'package:climax/suivi.dart';
-import 'package:climax/valorisation.dart';
+import 'package:garp/construction.dart';
+import 'package:garp/donnees.dart';
+import 'package:garp/formats.dart';
+import 'package:garp/recherche.dart';
+import 'package:garp/risques.dart';
+import 'package:garp/stockage.dart';
+import 'package:garp/suivi.dart';
+import 'package:garp/valorisation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, dynamic> _valeur(String ticker, Map<String, dynamic> plus) => {

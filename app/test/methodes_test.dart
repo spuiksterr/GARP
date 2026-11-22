@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:climax/donnees.dart';
-import 'package:climax/methodes.dart';
+import 'package:garp/donnees.dart';
+import 'package:garp/methodes.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Donnees _donnees({bool avecMethodes = true}) {

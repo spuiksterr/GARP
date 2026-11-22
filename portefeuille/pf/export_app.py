@@ -1,6 +1,6 @@
 """Export des données de marché pour l'application G.A.R.P (Android et Windows), sans aucune donnée personnelle.
 
-`climax-donnees.json.gz` : les valeurs du screener avec leurs indicateurs, les cours hebdomadaires sur 5 ans
+`garp-donnees.json.gz` : les valeurs du screener avec leurs indicateurs, les cours hebdomadaires sur 5 ans
 (devise de cotation), les changes hebdomadaires et l'indice de référence (risques, backtest), le dernier cours
 en euros, l'historique des rangs, les méthodes de notation et les réglages de la stratégie (valorisation,
 garde-fous, construction). Deux fichiers complémentaires viennent de pf/export_fiches.py. Publiés chaque nuit
@@ -17,7 +17,7 @@ from pathlib import Path
 import pandas as pd
 
 FORMAT = 1
-NOM_FICHIER = "climax-donnees.json.gz"
+NOM_FICHIER = "garp-donnees.json.gz"
 # Colonnes du screener reprises dans l'application (noms inchangés).
 COLONNES = [
     "nom", "pays", "enveloppe", "secteur", "profil", "devise", "statut", "rang", "score", "qualite", "croissance",

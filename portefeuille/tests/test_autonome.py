@@ -234,7 +234,7 @@ def test_screener_livre_tout_pret_et_son_empreinte(tmp_path, monkeypatch):
 
 
 def test_preparation_de_la_version_installee(tmp_path, monkeypatch):
-    racine = tmp_path / "climax"
+    racine = tmp_path / "garp"
     (racine / "config").mkdir(parents=True)
     (racine / "config" / "univers.csv").write_text("livré", encoding="utf-8")
     monkeypatch.setenv("PF_AUTONOME", "0")

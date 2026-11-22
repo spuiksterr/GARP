@@ -1,6 +1,6 @@
 """Version bureau : l'application dans sa propre fenêtre (pywebview, moteur Edge WebView2 sous Windows).
 
-`pf bureau`, le raccourci « G.A.R.P » (Climax.pyw, sans console) ou la version installée (pf/autonome.py) :
+`pf bureau`, le raccourci « G.A.R.P » (GARP.pyw, sans console) ou la version installée (pf/autonome.py) :
 ouvre aussitôt la fenêtre sur un écran d'attente, démarre le serveur Streamlit en arrière-plan, y branche la
 fenêtre dès qu'il répond, et l'arrête quand on la ferme. Si un serveur tourne déjà sur le port (lancé par
 lancer.bat ou laissé actif pour le téléphone), la fenêtre s'y branche et le laisse tourner. La version installée
@@ -28,7 +28,7 @@ PORT_AUTONOME = 8517
 # 127.0.0.1, ne verrait alors jamais le serveur démarré.
 HOTE = "127.0.0.1"
 TITRE = "G.A.R.P"
-ICONE = ROOT / "assets" / "climax.ico"
+ICONE = ROOT / "assets" / "garp.ico"
 ENTETE = ROOT / "assets" / "entete.png"  # logo et « G.A.R.P » (composer_icones.py), en tête de l'écran d'ouverture
 FOND = "#1a1a19"  # [theme.dark] de .streamlit/config.toml
 
@@ -136,7 +136,7 @@ def _identite_windows() -> None:
     try:
         import ctypes
 
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Climax.Climax")
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("GARP.GARP")
     except Exception:
         pass
 
