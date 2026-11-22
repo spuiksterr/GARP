@@ -116,7 +116,7 @@ if autonome.actif():
     c2.caption("Relues chaque nuit par GitHub, avec les données de la nuit.")
 elif c2.button("Mettre à jour", icon=":material/refresh:", width="stretch",
                help="Lit les nouvelles déclarations : gérants consultés au plus une fois par semaine, élus chaque "
-                    "jour. Les gérants sont aussi relus par la mise à jour complète."):
+                    "jour. Aussi fait par chaque mise à jour de la barre latérale."):
     with st.status("Lecture des déclarations…", expanded=True) as statut:
         ligne = st.empty()
         r1 = inv.mettre_a_jour(progress=lambda m: ligne.caption(m.strip()))
