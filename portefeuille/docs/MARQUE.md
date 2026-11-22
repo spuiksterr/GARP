@@ -88,7 +88,7 @@ Les couleurs d'état (vert pour une hausse, rouge pour une baisse ou une exclusi
 ## Typographie
 
 - **Outil** : titres en Manrope (licence OFL, embarquée dans `static/polices/`, aucun téléchargement à l'usage), texte courant en Source Sans 3, la police de Streamlit.
-- **En-tête de la barre latérale et écran d'ouverture** : `assets/entete.png` (icône et « G.A.R.P » en ocre), produite par `composer_icones.py`.
+- **En-tête de la barre latérale et écran d'ouverture** : `assets/entete.png` (version compacte du bandeau), produite par `composer_icones.py`.
 - **Bandeau et présentations** : Segoe UI Bold pour le nom, Segoe UI pour l'accroche.
 - **Le nom** s'écrit toujours « G.A.R.P », avec ses points et sans point final : ni « GARP », ni « Garp », ni « G.A.R.P. ». Dans une phrase qui se termine par le nom, le point de la phrase suffit. L'expression anglaise s'écrit *Growth at a reasonable price*.
 
