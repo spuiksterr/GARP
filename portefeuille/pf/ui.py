@@ -451,6 +451,11 @@ def data_version(paths: list[Path] | None = None) -> float:
     return max((p.stat().st_mtime for p in paths if p.exists()), default=0.0)
 
 
+def screener_vide_cache() -> None:
+    """Après un changement des poids de la note GARP : le screener est reclassé au prochain affichage."""
+    _screener.clear()
+
+
 def screener() -> pd.DataFrame:
     # La version entre dans la clé du cache : un changement ne laisse jamais un ancien tableau en mémoire.
     return _screener(data_version())

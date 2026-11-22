@@ -1401,3 +1401,24 @@ def test_13f_sans_contact_sec_l_echec_se_voit(monkeypatch, capsys):
     with pytest.raises(SystemExit, match="SEC_CONTACT"):
         cli.cmd_investisseurs(argparse.Namespace(force=False))
     assert "Non lus" in capsys.readouterr().out
+
+
+def test_poids_de_la_note_garp_reglables(tmp_path, monkeypatch):
+    """Poids réglés (ramenés à 100 %) appliqués au screener calculé comme au screener préparé ; None rétablit 40/35/25."""
+    from pf import scoring
+
+    monkeypatch.setattr(scoring, "POIDS_JSON", tmp_path / "garp.json")
+    assert scoring.poids_garp() == scoring.POIDS_GARP
+    scoring.enregistrer_poids_garp({"croissance": 0, "valorisation": 50, "qualite": 50})
+    assert scoring.poids_garp() == {"croissance": 0.0, "valorisation": 0.5, "qualite": 0.5}
+    sc = build_screener()
+    actions = sc[sc["statut"] != "Fonds"]
+    assert np.allclose(actions["score"], (actions["valorisation"] + actions["qualite"]) / 2)
+    elig = sc[sc["statut"] == "Éligible"]
+    assert list(elig.sort_values("score", ascending=False).index) == list(elig.sort_values("rang").index)
+    with pytest.raises(ValueError):
+        scoring.enregistrer_poids_garp({"croissance": 0, "valorisation": 0, "qualite": 0})
+    (tmp_path / "garp.json").write_text('{"croissance": "x"}', encoding="utf-8")
+    assert scoring.poids_garp() == scoring.POIDS_GARP  # fichier abîmé : les poids par défaut
+    scoring.enregistrer_poids_garp(None)
+    assert not (tmp_path / "garp.json").exists() and scoring.poids_garp() == scoring.POIDS_GARP

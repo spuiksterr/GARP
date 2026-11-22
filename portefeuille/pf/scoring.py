@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from . import criteres
-from .config import CACHE_DIR, METRICS_PARQUET, ecrire_json, ecriture_atomique, lire_json, load_strategy
+from .config import CACHE_DIR, METRICS_PARQUET, PROFIL_DIR, ecrire_json, ecriture_atomique, lire_json, load_strategy
 from .formats import nombre, pct
 from .metrics import compute_all, load_metrics, metrics_a_jour
 from .regards import AJUSTEMENTS_CSV, notes_frame
@@ -148,13 +148,50 @@ def pillar_scores(df: pd.DataFrame) -> pd.DataFrame:
 # 22/11/2026 : moyenne pondérée de trois piliers, chacun en rangs centiles dans l'univers (0 à 100). Le momentum
 # n'y entre pas (il reste affiché comme repère), pas plus que les quatre regards, les six critères ni les signaux de
 # santé (Piotroski, Altman, Beneish) : des repères à lire à côté, pas des notes à additionner.
+# Poids par défaut : un choix de conviction (la croissance d'abord, sans la surpayer, sur un socle de qualité), pas
+# un résultat d'étude. Chacun les règle depuis le tableau de bord (profil/garp.json).
 POIDS_GARP = {"croissance": 0.40, "valorisation": 0.35, "qualite": 0.25}
+POIDS_JSON = PROFIL_DIR / "garp.json"
 LIBELLES_GARP = {"croissance": "Croissance", "valorisation": "Valorisation", "qualite": "Qualité"}
 
 
-def note_garp(df: pd.DataFrame) -> pd.Series:
-    """Note GARP de 0 à 100 : croissance 40 %, valorisation 35 %, qualité 25 % (colonnes des piliers)."""
-    return sum(pd.to_numeric(df[p], errors="coerce") * w for p, w in POIDS_GARP.items()) / sum(POIDS_GARP.values())
+def poids_garp() -> dict[str, float]:
+    """Poids réglés par l'utilisateur (somme ramenée à 1), sinon ceux par défaut."""
+    lus = lire_json(POIDS_JSON, {}) or {}
+    try:
+        poids = {p: max(float(lus.get(p, 0)), 0.0) for p in POIDS_GARP}
+    except (TypeError, ValueError):
+        return dict(POIDS_GARP)
+    total = sum(poids.values())
+    return {p: w / total for p, w in poids.items()} if lus and total > 0 else dict(POIDS_GARP)
+
+
+def enregistrer_poids_garp(poids: dict[str, float] | None) -> None:
+    """Retient des poids (ramenés à une somme de 1) ; None rétablit ceux par défaut."""
+    if poids is None:
+        POIDS_JSON.unlink(missing_ok=True)
+        return
+    total = sum(max(float(poids.get(p, 0)), 0.0) for p in POIDS_GARP)
+    if total <= 0:
+        raise ValueError("au moins un pilier doit compter")
+    ecrire_json(POIDS_JSON, {p: round(max(float(poids.get(p, 0)), 0.0) / total, 4) for p in POIDS_GARP}, indent=1)
+
+
+def note_garp(df: pd.DataFrame, poids: dict[str, float] | None = None) -> pd.Series:
+    """Note GARP de 0 à 100 : moyenne pondérée des piliers croissance, valorisation et qualité."""
+    poids = poids or poids_garp()
+    return sum(pd.to_numeric(df[p], errors="coerce") * w for p, w in poids.items()) / sum(poids.values())
+
+
+def classer(df: pd.DataFrame, poids: dict[str, float] | None = None) -> pd.DataFrame:
+    """Note GARP avec les poids en vigueur, puis tri et rang des valeurs éligibles (fonds sans note)."""
+    df = df.copy()
+    df["score"] = note_garp(df, poids)
+    df = df.sort_values(["statut", "score"], ascending=[False, False])
+    df["rang"] = np.nan
+    elig = df["statut"] == "Éligible"
+    df.loc[elig, "rang"] = np.arange(1, elig.sum() + 1)
+    return df
 
 
 def _empreinte(strategy: dict) -> dict:
@@ -192,7 +229,7 @@ def screener_prepare(strategy: dict | None = None) -> pd.DataFrame | None:
     if not meta or meta != _empreinte(strategy or load_strategy()):
         return None
     try:
-        return pd.read_parquet(SCREENER_PARQUET)
+        return classer(pd.read_parquet(SCREENER_PARQUET))  # avec les poids réglés sur ce poste
     except (OSError, ValueError):
         return None
 
@@ -219,8 +256,4 @@ def build_screener(metrics: pd.DataFrame | None = None, strategy: dict | None = 
     df = df.join(health_points(df))  # signaux de santé ramenés sur 100 : repères, hors note
     if not funds.empty:
         df = pd.concat([df, funds.assign(motifs_exclusion="", alertes="", statut="Fonds")])
-    df = df.sort_values(["statut", "score"], ascending=[False, False])
-    df["rang"] = np.nan
-    elig = df["statut"] == "Éligible"
-    df.loc[elig, "rang"] = np.arange(1, elig.sum() + 1)
-    return df
+    return classer(df)

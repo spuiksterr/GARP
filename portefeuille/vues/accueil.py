@@ -5,7 +5,7 @@ import streamlit as st
 
 from pf import actualites as act
 from pf import backtest as bt
-from pf import dirigeants, photos, positions, regles, scenarios, ui
+from pf import dirigeants, photos, positions, regles, scenarios, scoring, ui
 from pf import portfolio as pfo
 from pf import prix_achat as pa
 from pf import watchlist as wl
@@ -21,6 +21,38 @@ names = sc["nom"].to_dict()
 suivies_wl = wl.load_watchlist()
 
 st.title("Tableau de bord")
+
+
+def _poids_changes() -> None:
+    """Curseurs de la note GARP : poids retenus aussitôt, et classement recalculé partout."""
+    valeurs = {p: st.session_state[f"garp_{p}"] for p in scoring.POIDS_GARP}
+    if sum(valeurs.values()) > 0:
+        scoring.enregistrer_poids_garp(valeurs)
+        ui.screener_vide_cache()
+
+
+def _poids_par_defaut() -> None:
+    scoring.enregistrer_poids_garp(None)
+    for p, w in scoring.POIDS_GARP.items():
+        st.session_state[f"garp_{p}"] = round(w * 100)
+    ui.screener_vide_cache()
+
+
+poids_actuels = scoring.poids_garp()
+resume_poids = " · ".join(f"{scoring.LIBELLES_GARP[p]} {round(w * 100)} %" for p, w in poids_actuels.items())
+with st.expander(f"Pondération de la note GARP : {resume_poids}", icon=":material/tune:"):
+    cp = st.columns(3)
+    for col, (p, lib) in zip(cp, scoring.LIBELLES_GARP.items()):
+        st.session_state.setdefault(f"garp_{p}", round(poids_actuels[p] * 100))
+        col.slider(lib, 0, 100, step=5, format="%d", key=f"garp_{p}", on_change=_poids_changes)
+    if sum(st.session_state.get(f"garp_{p}", 1) for p in scoring.POIDS_GARP) == 0:
+        st.warning("Au moins un pilier doit compter : les poids précédents restent en vigueur.", icon=":material/block:")
+    b1, b2 = st.columns([1, 3], vertical_alignment="center")
+    b1.button("Rétablir 40 / 35 / 25", on_click=_poids_par_defaut, disabled=poids_actuels == scoring.POIDS_GARP)
+    b2.caption("Les poids sont ramenés à 100 % et retenus pour les prochaines ouvertures. Ils changent la note GARP et "
+               "le classement partout (screener, « La bonne action au bon prix », fiche, construction), pas le prix "
+               "d'achat ni le verdict. 40 / 35 / 25 est un choix de conviction, pas un résultat d'étude : la "
+               "littérature étaye surtout la valorisation et la qualité.")
 st.caption(f"Cours au {ui.data_date()} · univers de {len(sc)} valeurs dont {int((sc['statut'] == 'Éligible').sum())} "
            f"passent les filtres de qualité · portefeuille de {len(w)} lignes")
 

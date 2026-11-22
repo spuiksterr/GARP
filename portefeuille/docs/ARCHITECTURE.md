@@ -106,7 +106,7 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `moat` | Moat estimé |
 | `criteres` | Six critères de qualité remplis ou non |
 | `regards` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith), lus un par un : repères, hors note GARP |
-| `scoring` | Filtres d'exclusion, piliers, note GARP (`score` : croissance 40 %, valorisation 35 %, qualité 25 %, `POIDS_GARP`), alertes, `build_screener` ; empreinte du screener préparé limitée aux filtres, à la valorisation et aux critères |
+| `scoring` | Filtres d'exclusion, piliers, note GARP (`score` : croissance 40 %, valorisation 35 %, qualité 25 % par défaut, `POIDS_GARP` ; poids réglés sur le tableau de bord dans `profil/garp.json`, `poids_garp`, appliqués par `classer`, y compris au screener préparé), alertes, `build_screener` ; empreinte du screener préparé limitée aux filtres, à la valorisation et aux critères |
 | `prix_juste` | Prix d'achat juste à un multiple jugé raisonnable |
 | `positions` | Photo du portefeuille : quantités par ligne prises au dernier import (`profil/positions.csv`, remplacée à chaque import) ; valorisée au dernier cours pour les poids réels (onglet Équilibre, tableau de bord, risques). À défaut, positions du journal `data/transactions.csv` (lecture seule) |
 | `prix_achat` | Prix juste au rendement exigé (modèle du TRI implicite, entrées de `entrees_valorisation`), prix d'achat après marge de sécurité, verdict ; réglages dans `profil/prix_achat.json` ; page « La bonne action au bon prix », analyse du portefeuille, en-tête de la fiche et tableau de bord |

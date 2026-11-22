@@ -201,3 +201,21 @@ def test_application_complete():
     at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=300)
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
+
+
+def test_ponderation_garp_depuis_le_tableau_de_bord():
+    """Les curseurs du tableau de bord règlent les poids de la note GARP (rétablis à la fin du test)."""
+    from pf import scoring
+
+    try:
+        at = _app("accueil")
+        at.run()
+        assert not at.exception, [str(e.value)[:300] for e in at.exception]
+        assert any(e.label.startswith("Pondération de la note GARP : Croissance 40 %") for e in at.expander)
+        at.slider(key="garp_croissance").set_value(0)
+        at.run()
+        assert not at.exception, [str(e.value)[:300] for e in at.exception]
+        assert scoring.poids_garp()["croissance"] == 0
+        assert any(e.label.startswith("Pondération de la note GARP : Croissance 0 %") for e in at.expander)
+    finally:
+        scoring.enregistrer_poids_garp(None)
