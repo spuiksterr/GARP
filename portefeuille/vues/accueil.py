@@ -5,10 +5,9 @@ import streamlit as st
 
 from pf import actualites as act
 from pf import backtest as bt
-from pf import dirigeants, photos, positions, regles, scenarios, ui
+from pf import dirigeants, photos, positions, regles, scenarios, scoring, ui
 from pf import portfolio as pfo
 from pf import prix_achat as pa
-from pf import styles as sty
 from pf import watchlist as wl
 from pf.config import BENCHMARKS, load_strategy
 from pf.sante import health_alerts
@@ -22,6 +21,38 @@ names = sc["nom"].to_dict()
 suivies_wl = wl.load_watchlist()
 
 st.title("Tableau de bord")
+
+
+def _poids_changes() -> None:
+    """Curseurs de la note GARP : poids retenus aussitôt, et classement recalculé partout."""
+    valeurs = {p: st.session_state[f"garp_{p}"] for p in scoring.POIDS_GARP}
+    if sum(valeurs.values()) > 0:
+        scoring.enregistrer_poids_garp(valeurs)
+        ui.screener_vide_cache()
+
+
+def _poids_par_defaut() -> None:
+    scoring.enregistrer_poids_garp(None)
+    for p, w in scoring.POIDS_GARP.items():
+        st.session_state[f"garp_{p}"] = round(w * 100)
+    ui.screener_vide_cache()
+
+
+poids_actuels = scoring.poids_garp()
+resume_poids = " · ".join(f"{scoring.LIBELLES_GARP[p]} {round(w * 100)} %" for p, w in poids_actuels.items())
+with st.expander(f"Pondération de la note GARP : {resume_poids}", icon=":material/tune:"):
+    cp = st.columns(3)
+    for col, (p, lib) in zip(cp, scoring.LIBELLES_GARP.items()):
+        st.session_state.setdefault(f"garp_{p}", round(poids_actuels[p] * 100))
+        col.slider(lib, 0, 100, step=5, format="%d", key=f"garp_{p}", on_change=_poids_changes)
+    if sum(st.session_state.get(f"garp_{p}", 1) for p in scoring.POIDS_GARP) == 0:
+        st.warning("Au moins un pilier doit compter : les poids précédents restent en vigueur.", icon=":material/block:")
+    b1, b2 = st.columns([1, 3], vertical_alignment="center")
+    b1.button("Rétablir 40 / 35 / 25", on_click=_poids_par_defaut, disabled=poids_actuels == scoring.POIDS_GARP)
+    b2.caption("Les poids sont ramenés à 100 % et retenus pour les prochaines ouvertures. Ils changent la note GARP et "
+               "le classement partout (screener, « La bonne action au bon prix », fiche, construction), pas le prix "
+               "d'achat ni le verdict. 40 / 35 / 25 est un choix de conviction, pas un résultat d'étude : la "
+               "littérature étaye surtout la valorisation et la qualité.")
 st.caption(f"Cours au {ui.data_date()} · univers de {len(sc)} valeurs dont {int((sc['statut'] == 'Éligible').sum())} "
            f"passent les filtres de qualité · portefeuille de {len(w)} lignes")
 
@@ -103,9 +134,8 @@ regl = pa.reglages(strat)
 vises = {t: float(v) for t, v in suivies_wl["prix_cible"].items() if isinstance(v, (int, float)) and math.isfinite(v)}
 reglages_txt = (f"au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de sécurité de "
                 f"{ui.pct(regl['marge'], 0)}, réglables dans « La bonne action au bon prix »")
-mon_style = sty.style_choisi()
 occasions = pa.tableau(sc, {t: "Univers" for t in sc.index[sc["statut"] == "Éligible"]}, strat["valorisation"],
-                       regl["rendement"], regl["marge"], vises, note=sty.note(sc[sc["statut"] != "Fonds"], mon_style))
+                       regl["rendement"], regl["marge"], vises)
 occasions = occasions[occasions["verdict"] == pa.VERDICTS["bon"]] if not occasions.empty else occasions
 lignes = pa.tableau(sc, {t: "Portefeuille" for t in w.index}, strat["valorisation"], regl["rendement"],
                     regl["marge"], vises)
@@ -122,7 +152,7 @@ with b[0].container(border=True, height="stretch"):
     chiffre(len(occasions), "actions de qualité sous votre prix d'achat",
             f"Parmi les valeurs qui passent les filtres de qualité, {reglages_txt}.")
     if len(occasions):
-        st.caption(f"Les mieux classées selon votre style ({sty.STYLES[mon_style].libelle}) : " + " · ".join(
+        st.caption("Les mieux notées (note GARP) : " + " · ".join(
             f"{x['nom']} ({ui.pct(x['ecart_achat'], 0, signe=True)})" for _, x in occasions.head(4).iterrows()))
     if st.button("Voir la sélection", icon=":material/arrow_forward:", key="aller_prix"):
         st.switch_page("vues/prix_achat.py")
@@ -156,9 +186,7 @@ with b[2].container(border=True, height="stretch"):
 st.divider()
 if rows:
     st.markdown("#### Points de vigilance")
-    al = pd.DataFrame(rows, columns=["Type", "ticker", "Détail"])
-    al.insert(1, "Valeur", al["ticker"].map(lambda t: names.get(t, t)))
-    ui.tableau(al.drop(columns="ticker"), hide_index=True, width="stretch")
+    st.markdown("\n".join(f"- **{names.get(t, t)}** · {genre} : {detail}" for genre, t, detail in rows))
 if pos.empty:
     st.caption("Sans quantités importées, ce tableau de bord suit les poids de votre portefeuille. Importez-le avec ses "
                "quantités (page « Importer mon portefeuille ») pour voir sa valeur et ses poids réels.")
@@ -201,10 +229,10 @@ t["poids"] = w
 t = t.join(sc[["score", "perf_1m", "perf_12m", "tri_implicite", "per_prospectif"]])
 t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_values("poids", ascending=False)
 ui.tableau(t, width="stretch", column_config={
-    "nom": "Valeur", "enveloppe": "Compte", "poche": "Poche",
+    "nom": st.column_config.TextColumn("Valeur", width="medium"), "enveloppe": "Compte", "poche": "Poche",
     "poids": ui.PCT("Poids"),
-    "score": ui.SCORE("Score", "Moyenne pondérée des analyses, chacune sur 100 : piliers, valorisation, "
-                               "quatre regards, Piotroski, Altman, Beneish"),
+    "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
+                                   "sur 100"),
     "perf_1m": ui.PCT("1 mois"), "perf_12m": ui.PCT("12 mois"),
     "tri_implicite": ui.PCT("TRI implicite"), "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"),
 })

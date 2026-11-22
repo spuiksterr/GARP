@@ -1,6 +1,6 @@
 """Trois signaux de santé tirés des comptes annuels : Piotroski, Altman et Beneish.
 
-Ils alertent et comptent dans le score composite, mais pas dans les filtres. Leurs formules supposent
+Ils alertent et s'affichent comme repères, hors note GARP et hors filtres. Leurs formules supposent
 un bilan d'entreprise classique, ils ne sont donc pas calculés pour les banques, assureurs et holdings.
 """
 from __future__ import annotations

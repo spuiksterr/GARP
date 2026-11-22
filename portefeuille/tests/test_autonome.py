@@ -2,6 +2,7 @@
 import json
 import zipfile
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -225,9 +226,19 @@ def test_screener_livre_tout_pret_et_son_empreinte(tmp_path, monkeypatch):
     strategie = load_strategy()
     pret = scoring.screener_prepare(strategie)
     pd.testing.assert_frame_equal(pret, scoring.build_screener(strategy=strategie))
-    # Stratégie changée sur le poste : le screener livré ne vaut plus, il faut le recalculer.
-    autre = {**strategie, "poids_piliers": {**strategie["poids_piliers"], "qualite": 99}}
+    # Filtres changés sur le poste : le screener livré ne vaut plus, il faut le recalculer.
+    autre = {**strategie, "filtres": {**strategie["filtres"], "rentabilite_min": 0.5}}
     assert scoring.screener_prepare(autre) is None
+    # Réglage sans effet sur le screener (construction, suivi) ou ancienne clé d'une version installée : il vaut.
+    ancien = {**strategie, "construction": {**strategie["construction"], "nb_lignes": 7}, "poids_score": {"x": 1}}
+    assert scoring.screener_prepare(ancien) is not None
+    # Poids de la note GARP réglés sur le poste : le screener livré est reclassé avec eux, sans recalcul.
+    monkeypatch.setattr(scoring, "POIDS_JSON", tmp_path / "garp.json")
+    scoring.enregistrer_poids_garp({"croissance": 1, "valorisation": 0, "qualite": 0})
+    reclasse = scoring.screener_prepare(strategie)
+    actions = reclasse[reclasse["statut"] != "Fonds"]
+    assert np.allclose(actions["score"], actions["croissance"])
+    assert reclasse.index[0] == actions[actions["statut"] == "Éligible"]["croissance"].idxmax()
     # Indicateurs changés sur le poste (pf homme-cle) : idem.
     monkeypatch.setattr(scoring, "METRICS_PARQUET", tmp_path / "autres_indicateurs.parquet")
     assert scoring.screener_prepare(strategie) is None

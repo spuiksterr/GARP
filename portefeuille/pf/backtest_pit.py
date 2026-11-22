@@ -43,13 +43,7 @@ PILIERS = {
     "momentum": ["mom_12_1"],
 }
 METHODES = {
-    "Piliers (qualité, croissance, valeur, momentum)": {"qualite": 1, "croissance": 1, "valeur": 1, "momentum": 1},
-    "Qualité": {"qualite": 1},
-    "Qualité + valeur": {"qualite": 1, "valeur": 1},
-    "Valeur": {"valeur": 1},
-    "Croissance": {"croissance": 1},
-    "Momentum": {"momentum": 1},
-    # Le style GARP de pf/styles.py : la croissance d'abord, sans la surpayer.
+    # La note GARP de l'outil (pf/scoring.POIDS_GARP), reconstituée avec les seuls comptes publiés à chaque date.
     "GARP (croissance, valeur, qualité)": {"croissance": 0.4, "valeur": 0.35, "qualite": 0.25},
 }
 RAPPORTS_DIVISION = [1.5, 2, 3, 4, 5, 6, 7, 8, 10, 15, 20, 25, 30, 40, 50]

@@ -337,40 +337,13 @@ def cmd_bureau(a):
     ouvrir(a.port)
 
 
-def cmd_mobile(a):
-    from . import mobile
-    try:
-        if a.arreter:
-            mobile.desactiver()
-            print("Accès depuis le téléphone coupé.")
-            return 0
-        url = mobile.activer(a.port)
-    except RuntimeError as exc:
-        print(f"Impossible : {exc}.")
-        return 1
-    print(f"Sur le téléphone (connecté à Tailscale) : {url}")
-    print("Puis menu du navigateur > « Ajouter à l'écran d'accueil ». L'application doit tourner sur ce PC "
-          "(fenêtre G.A.R.P ou lancer.bat) ; « pf mobile --arreter » coupe l'accès.")
-    return 0
-
-
-def cmd_export_app(a):
-    from pathlib import Path
-
-    from .export_app import exporter
-    if a.sources_sec:
-        from .export_fiches import prechauffer
-        from .scoring import build_screener
-        print(f"Sources SEC des fiches ({a.sources_sec:g} min au plus) : {prechauffer(build_screener(), a.sources_sec)}")
-    chemin = exporter(Path(a.vers))
-    for f in sorted(chemin.parent.glob("garp-*.json.gz")):
-        print(f"Données de l'application : {f} ({f.stat().st_size / 1e6:.1f} Mo)")
-
-
 def cmd_export_outil(a):
     from pathlib import Path
 
-    from .export_outil import exporter
+    from .export_outil import exporter, prechauffer
+    if a.sources_sec:
+        from .scoring import build_screener
+        print(f"Sources SEC des fiches ({a.sources_sec:g} min au plus) : {prechauffer(build_screener(), a.sources_sec)}")
     chemin = exporter(Path(a.vers))
     print(f"Données de la version autonome : {chemin} ({chemin.stat().st_size / 1e6:.1f} Mo)")
 
@@ -489,18 +462,11 @@ def main(argv=None):
     s = sub.add_parser("bureau", help="ouvrir l'application dans sa propre fenêtre (version bureau)")
     s.add_argument("--port", type=int, default=8501)
     s.set_defaults(fn=cmd_bureau)
-    s = sub.add_parser("mobile", help="ouvrir l'application au téléphone par le réseau privé Tailscale")
-    s.add_argument("--port", type=int, default=8501)
-    s.add_argument("--arreter", action="store_true", help="couper l'accès depuis le téléphone")
-    s.set_defaults(fn=cmd_mobile)
-    s = sub.add_parser("export-app", help="fichier de données de l'application G.A.R.P (sans donnée personnelle)")
-    s.add_argument("--vers", default="rapports", help="dossier de destination")
-    s.add_argument("--sources-sec", type=float, default=0, metavar="MINUTES",
-                   help="lire d'abord, pendant ce temps au plus, les sources SEC des fiches (dirigeants, ventilation)")
-    s.set_defaults(fn=cmd_export_app)
     s = sub.add_parser("export-outil", help="archive des données pour la version autonome installée (sans donnée "
                                              "personnelle)")
     s.add_argument("--vers", default="rapports", help="dossier de destination")
+    s.add_argument("--sources-sec", type=float, default=0, metavar="MINUTES",
+                   help="lire d'abord, pendant ce temps au plus, les sources SEC des fiches (dirigeants, ventilation)")
     s.set_defaults(fn=cmd_export_outil)
     s = sub.add_parser("sauvegarde", help="archive datée des données personnelles (profil, thèses, opérations, "
                                            "historique des scores) dans le dossier choisi")

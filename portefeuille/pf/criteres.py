@@ -1,8 +1,8 @@
 """Six critères de qualité, remplis ou non : croissance, rentabilité du capital, dette, dilution, marge.
 
 Grille de type « réussi / échoué », sans pondération : chaque critère compare une mesure à un seuil
-réglable (`criteres` dans config/strategie.json). Elle n'entre dans le score composite que si on lui
-donne un poids (`poids_score.criteres`), car elle recoupe en partie les piliers qualité et croissance.
+réglable (`criteres` dans config/strategie.json). Elle n'entre pas dans la note GARP : c'est un repère,
+qui recoupe en partie les piliers qualité et croissance.
 
 Les mesures viennent de l'historique commun (postes.py) : Yahoo, prolongé par la SEC (ou les rapports ESEF en Europe) pour les sociétés
 américaines. Elles valent donc exactement les indicateurs de même nom du screener (croissance du CA,

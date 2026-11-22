@@ -13,7 +13,7 @@ st.markdown(
     "- **Munger** : ce qui peut faire perdre la moitié de la mise (plus la note est haute, moins c'est fragile).\n"
     "- **Fisher** : la croissance à venir et l'usage du capital.\n"
     "- **Smith** : une rentabilité durable, transformée en cash.\n\n"
-    "Quatre avis à lire un par un : ils ne s'additionnent pas et ne comptent pas dans le score composite. Un écart "
+    "Quatre avis à lire un par un : ils ne s'additionnent pas et ne comptent pas dans la note GARP. Un écart "
     "entre eux (Fisher enthousiaste, Buffett réservé sur le prix) dit souvent plus qu'une moyenne."
 )
 st.caption(f"Notes issues de règles fixes sur les indicateurs. Seules {len(load_adjustments())} valeurs ont en plus une correction "
@@ -21,7 +21,7 @@ st.caption(f"Notes issues de règles fixes sur les indicateurs. Seules {len(load
            "récentes. Sans correction, un pic de cycle ou un risque réglementaire n'est pas pris en compte. Les fonds ne sont pas notés. "
            "Ce crible désigne quoi analyser, pas quoi acheter : utilisez /analyse-valeur avant toute décision.")
 
-c = st.columns([2, 2.4, 2.2, 1])
+c = st.columns([1.8, 2, 3, 1])
 statut = c[0].segmented_control("Statut", ["Éligible", "Exclu"], selection_mode="multi", default=["Éligible", "Exclu"])
 q = c[1].text_input("Recherche", placeholder="Nom ou ticker").strip().lower()
 tri = c[2].segmented_control("Trier selon", ["Buffett", "Munger", "Fisher", "Smith"], key="regards_tri",
@@ -43,7 +43,7 @@ note = lambda label: st.column_config.ProgressColumn(label, min_value=0, max_val
 ui.tableau(t, width="stretch", height=640, column_config={
     "rang": st.column_config.NumberColumn("Rang", format="%d", pinned=True),
     "nom": st.column_config.TextColumn("Valeur", pinned=True), "detenue": st.column_config.CheckboxColumn("Détenue"),
-    "statut": "Filtres", "score": ui.SCORE("Score"), "buffett": note("Buffett"), "munger": note("Munger"), "fisher": note("Fisher"),
+    "statut": "Filtres", "score": ui.SCORE("Note GARP"), "buffett": note("Buffett"), "munger": note("Munger"), "fisher": note("Fisher"),
     "smith": note("Smith"), "total": None,  # pas de total : les regards ne s'additionnent pas
     "correction": st.column_config.TextColumn("Correction", width="large"),
 })

@@ -20,43 +20,13 @@ METHODES = {
 # sommet du cycle, leurs multiples paraissent bas et le score les favorise. Leur part est plafonnée.
 CYCLIQUES = {"Infrastructures & Énergie", "Matériaux & Chimie", "Banques"}
 
-# Notes qui peuvent classer les candidats. Chacune est ramenée à son rang centile dans l'univers (0 à 100) :
-# une note de 1 à 5 (un regard) et un score sur 100 deviennent comparables, et se combinent.
-COMPOSANTES = {
-    "score": "Score composite",
-    "pts_regards": "Quatre regards",
-    "buffett": "Buffett",
-    "munger": "Munger",
-    "fisher": "Fisher",
-    "smith": "Terry Smith",
-    "qualite": "Qualité",
-    "croissance": "Croissance",
-    "valorisation": "Valorisation",
-    "momentum": "Momentum",
-    "criteres_part": "Six critères",
-}
-# Méthodes de notation proposées : (libellé, description, poids des composantes).
+# Note qui classe les candidats : la note GARP du screener (colonne `score`), seule méthode de l'outil depuis le
+# 22/11/2026. `note_construction` la ramène à son rang dans l'univers (0 à 100) ; d'autres composantes restent
+# possibles par code (rang centile de chaque colonne), sans être proposées dans l'interface.
+COMPOSANTES = {"score": "Note GARP"}
 NOTATIONS = {
-    "composite": ("Score composite", "La note de l'outil : piliers, valorisation, Piotroski, Altman, Beneish. "
-                  "Équilibrée, mais sensible aux valeurs bon marché.", {"score": 1}),
-    # Plus de moyenne des quatre regards (22/11/2026) : chacun reste une méthode à part, sans être additionné.
-    "garp": ("GARP", "La croissance, sans la surpayer : croissance, valorisation et qualité, la croissance d'abord.",
-             {"croissance": 0.4, "valorisation": 0.35, "qualite": 0.25}),
-    "buffett": ("Buffett", "Avantage durable, rentabilité élevée sans dette excessive, prix raisonnable.", {"buffett": 1}),
-    "munger": ("Munger", "Éviter les erreurs : solidité financière, simplicité, pas de comptabilité douteuse.",
-               {"munger": 1}),
-    "fisher": ("Fisher", "Croissance de long terme portée par l'innovation et les marges.", {"fisher": 1}),
-    "smith": ("Terry Smith", "Acheter de bonnes entreprises, ne pas surpayer, ne rien faire : rentabilité du capital, "
-                             "marges élevées, croissance autofinancée.", {"smith": 1}),
-    "qualite": ("Qualité d'abord", "Rentabilité du capital, marges et solidité, puis les six critères.",
-                {"qualite": 0.6, "criteres_part": 0.4}),
-    "croissance": ("Croissance", "Croissance passée et attendue du chiffre d'affaires et des bénéfices.",
-                   {"croissance": 1}),
-    "valeur": ("Valeur", "Les moins chères par rapport à leurs flux, avec un minimum de qualité.",
-               {"valorisation": 0.7, "qualite": 0.3}),
-    "momentum": ("Momentum", "Les actions qui montent le plus sur 12 mois (hors dernier mois).", {"momentum": 1}),
-    "criteres": ("Six critères", "La part des six critères de qualité remplis : croissance du chiffre d'affaires "
-                 "et du free cash flow, ROCE, dette, nombre d'actions, marge de FCF.", {"criteres_part": 1}),
+    "garp": ("Note GARP", "La croissance, sans la surpayer : croissance 40 %, valorisation 35 %, qualité 25 %.",
+             {"score": 1}),
 }
 
 # Indicateurs moyens affichés pour un portefeuille (moyenne pondérée)
@@ -131,7 +101,7 @@ def note_construction(screener: pd.DataFrame, poids: dict[str, float] | None = N
     """Note de 0 à 100 qui classe les candidats : moyenne pondérée des rangs centiles des composantes choisies.
 
     Une composante absente pour une valeur (regard non calculé, banque sans six critères) est ignorée et son poids
-    reporté sur les autres. Le score composite départage les ex aequo (fréquents avec des notes de 1 à 5).
+    reporté sur les autres. La note GARP départage les ex aequo (fréquents avec des notes de 1 à 5).
     """
     poids = {k: float(v) for k, v in (poids or {"score": 1}).items() if float(v) > 0}
     if not poids:
@@ -185,7 +155,7 @@ def select(
 ) -> list[str]:
     """Meilleures notes éligibles, avec un nombre maximal de lignes par secteur et un ratio PEA/CTO.
 
-    `note` classe les candidats (par défaut : le score composite). Options : plancher de qualité
+    `note` classe les candidats (par défaut : la note GARP). Options : plancher de qualité
     (`qualite_suffisante`) et part maximale des lignes dans les secteurs cycliques.
     """
     elig = screener[screener["statut"] == "Éligible"]

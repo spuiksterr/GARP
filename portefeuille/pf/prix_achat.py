@@ -2,8 +2,8 @@
 
 Prix juste : le cours auquel l'action rapporterait exactement votre rendement exigé si la croissance attendue se
 réalise (modèle des « value drivers » de pf/valuation.py, entrées ramenées à la capitalisation par
-pf/export_app.py, même calcul que la page « Pour moi » de l'application du téléphone). Prix d'achat : le prix
-juste diminué de votre marge de sécurité, qui couvre l'erreur d'estimation.
+`entrees_valorisation`). Prix d'achat : le prix juste diminué de votre marge de sécurité, qui couvre l'erreur
+d'estimation.
 
 Verdict : au bon prix (cours au plus au prix d'achat), prix correct (entre le prix d'achat et le prix juste),
 à attendre (au-dessus du prix juste), non évalué (holding, société en perte, fonds : le modèle ne s'applique pas).
@@ -16,10 +16,33 @@ import math
 import pandas as pd
 
 from .config import PROFIL_DIR, ecrire_json, lire_json
-from .export_app import _valorisation as entrees_valorisation
 from .valuation import value_driver_ev
 
 REGLAGES_JSON = PROFIL_DIR / "prix_achat.json"
+
+
+def entrees_valorisation(r: pd.Series, vcfg: dict) -> dict:
+    """Entrées du modèle des « value drivers » (pf/valuation.py), ramenées à la capitalisation :
+        valeur / cours = val_base_cap × VE(1, croissance, rendement, ROIC) − val_dette_cap
+    Banque ou assureur : base = résultat net, sans dette. Rien pour une holding ou une société en perte."""
+    def num(c):
+        v = pd.to_numeric(pd.Series([r.get(c)]), errors="coerce").iloc[0]
+        return float(v) if pd.notna(v) else math.nan
+
+    def vrai(c):
+        return bool(r.get(c)) if pd.notna(r.get(c)) else False
+
+    fin = vrai("financiere")
+    base = num("benefice_ttm") if fin else num("nopat_ttm")
+    capi, dette = num("capitalisation_comptes"), num("dette_nette")
+    if vrai("holding") or not (base > 0 and capi > 0) or (not fin and not math.isfinite(dette)):
+        return {}
+    if not fin and capi + dette <= 0:
+        return {}
+    rmin, rmax = vcfg.get("roic_incremental_min", 0.12), vcfg.get("roic_incremental_max", 0.4)
+    roic = num("rentabilite")
+    return {"val_base_cap": round(base / capi, 5), "val_dette_cap": 0.0 if fin else round(dette / capi, 5),
+            "val_roic": round(min(max(roic if math.isfinite(roic) else rmin, rmin), rmax), 4)}
 MARGE_DEFAUT = 0.20
 VERDICTS = {
     "bon": "Au bon prix",
@@ -72,11 +95,11 @@ def verdict(cours: float, juste: float, achat: float) -> str:
 
 
 def tableau(sc: pd.DataFrame, sources: dict[str, str], vcfg: dict, rendement: float, marge: float,
-            prix_vises: dict[str, float] | None = None, note: pd.Series | None = None) -> pd.DataFrame:
+            prix_vises: dict[str, float] | None = None) -> pd.DataFrame:
     """Une ligne par valeur de `sources` (ticker -> « Portefeuille », « Watchlist »…) présente dans le screener.
 
-    `note` (note du style de l'utilisateur, pf/styles.py) classe les valeurs à verdict égal ; sans elle, le score
-    composite. Le prix d'achat et le verdict n'en dépendent pas : ils jugent le prix, pas l'entreprise."""
+    À verdict égal, la note GARP (colonne `score`) classe les valeurs. Le prix d'achat et le verdict n'en dépendent
+    pas : ils jugent le prix, pas l'entreprise."""
     prix_vises = prix_vises or {}
     lignes = []
     for t, source in sources.items():
@@ -98,13 +121,12 @@ def tableau(sc: pd.DataFrame, sources: dict[str, str], vcfg: dict, rendement: fl
             "score": r.get("score"), "secteur": r.get("secteur"), "enveloppe": r.get("enveloppe"),
             "moat": r.get("moat"), "criteres": r.get("criteres"), "criteres_ok": r.get("criteres_ok"),
             "statut": r.get("statut"),
-            "note_style": float(note[t]) if note is not None and t in note.index and pd.notna(note[t]) else math.nan,
         })
     out = pd.DataFrame(lignes)
     if out.empty:
         return out
-    # Au bon prix d'abord ; à verdict égal, la mieux notée selon le style (à défaut, le score) en premier.
+    # Au bon prix d'abord ; à verdict égal, la meilleure note GARP en premier.
     ordre = {v: i for i, v in enumerate(VERDICTS.values())}
-    score = pd.to_numeric(out["note_style" if note is not None else "score"], errors="coerce").fillna(-1)
+    score = pd.to_numeric(out["score"], errors="coerce").fillna(-1)
     return (out.assign(_o=out["verdict"].map(ordre), _s=-score).sort_values(["_o", "_s", "ecart_achat"])
             .drop(columns=["_o", "_s"]).set_index("ticker"))

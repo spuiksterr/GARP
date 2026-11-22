@@ -116,7 +116,7 @@ if autonome.actif():
     c2.caption("Relues chaque nuit par GitHub, avec les données de la nuit.")
 elif c2.button("Mettre à jour", icon=":material/refresh:", width="stretch",
                help="Lit les nouvelles déclarations : gérants consultés au plus une fois par semaine, élus chaque "
-                    "jour. Les gérants sont aussi relus par la mise à jour complète."):
+                    "jour. Aussi fait par chaque mise à jour de la barre latérale."):
     with st.status("Lecture des déclarations…", expanded=True) as statut:
         ligne = st.empty()
         r1 = inv.mettre_a_jour(progress=lambda m: ligne.caption(m.strip()))
@@ -155,10 +155,10 @@ with onglets[0]:
             m[0].metric("Valeur déclarée", montant(p.attrs["total"]))
             m[1].metric("Lignes", len(detenues))
             m[2].metric("Trimestre", trimestre(p.attrs["periode"]), f"déposé le {pd.Timestamp(p.attrs['depose_le']):%d/%m/%Y}",
-                        delta_color="off")
+                        delta_color="off", delta_arrow="off")
             m[3].metric("Entrées / sorties", f"{mv.get('Nouvelle', 0)} / {mv.get('Soldée', 0)}",
                         f"{mv.get('Renforcée', 0)} renforcées · {mv.get('Allégée', 0)} allégées" if p.attrs["precedente"]
-                        else "premier trimestre lu", delta_color="off")
+                        else "premier trimestre lu", delta_color="off", delta_arrow="off")
 
             g, d = st.columns([3, 2])
             with g.container(border=True):
@@ -210,7 +210,7 @@ with onglets[0]:
                 "depuis_txt": st.column_config.TextColumn(
                     "Détenue depuis", help=f"Premier trimestre d'une détention continue. « ≤ » : déjà détenue au début "
                                            f"de l'historique lu ({trimestre(p.attrs['premiere'])})."),
-                "score": ui.SCORE("Votre score", "Score de l'outil si la valeur est dans votre univers ; clic : sa fiche"),
+                "score": ui.SCORE("Note GARP", "Note GARP de l'outil si la valeur est dans votre univers ; clic : sa fiche"),
             })
             st.caption("Formulaire 13F déposé à la SEC : positions longues en actions cotées aux États-Unis, à la date de "
                        "fin du trimestre, publiées jusqu'à 45 jours plus tard. Ni ventes à découvert, ni options, ni "
@@ -257,7 +257,7 @@ with onglets[1]:
             "detenteurs": st.column_config.NumberColumn("Investisseurs", format="%d"),
             "poids_moyen": ui.PCT("Poids moyen", "Poids moyen chez ceux qui le détiennent"), "poids_max": ui.PCT("Poids max."),
             "qui": st.column_config.TextColumn("Détenu par", width="large"),
-            "score": ui.SCORE("Votre score")})
+            "score": ui.SCORE("Note GARP")})
         st.caption("Titres détenus par au moins deux des investisseurs suivis à leur dernier trimestre déclaré.")
 
 # --------------------------------------------------------------------------- élus
@@ -290,7 +290,7 @@ with onglets[2]:
         m[1].metric("Achats", int((t["operation"] == "P").sum()))
         m[2].metric("Ventes", int(t["operation"].str.startswith("S").sum()))
         m[3].metric("Délai de déclaration", f"{ui.num(t['retard_jours'].median(), 0)} jours" if len(t) else "—",
-                    "médiane (limite légale : 45)", delta_color="off")
+                    "médiane (limite légale : 45)", delta_color="off", delta_arrow="off")
 
         g, d = st.columns([1, 1])
         with g.container(border=True):

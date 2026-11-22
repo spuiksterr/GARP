@@ -6,3 +6,6 @@ security-audit-skill-main/
 .claude/settings.local.json
 # Le reste des exclusions est dans portefeuille/.gitignore (données personnelles, environnement, caches).
 __pycache__/
+# Sorties de la construction de l'installateur Windows (installateur/preparer_outil.ps1 et garp.iss).
+/build/
+installateur/sortie/

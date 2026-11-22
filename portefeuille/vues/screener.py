@@ -9,25 +9,11 @@ ui.require_data()
 strat = load_strategy()
 
 st.title("Screener")
-st.caption("Étape 1 : les filtres d'exclusion écartent les entreprises qui ne sont pas de premier ordre. Étape 2 : les survivantes sont "
-           "classées sur la moyenne pondérée de plusieurs analyses, chacune sur 100 : le bloc des quatre piliers, la valorisation "
-           "(comptée aussi à part, pour qu'elle pèse vraiment), les quatre regards, Piotroski, Altman et Beneish.")
-
-with st.expander("Pondération des piliers", icon=":material/tune:"):
-    base = strat["poids_piliers"]
-    c = st.columns(4)
-    poids = {
-        "qualite": c[0].slider("Qualité", 0, 100, int(base["qualite"] * 100), 5),
-        "croissance": c[1].slider("Croissance", 0, 100, int(base["croissance"] * 100), 5),
-        "valorisation": c[2].slider("Valorisation", 0, 100, int(base["valorisation"] * 100), 5),
-        "momentum": c[3].slider("Momentum", 0, 100, int(base["momentum"] * 100), 5),
-    }
-    st.caption("Ces curseurs règlent le bloc « Piliers », l'une des analyses du score. Les poids sont normalisés. Par défaut : "
-               "qualité 35, valorisation 25, croissance 20, momentum 20. "
-               "Le poids de chaque analyse se règle dans config/strategie.json (poids_score).")
-if sum(poids.values()) == 0:
-    poids = {k: 1 for k in poids}
-sc = ui.screener(tuple(sorted((k, v / 100) for k, v in poids.items())))
+st.caption("Étape 1 : les filtres d'exclusion écartent les entreprises qui ne sont pas de premier ordre. Étape 2 : "
+           "les survivantes sont classées par la note GARP, la croissance sans la surpayer : croissance 40 %, "
+           "valorisation 35 %, qualité 25 %, chaque pilier en rang centile dans l'univers. Quatre regards, six critères "
+           "et signaux de santé restent affichés comme repères, hors note.")
+sc = ui.screener()
 
 # Les filtres courants en tête ; les autres dans un volet, pour que le tableau arrive vite à l'écran.
 f = st.columns([1.1, 1.4, 3])
@@ -90,7 +76,7 @@ st.caption("Cliquez sur une valeur pour ouvrir sa fiche. La case à gauche d'une
 # Les colonnes utiles pour juger « de la croissance à un prix raisonnable » ; le reste sur demande.
 ESSENTIELLES = ["rang", "nom", "enveloppe", "secteur", "score", "moat", "criteres", "croissance_attendue",
                 "per_prospectif", "ecart_per_historique", "tri_implicite"]
-cols = ["rang", "nom", "enveloppe", "secteur", "score", "score_piliers", "moat", "criteres", "exercices_historique",
+cols = ["rang", "nom", "enveloppe", "secteur", "score", "moat", "criteres", "exercices_historique",
         "ecart_per_historique", "p_fcf", "p_fcf_net", "ecart_p_fcf_historique", "regards_total", "buffett", "munger", "fisher", "smith",
         "piotroski", "altman_z", "beneish_m", "verif_sec", "homme_cle",
         "qualite", "croissance", "valorisation", "momentum", "rentabilite",
@@ -151,9 +137,7 @@ ui.tableau(
         "rang": st.column_config.NumberColumn("Rang", format="%d", pinned=True),
         "nom": st.column_config.TextColumn("Valeur", pinned=True),
         "enveloppe": "Compte", "secteur": "Secteur",
-        "score": ui.SCORE("Score", "Moyenne pondérée des analyses, chacune sur 100 : piliers, valorisation, "
-                                   "quatre regards, Piotroski, Altman, Beneish"),
-        "score_piliers": ui.SCORE("Piliers", "Qualité, croissance, valorisation et momentum"),
+        "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, sur 100"),
         "moat": st.column_config.TextColumn("Moat estimé", help="Rentabilité élevée et tenue, prix défendus. "
                                                                 "Estimation chiffrée, pas le moat de Morningstar."),
         "p_fcf": st.column_config.NumberColumn("P/FCF", format="%.1f", help="Capitalisation / flux de trésorerie disponible des 12 derniers mois"),
@@ -206,8 +190,9 @@ ui.tableau(
 st.download_button("Exporter la sélection (CSV)", view.drop(columns=["profil"], errors="ignore").to_csv(sep=";", decimal=",").encode("utf-8-sig"),
                    file_name=f"screener-{ui.stamp()}.csv", mime="text/csv", icon=":material/download:")
 
-st.subheader("Qualité et valorisation")
-st.caption("En haut à droite : entreprises de qualité à prix raisonnable. Taille : capitalisation. Survolez un point pour le détail.")
+st.subheader("Croissance et valorisation")
+st.caption("En haut à droite : la croissance à prix raisonnable, le cœur de la note GARP. Taille : capitalisation. "
+           "Survolez un point pour le détail (qualité et note GARP).")
 fig = go.Figure()
 for i, e in enumerate(["PEA", "CTO"]):
     d = view[view["enveloppe"] == e]
@@ -215,13 +200,13 @@ for i, e in enumerate(["PEA", "CTO"]):
         continue
     size = (d["capitalisation_eur"].fillna(1e10) / 1e9) ** 0.5
     fig.add_trace(go.Scatter(
-        x=d["valorisation"], y=d["qualite"], mode="markers", name=e,
+        x=d["valorisation"], y=d["croissance"], mode="markers", name=e,
         marker=dict(size=(size / size.max() * 28).clip(lower=8), color=ui.couleurs()["series"][i], opacity=0.85,
                     line=dict(width=2, color=ui.couleurs()["surface"])),
-        text=d["nom"], customdata=d[["score", "tri_implicite"]].values,
-        hovertemplate="<b>%{text}</b><br>Qualité %{y:.0f} · Valorisation %{x:.0f}<br>Score %{customdata[0]:.0f}"
-                      " · TRI %{customdata[1]:.1%}<extra>" + e + "</extra>"))
+        text=d["nom"], customdata=d[["score", "tri_implicite", "qualite"]].values,
+        hovertemplate="<b>%{text}</b><br>Croissance %{y:.0f} · Valorisation %{x:.0f} · Qualité %{customdata[2]:.0f}"
+                      "<br>Note GARP %{customdata[0]:.0f} · TRI %{customdata[1]:.1%}<extra>" + e + "</extra>"))
 ui.style(fig, 520)
 fig.update_xaxes(title="Valorisation (rang centile, 100 = la moins chère)", range=[0, 102], showgrid=True, gridcolor=ui.TRAIT)
-fig.update_yaxes(title="Qualité (rang centile)", range=[0, 102])
+fig.update_yaxes(title="Croissance (rang centile)", range=[0, 102])
 ui.show(fig)

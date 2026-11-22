@@ -2,11 +2,11 @@
 
 Outils pour constituer, suivre et faire vivre un portefeuille d'actions de long terme, pensé pour un investisseur français (PEA + compte-titres) :
 
-- un **screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars et une sélection internationale), avec filtres d'exclusion et score Qualité / Croissance / Valorisation / Momentum ;
+- un **screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars et une sélection internationale), avec filtres d'exclusion et note GARP (croissance 40 %, valorisation 35 %, qualité 25 %) ;
 - **votre portefeuille réel** (repris le 29/10/2026 depuis votre courtier : 8 lignes sur le compte-titres) avec ses poids cibles, une fiche de thèse par ligne et le suivi de performance contre l'ETF MSCI World ;
 - la **sélection de 25 valeurs proposée par Claude** le 29/10/2026, archivée dans `profil/selection_claude_2026-10.csv` et comparable dans le backtest ;
 - trois **signaux de santé** (Piotroski, Altman, Beneish) et une note selon **quatre regards**, intégrés au score avec la valorisation, qui y compte aussi comme un bloc à part ;
-- un **moat estimé** et une comparaison du PER à son historique, hors score ;
+- un **moat estimé** et une comparaison du PER à son historique, hors note ;
 - **six critères de qualité** remplis ou non (croissance du CA et du free cash flow, ROCE, dette nette / FCF, nombre d'actions, marge de FCF), en cartes sur la fiche valeur et en filtre dans le screener, hors score par défaut ;
 - une **interface** locale (Streamlit) : tableau de bord, fiche valeur avec DCF inversé, construction, backtest, suivi réel, apport du mois ;
 - une **ligne de commande** et des **commandes Claude Code** en français pour l'analyse et les revues.
@@ -18,22 +18,8 @@ La méthode complète est dans [docs/METHODE.md](docs/METHODE.md) (aussi visible
 1. Double-cliquez sur `installer.bat` (une seule fois : environnement Python et premier téléchargement des données, environ 5 minutes). Déjà fait sur ce poste.
 2. Ouvrez **G.A.R.P (projet)** (icône sur le bureau et dans le menu Démarrer ; « G.A.R.P » tout court est la version installée par `GARP-Setup`) : l'application s'ouvre dans sa propre fenêtre, et s'arrête quand on la ferme. Raccourcis à recréer après un déplacement du dossier : clic droit sur `creer_raccourcis.ps1` > « Exécuter avec PowerShell ». Toujours possible : `lancer.bat`, qui l'ouvre dans le navigateur sur http://localhost:8501. La fenêtre est toujours en thème sombre.
 
-**Sur un autre PC, sans Python ni ce dossier** : l'installateur `GARP-Setup-b<n>.exe` des Releases GitHub installe ce même outil avec tout ce qu'il lui faut (voir [app/README.md](../app/README.md)). Il télécharge, sans jeton, chaque nuit les données calculées par GitHub (`pf export-outil`) au lieu de les calculer ; « Importer mon portefeuille » reprend les lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`).
+**Sur un autre PC, sans Python ni ce dossier** : l'installateur `GARP-Setup-b<n>.exe` des Releases GitHub installe ce même outil avec tout ce qu'il lui faut (voir [installateur/README.md](../installateur/README.md)). Il télécharge, sans jeton, chaque nuit les données calculées par GitHub (`pf export-outil`) au lieu de les calculer ; « Importer mon portefeuille » reprend les lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`).
 3. Dans l'interface (barre latérale), bouton « Mise à jour rapide » avant chaque session : cours, changes et scores en quelques minutes. Une fois par semaine, « Mise à jour complète » : fondamentaux par roulement et comptes déposés (SEC, rapports européens), environ 10 minutes. La barre latérale signale une mise à jour complète vieille de plus d'une semaine.
-
-## Sur le téléphone
-
-L'application tourne sur le PC ; le téléphone y accède de partout par un réseau privé chiffré (Tailscale, gratuit
-pour un usage personnel). Rien n'est ouvert sur Internet et vos données restent sur le PC.
-
-1. Installez Tailscale sur le PC et sur le téléphone (https://tailscale.com/download, ou l'App Store / le Play
-   Store), et connectez-vous **avec le même compte** sur les deux.
-2. Sur le PC : `.venv\Scripts\python.exe -m pf mobile`. La commande affiche l'adresse à ouvrir sur le téléphone
-   (`https://<nom-du-pc>.<…>.ts.net`). À faire une fois : le réglage est mémorisé par Tailscale.
-3. Sur le téléphone : ouvrez cette adresse, puis menu du navigateur > « Ajouter à l'écran d'accueil ».
-
-Le PC doit être allumé et l'application lancée (fenêtre G.A.R.P ouverte, ou `lancer.bat` pour la laisser tourner
-sans fenêtre). `pf mobile --arreter` coupe l'accès.
 
 ## Routine conseillée
 
@@ -41,7 +27,7 @@ sans fenêtre). `pf mobile --arreter` coupe l'accès.
 |---|---|
 | Chaque mois | Mise à jour, tableau de bord, « La bonne action au bon prix », proposition d'apport (onglet « Équilibre » du portefeuille) |
 | Chaque trimestre | `/revue-portefeuille` dans Claude Code après les publications de résultats |
-| Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleurs scores hors portefeuille |
+| Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleures notes GARP hors portefeuille |
 | Chaque année | Bilan contre l'ETF MSCI World, rééquilibrage par les apports |
 
 ## Ligne de commande
@@ -63,7 +49,7 @@ Depuis ce dossier : `.venv\Scripts\python.exe -m pf <commande>`, ou `.venv\Scrip
 | `screener --top 30 --enveloppe PEA` | Classement ; `--tous` inclut les exclues |
 | `fiche ASML.AS` | Tous les indicateurs d'une valeur et sa thèse |
 | `modele` | Composition du portefeuille (poids cibles), caractéristiques, répartitions |
-| `construire --n 22` | Construction de portefeuille : portefeuille construit par des règles (plancher de qualité, cycliques plafonnés), réglages de config/strategie.json ; `--notation regards` choisit la méthode de notation (composite, regards, buffett, munger, fisher, smith, qualite, croissance, valeur, momentum), `--pea 0.5` impose une part PEA |
+| `construire --n 22` | Construction de portefeuille : portefeuille construit par des règles (plancher de qualité, cycliques plafonnés), réglages de config/strategie.json , classement par la note GARP ; `--pea 0.5` impose une part PEA |
 | `backtest --depuis 2016-01-01 --reequilibrage annuel` | Profil de risque historique (attention au biais rétrospectif) |
 | `suivi` | Positions, performance, écart à l'ETF, écarts aux poids cibles |
 | `apport 1000 --compte PEA` | Ordres à passer pour investir un apport sans vendre |
@@ -124,9 +110,9 @@ Une valeur hors univers doit être ajoutée à `config/univers.csv`. Pour un ETF
 G.A.R.P sert d'abord à **trouver la bonne action au bon prix**. Votre portefeuille, importé de votre courtier, est analysé avec les mêmes outils ; l'équilibre n'y est qu'un onglet de propositions.
 
 - **Tableau de bord** : les actions de qualité au bon prix aujourd'hui, le verdict de vos lignes, les points de vigilance.
-- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, classement selon votre style, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict ; ouvrir une fiche ou ajouter à la watchlist depuis le tableau), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
-- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Risques, Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles), Mon style d'investisseur (questionnaire qui propose l'un des cinq styles : qualité, croissance, GARP, valeur, momentum ; comparaison des styles).
-- **Explorer** : Actualités, Quatre regards (lus un par un, hors score), Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
+- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, classement par note GARP, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict ; ouvrir une fiche ou ajouter à la watchlist depuis le tableau), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
+- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Risques, Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles).
+- **Explorer** : Actualités, Quatre regards (lus un par un, hors note), Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
 
 Les quantités de vos lignes viennent du dernier import (photo du portefeuille, `profil/positions.csv`), remplacée à chaque réimport : rien à saisir à la main. Performance et fiscalité restent chez le courtier ; l'ancien journal des opérations (`data/transactions.csv`) n'est plus tenu par l'interface, mais reste lu s'il n'y a pas encore de photo.
 

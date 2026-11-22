@@ -1,19 +1,4 @@
 {
-  "poids_piliers": {
-    "qualite": 0.35,
-    "croissance": 0.2,
-    "valorisation": 0.25,
-    "momentum": 0.2
-  },
-  "poids_score": {
-    "piliers": 1,
-    "valorisation": 1,
-    "regards": 0,
-    "piotroski": 1,
-    "altman": 1,
-    "beneish": 1,
-    "criteres": 0
-  },
   "filtres": {
     "rentabilite_min": 0.08,
     "couverture_interets_min": 3.0,

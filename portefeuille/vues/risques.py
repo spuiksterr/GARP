@@ -32,15 +32,15 @@ date_pire, pire = risques.pire_mois(r_p)
 
 # --------------------------------------------------------------------------- chiffres clés
 k = st.columns(5)
-k[0].metric("Plus grosse ligne", ui.pct(conc["poids_plus_grosse"], 0), noms[conc["plus_grosse"]], delta_color="off")
-k[1].metric("Trois premières lignes", ui.pct(conc["trois_premieres"], 0), f"{len(w)} lignes au total", delta_color="off")
+k[0].metric("Plus grosse ligne", ui.pct(conc["poids_plus_grosse"], 0), noms[conc["plus_grosse"]], delta_color="off", delta_arrow="off")
+k[1].metric("Trois premières lignes", ui.pct(conc["trois_premieres"], 0), f"{len(w)} lignes au total", delta_color="off", delta_arrow="off")
 k[2].metric("Nombre effectif de lignes", ui.num(conc["nombre_effectif"], 1),
             help="Diversification réelle : un portefeuille de 10 lignes égales vaut 10 ; s'il est dominé par une ligne, "
-                 "il vaut bien moins.", delta="lignes « équivalentes »", delta_color="off")
-k[3].metric("Volatilité", ui.pct(profil.get("volatilite"), 0), "annuelle, sur 3 ans", delta_color="off")
+                 "il vaut bien moins.", delta="lignes « équivalentes »", delta_color="off", delta_arrow="off")
+k[3].metric("Volatilité", ui.pct(profil.get("volatilite"), 0), "annuelle, sur 3 ans", delta_color="off", delta_arrow="off")
 k[4].metric("Perte maximale", ui.pct(risques.perte_maximale(r_p), 0),
             f"pire mois : {ui.pct(pire, 0)}" + (f" ({date_pire:%m/%Y})" if date_pire is not None else ""),
-            delta_color="off", help="Plus forte baisse depuis un sommet sur 3 ans, avec les poids d'aujourd'hui.")
+            delta_color="off", delta_arrow="off", help="Plus forte baisse depuis un sommet sur 3 ans, avec les poids d'aujourd'hui.")
 for t, message in risques.garde_fous(w, sc["secteur"], r):
     st.warning(f"{noms[t]} {message}" if t else message, icon=":material/warning:")
 if risques.garde_fous(w, sc["secteur"], r):

@@ -43,14 +43,6 @@ def tout_mettre_a_jour(complet: bool = False, age: float = 7, progress: Callable
     tickers = all_tracked_tickers()
     res = update_all(tickers, max_age_days=0 if complet else age, progress=progress,
                      max_refresh=None if complet else renouvellement(len(tickers)), rapide=rapide and not complet)
-    if not res.get("rapide"):
-        # Portefeuilles 13F des grands investisseurs : chaque gérant relu au plus une fois par semaine.
-        from . import investisseurs
-        progress("Portefeuilles 13F des grands investisseurs…")
-        try:
-            res["investisseurs"] = investisseurs.mettre_a_jour(progress=progress)
-        except Exception as exc:  # SEC injoignable : le reste de la mise à jour reste valable
-            res["investisseurs"] = {"erreur": str(exc)[:200]}
     t0 = time.time()
     progress("Calcul des indicateurs et des scores…")
     sc = build_screener(compute_all())
@@ -99,11 +91,6 @@ def bilan(res: dict, sc: pd.DataFrame) -> list[str]:
         lignes.append(f"Rapports européens (ESEF) : {res.get('esef_ok', 0)} sociétés lues"
                       + (f", {res['esef_reste']} à traiter aux prochaines mises à jour (ou : python -m pf esef)."
                          if res.get("esef_reste") else "."))
-    inv = res.get("investisseurs") or {}
-    if inv.get("saute") or inv.get("erreur"):
-        lignes.append(f"Portefeuilles 13F non lus : {inv.get('saute') or inv.get('erreur')}.")
-    elif inv.get("nouvelles"):
-        lignes.append(f"Portefeuilles 13F : {inv['nouvelles']} nouveaux trimestres lus.")
     if res["erreurs"]:
         lignes.append("Non mises à jour : " + ", ".join(sorted(res["erreurs"])))
     if res["sans_cours"]:

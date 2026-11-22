@@ -17,7 +17,7 @@ But : décider si $ARGUMENTS mérite une place dans le portefeuille long terme, 
 
 Depuis `portefeuille/` : `.venv/Scripts/python.exe -m pf fiche <TICKER>` (Git Bash) ou `& .\.venv\Scripts\python.exe -m pf fiche <TICKER>` (PowerShell). Si les données ont plus d'un jour : `-m pf maj` d'abord.
 
-Relever : statut des filtres et motifs, score et piliers, ROIC, marges, conversion en cash, dette, dilution, croissance historique et consensus, PER prospectif, croissance implicite, TRI implicite, momentum, alertes.
+Relever : statut des filtres et motifs, note GARP et ses trois piliers, ROIC, marges, conversion en cash, dette, dilution, croissance historique et consensus, PER prospectif, croissance implicite, TRI implicite, momentum, alertes.
 
 Puis `-m pf contexte <TICKER>` (tout ce que l'outil sait d'autre) :
 

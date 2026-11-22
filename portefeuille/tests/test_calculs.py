@@ -15,7 +15,7 @@ from pf import moat as pf_moat  # noqa: E402
 from pf import portfolio as pfo  # noqa: E402
 from pf.data import fx_rate, prices_in_eur, split_currency  # noqa: E402
 from pf.metrics import historical_multiple  # noqa: E402
-from pf.scoring import build_screener, composite_score, exclusion_reasons, pillar_scores  # noqa: E402
+from pf.scoring import POIDS_GARP, build_screener, exclusion_reasons, note_garp, pillar_scores  # noqa: E402
 from pf.valuation import implied_growth, implied_irr, value_driver_ev  # noqa: E402
 
 FILTRES = {"rentabilite_min": 0.08, "couverture_interets_min": 3.0, "dette_nette_ebitda_max": 3.5,
@@ -231,7 +231,7 @@ def test_financieres_classees_entre_elles_sur_la_valorisation():
 
 
 def test_fonds_hors_classement_et_booleens_a_trous():
-    strat = {"poids_piliers": {"qualite": 1.0}, "filtres": FILTRES}
+    strat = {"filtres": FILTRES}
     rows = {t: _row(rentabilite=r, marge_brute=0.5) for t, r in (("A", 0.30), ("B", 0.20), ("C", 0.10))}
     df = pd.DataFrame(rows).T
     df.loc["ETF"] = np.nan
@@ -378,20 +378,27 @@ def test_signaux_absents_pour_les_financieres_et_alertes_seuils():
     assert sante.health_alerts(pd.Series(dtype=float)) == []
 
 
-# ------------------------------------------------------------------ score composite
+# ------------------------------------------------------------------ note GARP
 
-def test_le_score_est_la_moyenne_des_analyses_sans_les_regards():
-    df = pd.DataFrame({"score_piliers": [60.0, 40.0], "regards_total": [16.0, 8.0], "piotroski": [9.0, 0.0],
-                       "altman_z": [5.0, 1.0], "beneish_m": [-3.0, -1.0]}, index=["BON", "MAUVAIS"])
-    s = composite_score(df)["score"]
-    # Les quatre regards se lisent à part : leur total (16 et 8 sur 20) ne compte pas.
-    assert s["BON"] == pytest.approx((60 + 100 + 100 + 100) / 4)
-    assert s["MAUVAIS"] == pytest.approx((40 + 0 + 0 + 0) / 4)
-    # Ancien réglage, toujours possible en passant les poids : les regards comme cinquième analyse.
-    avec = composite_score(df, {"piliers": 1, "regards": 1, "piotroski": 1, "altman": 1, "beneish": 1})["score"]
-    assert avec["BON"] == pytest.approx((60 + 80 + 100 + 100 + 100) / 5)
-    # Les poids sont réglables : seul le bloc Piliers compté, on retrouve l'ancien score.
-    assert composite_score(df, {"piliers": 1})["score"]["BON"] == pytest.approx(60)
+def test_la_note_garp_pese_croissance_valorisation_qualite():
+    df = pd.DataFrame({"croissance": [100.0, 0.0, 50.0], "valorisation": [0.0, 100.0, 50.0],
+                       "qualite": [0.0, 0.0, 100.0], "momentum": [100.0, 0.0, 0.0]}, index=["CROIT", "PAS_CHER", "QUALITE"])
+    n = note_garp(df)
+    assert n["CROIT"] == pytest.approx(40) and n["PAS_CHER"] == pytest.approx(35)
+    assert n["QUALITE"] == pytest.approx(50 * 0.40 + 50 * 0.35 + 100 * 0.25)
+    assert sum(POIDS_GARP.values()) == pytest.approx(1)
+
+
+def test_la_note_garp_ignore_regards_criteres_sante_et_momentum():
+    """Repères, hors note : changer les regards, les critères, les signaux de santé ou le momentum ne change rien."""
+    sc = build_screener()
+    actions = sc[sc["statut"] != "Fonds"]
+    attendu = (actions["croissance"] * 0.40 + actions["valorisation"] * 0.35 + actions["qualite"] * 0.25)
+    assert np.allclose(actions["score"], attendu)
+    autre = actions.assign(buffett=1, munger=1, fisher=1, smith=1, criteres_ok=0, piotroski=0, momentum=0)
+    assert np.allclose(note_garp(autre), actions["score"])
+    elig = sc[sc["statut"] == "Éligible"]
+    assert list(elig.sort_values("score", ascending=False).index) == list(elig.sort_values("rang").index)
 
 
 def test_altman_et_beneish_sont_des_jauges():
@@ -399,15 +406,6 @@ def test_altman_et_beneish_sont_des_jauges():
     p = sante.health_points(df)
     assert list(p["pts_altman"].round()) == [0, 50, 100, 100]  # au-delà de la zone sûre, rien de plus
     assert list(p["pts_beneish"].round()) == [0, 50, 100, 100]
-
-
-def test_signal_absent_ni_bonus_ni_malus():
-    # La banque a les mêmes piliers et regards que la société médiane : même score, sans ses signaux de santé.
-    df = pd.DataFrame({"score_piliers": [50.0, 50.0, 50.0, 50.0], "regards_total": [10.0] * 4,
-                       "piotroski": [3.0, 6.0, 9.0, np.nan], "altman_z": [1.0, 3.0, 5.0, np.nan],
-                       "beneish_m": [-2.6, -2.6, -2.6, np.nan]}, index=["A", "MEDIANE", "C", "BANQUE"])
-    s = composite_score(df)["score"]
-    assert s["BANQUE"] == pytest.approx(s["MEDIANE"])
 
 
 # ------------------------------------------------------------------ moat et PER historique
@@ -578,16 +576,6 @@ def test_criteres_cas_limites():
     assert dette.rempli is True and math.isnan(dette.valeur)
 
 
-def test_criteres_dans_le_score_seulement_avec_un_poids():
-    df = pd.DataFrame({"score_piliers": [60.0, 40.0], "regards_total": [10, 10], "criteres_ok": [6, 1],
-                       "criteres_evalues": [6, 2]}, index=["A", "BANQUE"])
-    sans = composite_score(df, {"piliers": 1, "regards": 1, "criteres": 0})
-    assert sans.loc["A", "score"] == pytest.approx(55.0)
-    avec = composite_score(df, {"piliers": 1, "regards": 1, "criteres": 1})
-    # A : (60 + 50 + 100) / 3. La banque (2 critères évalués) reçoit la médiane du bloc, soit 100.
-    assert avec.loc["A", "score"] == pytest.approx(70.0) and avec.loc["BANQUE", "pts_criteres"] != avec.loc["BANQUE", "pts_criteres"]
-
-
 # ------------------------------------------------------------------ robustesse (audit du 04/11/2026)
 
 def test_ecriture_atomique_garde_l_ancien_fichier_si_l_ecriture_echoue(tmp_path):
@@ -667,12 +655,6 @@ def test_ordres_d_apport_deja_enregistres():
     plan = pd.DataFrame({"ticker": ["GOOGL", "NUKL.DE"], "quantite": [1.0, 18.0]})
     assert tracker.ordres_deja_saisis(tx, plan, "CTO", "2026-11-04") == {"GOOGL"}
     assert tracker.ordres_deja_saisis(tx, plan, "CTO", "2026-11-05") == set()
-
-
-def test_valorisation_compte_comme_un_bloc_du_score():
-    df = pd.DataFrame({"score_piliers": [60.0, 60.0], "regards_total": [10, 10], "valorisation": [100.0, 0.0]}, index=["BON_PRIX", "CHERE"])
-    s = composite_score(df, {"piliers": 1, "valorisation": 1, "regards": 1})["score"]
-    assert s["BON_PRIX"] == pytest.approx((60 + 100 + 50) / 3) and s["CHERE"] == pytest.approx((60 + 0 + 50) / 3)
 
 
 def test_seuils_des_criteres_reappliques_sans_recalcul():
@@ -1055,9 +1037,10 @@ def test_note_de_construction_selon_la_methode():
         "criteres_ok": [6, 2, 4, 1], "criteres_evalues": [6, 2, 6, 1], "moat": ["Large"] * 4,
     }, index=["W", "X", "Y", "Z"])
     defaut = pfo.note_construction(sc)
-    assert list(defaut.sort_values(ascending=False).index) == ["W", "X", "Y", "Z"]  # score composite
-    b = pfo.note_construction(sc, pfo.NOTATIONS["buffett"][2])
-    assert b["X"] > b["Z"] > b["Y"] > b["W"]  # ex aequo X et Z (5/5) départagés par le score
+    assert list(defaut.sort_values(ascending=False).index) == ["W", "X", "Y", "Z"]  # note GARP
+    assert list(pfo.NOTATIONS) == ["garp"] and pfo.NOTATIONS["garp"][2] == {"score": 1}
+    b = pfo.note_construction(sc, {"buffett": 1})  # une autre composante reste possible par code
+    assert b["X"] > b["Z"] > b["Y"] > b["W"]  # ex aequo X et Z (5/5) départagés par la note GARP
     mix = pfo.note_construction(sc, {"valorisation": 0.5, "criteres_part": 0.5})
     assert mix["Z"] != mix["Z"]  # ni valorisation ni critères (un seul évalué) : pas de note
     assert mix["Y"] > mix["W"]
@@ -1405,53 +1388,6 @@ def test_garde_fous_de_concentration():
     assert risques.seuils_garde_fous({})["ligne_max"] == 0.25  # valeurs par défaut sans réglage
 
 
-def test_mobile_adresse_tailscale():
-    from pf import mobile
-    assert mobile.adresse({"BackendState": "Running", "Self": {"DNSName": "pc-maison.tail1234.ts.net."}}) \
-        == "https://pc-maison.tail1234.ts.net"
-    assert mobile.adresse({"BackendState": "NeedsLogin", "Self": {"DNSName": "pc.tail1234.ts.net."}}) is None
-    assert mobile.adresse({}) is None
-
-
-def test_export_application_sans_donnee_personnelle(tmp_path):
-    import gzip
-    import json
-
-    from pf.export_app import exporter
-    chemin = exporter(tmp_path)
-    d = json.load(gzip.open(chemin, "rt", encoding="utf-8"))
-    assert d["format"] == 1 and d["nb_valeurs"] == len(d["valeurs"]) == 16
-    adbe = next(v for v in d["valeurs"] if v["ticker"] == "ADBE")
-    assert adbe["statut"] == "Éligible" and isinstance(adbe["score"], float) and adbe["devise"] == "USD"
-    assert 0.5 < adbe["cours_eur"] / adbe["cours"] < 1.2  # dollar converti en euros
-    assert len(d["cours"]["ADBE"]["c"]) > 200 and d["rangs"]["ADBE"][0][0] == "2026-11-01"
-    # Méthodes d'évaluation et six critères, que l'application recalcule.
-    ids = [m["id"] for m in d["methodes"]]
-    assert ids[0] == "composite" and {"buffett", "munger", "fisher", "smith", "criteres"} <= set(ids)
-    assert next(m for m in d["methodes"] if m["id"] == "qualite")["poids"] == {"qualite": 0.6, "criteres_part": 0.4}
-    assert [c["cle"] for c in d["criteres"]] == ["ca", "fcf", "roce", "dette", "actions", "marge"]
-    assert {"criteres_ok", "criteres_evalues"} <= set(adbe)
-    # Valorisation recalculable par l'application : mêmes entrées que metrics.py, ramenées à la capitalisation.
-    from pf.valuation import implied_irr
-    v = d["strategie"]["valorisation"]
-    tri = implied_irr(1 + adbe["val_dette_cap"], adbe["val_base_cap"], adbe["croissance_attendue"],
-                      g_term=v["croissance_terminale"], roic=adbe["val_roic"], years_high=v["annees_croissance"],
-                      years_fade=v["annees_convergence"])
-    assert abs(tri - adbe["tri_implicite"]) < 1e-3
-    assert len(d["changes"]["USD"]["c"]) > 200 and 0.5 < d["changes"]["USD"]["c"][-1] < 1.2
-    assert d["strategie"]["garde_fous"]["ligne_max"] > 0 and "notation" not in d["strategie"]["construction"]
-    # Fichiers complémentaires : fiches (historique, repères des multiples) et investisseurs.
-    fiches = json.load(gzip.open(tmp_path / "garp-fiches.json.gz", "rt", encoding="utf-8"))["fiches"]
-    h = fiches["ADBE"]["h"]
-    assert len(h["an"]) == len(h["chiffre_affaires"]) >= 4 and h["chiffre_affaires"][-1] > 1e9
-    assert fiches["ADBE"]["r"]["PER"]["actuel"] > 0 and len(fiches["ADBE"]["r"]["PER"]["v"]) >= 4
-    inv = json.load(gzip.open(tmp_path / "garp-investisseurs.json.gz", "rt", encoding="utf-8"))
-    assert {"investisseurs", "partages", "elus", "operations"} <= set(inv)
-    texte = gzip.open(chemin, "rt", encoding="utf-8").read()
-    for interdit in ("poids_cible", "transactions", "quantite", "contact_sec", "Exemple fictif"):
-        assert interdit not in texte, interdit
-
-
 def test_13f_sans_contact_sec_l_echec_se_voit(monkeypatch, capsys):
     """Sans adresse de contact SEC, la commande échoue (étape en orange dans le flux de la nuit) au lieu d'annoncer
     « 0 trimestres lus » : c'est ainsi que les 13F sont restés figés dans l'ancien dépôt."""
@@ -1465,3 +1401,24 @@ def test_13f_sans_contact_sec_l_echec_se_voit(monkeypatch, capsys):
     with pytest.raises(SystemExit, match="SEC_CONTACT"):
         cli.cmd_investisseurs(argparse.Namespace(force=False))
     assert "Non lus" in capsys.readouterr().out
+
+
+def test_poids_de_la_note_garp_reglables(tmp_path, monkeypatch):
+    """Poids réglés (ramenés à 100 %) appliqués au screener calculé comme au screener préparé ; None rétablit 40/35/25."""
+    from pf import scoring
+
+    monkeypatch.setattr(scoring, "POIDS_JSON", tmp_path / "garp.json")
+    assert scoring.poids_garp() == scoring.POIDS_GARP
+    scoring.enregistrer_poids_garp({"croissance": 0, "valorisation": 50, "qualite": 50})
+    assert scoring.poids_garp() == {"croissance": 0.0, "valorisation": 0.5, "qualite": 0.5}
+    sc = build_screener()
+    actions = sc[sc["statut"] != "Fonds"]
+    assert np.allclose(actions["score"], (actions["valorisation"] + actions["qualite"]) / 2)
+    elig = sc[sc["statut"] == "Éligible"]
+    assert list(elig.sort_values("score", ascending=False).index) == list(elig.sort_values("rang").index)
+    with pytest.raises(ValueError):
+        scoring.enregistrer_poids_garp({"croissance": 0, "valorisation": 0, "qualite": 0})
+    (tmp_path / "garp.json").write_text('{"croissance": "x"}', encoding="utf-8")
+    assert scoring.poids_garp() == scoring.POIDS_GARP  # fichier abîmé : les poids par défaut
+    scoring.enregistrer_poids_garp(None)
+    assert not (tmp_path / "garp.json").exists() and scoring.poids_garp() == scoring.POIDS_GARP

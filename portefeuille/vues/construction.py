@@ -14,33 +14,12 @@ cfg = strat["construction"]
 version = ui.data_version()
 
 st.title("Construction automatique")
-st.caption("Un portefeuille diversifié construit uniquement par des règles, à partir de la méthode de notation de votre "
-           "choix. Il sert de point de comparaison et de liste d'idées à étudier : un bon classement n'est pas une "
-           "recommandation, seule l'analyse d'une valeur (/analyse-valeur) peut justifier un achat.")
+st.caption("Un portefeuille diversifié construit uniquement par des règles : les meilleures notes GARP (croissance "
+           "40 %, valorisation 35 %, qualité 25 %) qui passent vos garde-fous. Il sert de point de comparaison et "
+           "de liste d'idées à étudier : un bon classement n'est pas une recommandation, seule l'analyse d'une "
+           "valeur (/analyse-valeur) peut justifier un achat.")
 
-# --------------------------------------------------------------------------- méthode de notation
-PERSO = "perso"
-libelles = {k: v[0] for k, v in pfo.NOTATIONS.items()} | {PERSO: "Personnalisée"}
-poids_cfg = {k: float(v) for k, v in (cfg.get("notation") or {"score": 1}).items()}
-defaut = next((k for k, v in pfo.NOTATIONS.items() if v[2] == poids_cfg), PERSO)
-
-with st.container(border=True):
-    choix = st.segmented_control("Méthode de notation mise en avant", list(libelles), format_func=libelles.get,
-                                 default=defaut, key="cp_notation") or defaut
-    if choix != PERSO:
-        poids = pfo.NOTATIONS[choix][2]
-        st.caption(pfo.NOTATIONS[choix][1])
-    else:
-        st.caption("Composez votre propre note : chaque curseur fixe le poids d'une composante. Toutes sont ramenées à "
-                   "leur rang dans l'univers (0 à 100), donc comparables.")
-        cols = st.columns(4)
-        poids = {}
-        for i, (cle, lib) in enumerate(pfo.COMPOSANTES.items()):
-            poids[cle] = cols[i % 4].slider(lib, 0, 100, int(round(poids_cfg.get(cle, 0) * 100)), 5,
-                                            key=f"cp_poids_{cle}", format="%d %%") / 100
-        if sum(poids.values()) == 0:
-            st.warning("Tous les poids sont à zéro : le score composite est utilisé.")
-            poids = {"score": 1.0}
+poids = {"score": 1.0}  # la note GARP, seule méthode de l'outil
 
 # --------------------------------------------------------------------------- réglages, repliés
 g, d = st.columns(2)
@@ -61,7 +40,7 @@ with d.expander("Diversification et pondération", icon=":material/tune:"):
     max_sec = c[1].slider("Lignes maximum par secteur", 2, 10, int(cfg["max_par_secteur"]))
     sect_max = c[0].slider("Poids maximal par secteur", 10, 50, int(cfg["secteur_max"] * 100), 5, format="%d %%") / 100
     methode = c[1].selectbox("Pondération", list(pfo.METHODES), index=list(pfo.METHODES).index(cfg["methode"]),
-                             format_func=pfo.METHODES.get, help="« Note » : la note de la méthode choisie × 1/volatilité.")
+                             format_func=pfo.METHODES.get, help="« Note » : la note GARP × 1/volatilité.")
     w_min = c[0].slider("Poids minimal par ligne", 0.5, 5.0, cfg["poids_min"] * 100, 0.5, format="%.1f %%") / 100
     w_max = c[1].slider("Poids maximal par ligne", 3.0, 15.0, cfg["poids_max"] * 100, 0.5, format="%.1f %%") / 100
     imposer_pea = st.toggle("Imposer une part PEA", value=cfg.get("part_pea") not in (None, 0, 1),
@@ -108,17 +87,6 @@ def detenteurs(version):
     return inv.detenteurs_par_ticker()
 
 
-@st.cache_data(show_spinner=False)
-def comparer_methodes(version, n, max_sec, part_pea, exclure, crit_min, sans_faible, cycliques_max):
-    """Valeurs retenues par chaque méthode proposée, avec les mêmes garde-fous."""
-    out = {}
-    for lib, _, p in pfo.NOTATIONS.values():
-        note = pfo.note_construction(sc, p)
-        out[lib] = pfo.select(sc, n, max_sec, part_pea, exclude=list(exclure), criteres_min=crit_min,
-                              exclure_moat_faible=sans_faible, cycliques_max=cycliques_max, note=note)
-    return out
-
-
 reglages = dict(n=n, max_sec=max_sec, part_pea=part_pea, exclure=tuple(exclure), crit_min=crit_min,
                 sans_faible=sans_faible, cycliques_max=cycliques_max)
 with st.spinner("Construction…"):
@@ -141,17 +109,18 @@ communes = w.index.intersection(model_w.index)
 # --------------------------------------------------------------------------- chiffres clés
 k = st.columns(5)
 k[0].metric("Lignes", len(w), f"{len(communes)} déjà détenue(s)" if len(communes) else "aucune déjà détenue",
-            delta_color="off")
-k[1].metric(f"Note « {libelles[choix]} »", ui.num(float((note.reindex(w.index).clip(upper=100) * w).sum()), 0),
-            "sur 100 (rang)", delta_color="off")
+            delta_color="off", delta_arrow="off")
+garp = pd.to_numeric(sc.reindex(w.index)["score"], errors="coerce")
+k[1].metric("Note GARP", ui.num(float((garp * w).sum() / w[garp.notna()].sum()), 0) if garp.notna().any() else "—",
+            "sur 100", delta_color="off", delta_arrow="off")
 tri = pd.to_numeric(sc.reindex(w.index)["tri_implicite"], errors="coerce")
 k[2].metric("TRI implicite", ui.pct(float((tri * w).sum() / w[tri.notna()].sum())) if tri.notna().any() else "—",
-            "par an, au prix actuel", delta_color="off")
-k[3].metric("Volatilité attendue", ui.pct(risque.get("volatilite")), "sur 3 ans de cours", delta_color="off")
+            "par an, au prix actuel", delta_color="off", delta_arrow="off")
+k[3].metric("Volatilité attendue", ui.pct(risque.get("volatilite")), "sur 3 ans de cours", delta_color="off", delta_arrow="off")
 k[4].metric("Secteurs cycliques", ui.pct(float(w[secteurs.isin(pfo.CYCLIQUES)].sum()), 0),
-            f"{secteurs.nunique()} secteurs", delta_color="off")
+            f"{secteurs.nunique()} secteurs", delta_color="off", delta_arrow="off")
 
-onglet_sel, onglet_meth, onglet_comp = st.tabs(["Sélection", "Comparer les méthodes", "Face à mon portefeuille"])
+onglet_sel, onglet_comp = st.tabs(["Sélection", "Face à mon portefeuille"])
 
 # --------------------------------------------------------------------------- sélection
 with onglet_sel:
@@ -159,7 +128,6 @@ with onglet_sel:
     suivies = set(wl.load_watchlist().index)
     t = sc.reindex(w.index).copy()
     t["poids"] = w
-    t["note"] = note.reindex(w.index).clip(upper=100)
     t["investisseurs"] = [len(qui.get(x, [])) for x in t.index]
 
     def signal_dirigeants(ticker: str) -> str:
@@ -173,7 +141,7 @@ with onglet_sel:
     t["dirigeants"] = [signal_dirigeants(x) for x in t.index]
     t["detenue"] = t.index.isin(model_w.index)
     show = ui.as_pct_cols(t, ["poids", "ecart_p_fcf_historique", "tri_implicite"])
-    show = show[["nom", "poids", "note", "score", "buffett", "munger", "fisher", "smith", "criteres", "moat",
+    show = show[["nom", "poids", "score", "buffett", "munger", "fisher", "smith", "criteres", "moat",
                  "ecart_p_fcf_historique", "tri_implicite", "investisseurs", "dirigeants", "detenue", "secteur",
                  "enveloppe"]]
     show.insert(0, "symbole", show.index)
@@ -211,8 +179,7 @@ with onglet_sel:
                selection_mode=["single-cell", "multi-row"], key=cle_tableau, hide_index=True, column_config={
                    "symbole": st.column_config.TextColumn("Ticker", pinned=True),
                    "nom": st.column_config.TextColumn("Valeur", pinned=True), "poids": ui.PCT("Poids"),
-                   "note": ui.SCORE(f"Note {libelles[choix]}", "Note de la méthode choisie : rang dans l'univers, sur 100"),
-                   "score": ui.SCORE("Score", "Score composite de l'outil"),
+                   "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 %, sur 100"),
                    "buffett": regard("Buffett", "Regard de Buffett, de 1 à 5"),
                    "munger": regard("Munger", "Regard de Munger, de 1 à 5"),
                    "fisher": regard("Fisher", "Regard de Fisher, de 1 à 5"),
@@ -232,29 +199,6 @@ with onglet_sel:
                })
     st.caption("Cochez une ligne pour l'ajouter à la watchlist, cliquez sur une cellule pour ouvrir la fiche. Regards de "
                "1 (faible) à 5 (excellent) : détail et corrections dans la page « Quatre regards ».")
-
-# --------------------------------------------------------------------------- comparer les méthodes
-with onglet_meth:
-    st.caption("La sélection de chaque méthode, avec vos garde-fous et votre diversification. Une valeur retenue par "
-               "beaucoup de méthodes plaît sous plusieurs angles : c'est souvent la plus intéressante à étudier.")
-    par_methode = comparer_methodes(version, **reglages)
-    lignes = sorted({x for v in par_methode.values() for x in v})
-    m = pd.DataFrame({lib: ["●" if x in v else "" for x in lignes] for lib, v in par_methode.items()}, index=lignes)
-    m.insert(0, "methodes", (m == "●").sum(axis=1))
-    m.insert(0, "nom", sc.reindex(m.index)["nom"])
-    m["detenue"] = m.index.isin(model_w.index)
-    m = m.sort_values(["methodes", "nom"], ascending=[False, True])
-    m.insert(0, "symbole", m.index)
-    compteur = "cp_meth"
-    ev = ui.tableau(m, width="stretch", height=min(620, 35 * len(m) + 38), hide_index=True, on_select="rerun",
-                    selection_mode="single-cell", key=f"{compteur}_{st.session_state.get(compteur, 0)}",
-                    column_config={"symbole": st.column_config.TextColumn("Ticker", pinned=True),
-                                   "nom": st.column_config.TextColumn("Valeur", pinned=True),
-                                   "methodes": st.column_config.ProgressColumn(
-                                       "Méthodes", min_value=0, max_value=len(par_methode), format="%d",
-                                       help="Nombre de méthodes qui la retiennent"),
-                                   "detenue": st.column_config.CheckboxColumn("Détenue")})
-    ui.fiche_au_clic(m, ev, compteur, lignes=False)
 
 # --------------------------------------------------------------------------- face à mon portefeuille
 with onglet_comp:
@@ -290,7 +234,7 @@ if c[0].button("Enregistrer ces réglages par défaut", icon=":material/save:",
     strat["construction"].update({"nb_lignes": n, "methode": methode, "part_pea": part_pea, "secteur_max": sect_max,
                                   "poids_min": w_min, "poids_max": w_max, "max_par_secteur": max_sec,
                                   "criteres_min": crit_min, "exclure_moat_faible": sans_faible,
-                                  "cycliques_max": cycliques_max, "notation": {k: v for k, v in poids.items() if v > 0}})
+                                  "cycliques_max": cycliques_max, "notation": poids})
     save_strategy(strat)
     st.cache_data.clear()
     st.toast("Réglages enregistrés dans config/strategie.json")

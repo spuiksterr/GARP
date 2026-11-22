@@ -18,7 +18,7 @@ pas : un fondateur absent de la liste de Yahoo, une succession déjà organisée
 Niveaux : faible sous 3, modéré de 3 à 5,5, élevé à partir de 6.
 
 La note est un signal à lire, pas une sanction : un fondateur aux commandes est aussi souvent une force (vision longue,
-intérêts alignés). Elle n'entre ni dans le score composite ni dans les filtres d'exclusion.
+intérêts alignés). Elle n'entre ni dans la note GARP ni dans les filtres d'exclusion.
 """
 from __future__ import annotations
 

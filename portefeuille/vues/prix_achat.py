@@ -1,12 +1,11 @@
-"""La bonne action au bon prix : les entreprises de qualité (filtres), classées selon votre style (pf/styles.py),
-dont le cours est sous votre prix d'achat (pf/prix_achat.py). Dans tout l'univers, dans votre portefeuille ou dans
-votre watchlist."""
+"""La bonne action au bon prix : les entreprises de qualité (filtres), classées selon la note GARP, dont le cours
+est sous votre prix d'achat (pf/prix_achat.py). Dans tout l'univers, dans votre portefeuille ou dans votre
+watchlist."""
 import math
 
 import streamlit as st
 
 from pf import prix_achat as pa
-from pf import styles as sty
 from pf import ui
 from pf import watchlist as wl
 from pf.config import load_strategy
@@ -18,9 +17,10 @@ regl = pa.reglages(strat)
 
 st.title("La bonne action au bon prix")
 st.markdown(
-    "Deux questions. **La bonne action** : l'entreprise passe-t-elle les filtres de qualité, et comment la classe "
-    "votre style ? **Au bon prix** : son cours est-il sous votre **prix d'achat**, c'est-à-dire le **prix juste** (le cours "
-    "qui vous rapporterait votre rendement exigé si la croissance attendue se réalise) moins votre marge de sécurité ?")
+    "Deux questions. **La bonne action** : l'entreprise passe-t-elle les filtres de qualité, et quelle est sa "
+    "**note GARP** (la croissance, sans la surpayer) ? **Au bon prix** : son cours est-il sous votre **prix "
+    "d'achat**, c'est-à-dire le **prix juste** (le cours qui vous rapporterait votre rendement exigé si la "
+    "croissance attendue se réalise) moins votre marge de sécurité ?")
 
 c = st.columns([1.2, 1.2, 2.6])
 rendement = c[0].slider("Rendement exigé (par an)", 5.0, 15.0, regl["rendement"] * 100, 0.5, format="%.1f %%",
@@ -33,21 +33,6 @@ ou = c[2].segmented_control("Où chercher", ["Toutes les actions de qualité", "
 if (rendement / 100, marge / 100) != (regl["rendement"], regl["marge"]):
     pa.enregistrer_reglages(rendement / 100, marge / 100)  # retenus pour les prochaines ouvertures
 
-# Classement selon le style : celui du profil, ou un autre pour comparer. Le prix d'achat et le verdict n'en
-# dépendent pas.
-profil_style = sty.style_choisi()
-cs = st.columns([2.6, 2.4])
-style = cs[0].segmented_control(
-    "Classer selon le style", list(sty.STYLES), format_func=lambda k: sty.STYLES[k].libelle, default=profil_style,
-    key="bon_prix_style", help="Votre style se choisit dans « Mon style d'investisseur » (questionnaire).",
-) or profil_style
-cs[1].caption(f"**{sty.STYLES[style].libelle}** : {sty.STYLES[style].devise}"
-              + ("" if sty.profil() else " Style par défaut : faites le questionnaire de « Mon style d'investisseur ».")
-              + ("" if style == profil_style or not sty.profil() else " (votre style : "
-                 f"{sty.STYLES[profil_style].libelle})"))
-actions = sc[sc["statut"] != "Fonds"]
-note_style = sty.note(actions, style)
-
 suivies = wl.load_watchlist()
 univers = ou == "Toutes les actions de qualité"
 if univers:
@@ -57,7 +42,7 @@ elif ou == "Mon portefeuille":
 else:
     sources = {t: "Watchlist" for t in suivies.index}
 prix_vises = {t: float(v) for t, v in suivies["prix_cible"].items() if isinstance(v, (int, float)) and math.isfinite(v)}
-tab = pa.tableau(sc, sources, vcfg, rendement / 100, marge / 100, prix_vises, note=note_style)
+tab = pa.tableau(sc, sources, vcfg, rendement / 100, marge / 100, prix_vises)
 if tab.empty:
     st.info("Aucune valeur à évaluer : importez votre portefeuille, ou ajoutez des valeurs à la watchlist depuis le "
             "screener ou une fiche.", icon=":material/info:")
@@ -90,8 +75,8 @@ for col, v in zip(m, pa.VERDICTS.values()):
     col.metric(v, int(nb.get(v, 0)), border=True, help=pa.EXPLICATIONS[v])
 MAX = 150
 st.markdown(f"**{len(vue)} valeurs** retenues par les filtres" + (f", les {MAX} premières affichées" if len(vue) > MAX
-                                                                    else "") + " : au bon prix d'abord, puis selon "
-            f"la note du style {sty.STYLES[style].libelle}.")
+                                                                    else "") + " : au bon prix d'abord, puis par "
+            "note GARP.")
 
 vue = vue.head(MAX).copy()
 vue.insert(0, "symbole", vue.index)
@@ -104,7 +89,7 @@ vue["prix_vise"] = [("—" if not math.isfinite(v) else ui.num(v, 2) + (" · att
 vue["verdict"] = ui.pastilles_verdict(vue["verdict"])
 # Barre d'actions au-dessus du tableau (remplie après lui, une fois la sélection connue).
 barre = st.container()
-colonnes = ["symbole", "nom", "verdict", "ecart_achat", "cours", "prix_achat", "prix_juste", "devise", "note_style",
+colonnes = ["symbole", "nom", "verdict", "ecart_achat", "cours", "prix_achat", "prix_juste", "devise", "score",
             "moat",
             "criteres", "tri_implicite", "croissance_attendue", "secteur", "enveloppe", "prix_vise"]
 selection = ui.tableau(
@@ -112,7 +97,7 @@ selection = ui.tableau(
     selection_mode="multi-row", key=f"bon_prix_tableau_{ou}",
     column_config={
         "symbole": st.column_config.TextColumn("Ticker", pinned=True),
-        "nom": st.column_config.TextColumn("Valeur", pinned=True),
+        "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"),
         "verdict": ui.colonne_verdict(),
         "ecart_achat": ui.PCT("Cours / prix d'achat", "Négatif : le cours est sous votre prix d'achat.", 0),
         "cours": st.column_config.NumberColumn("Cours", format="%.2f"),
@@ -120,8 +105,8 @@ selection = ui.tableau(
                                                     help="Prix juste moins votre marge de sécurité."),
         "prix_juste": st.column_config.NumberColumn("Prix juste", format="%.2f"),
         "devise": "Devise",
-        "note_style": ui.SCORE(f"Note {sty.STYLES[style].libelle}",
-                               "Rang de l'entreprise selon le style choisi, de 0 à 100 (100 : la mieux classée)."),
+        "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
+                                       "de 0 à 100 (100 : la mieux classée)."),
         "moat": st.column_config.TextColumn("Moat estimé"),
         "criteres": st.column_config.TextColumn("Critères", help="Critères de qualité remplis sur critères évalués."),
         "tri_implicite": ui.PCT("TRI au cours actuel", "Rendement annuel si la croissance retenue se réalise."),

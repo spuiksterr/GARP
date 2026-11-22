@@ -89,7 +89,7 @@ def test_vigilance_homme_cle(monkeypatch):
     at = _app("accueil")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert any("Homme-clé" in df.value.to_string() for df in at.dataframe)
+    assert any("Homme-clé" in m.value for m in at.markdown)  # liste des points de vigilance
 
 
 def test_import_avec_quantites_propose_la_photo():
@@ -123,13 +123,9 @@ def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
     assert at.segmented_control[0].value == "Toutes les actions de qualité" or any(
         s.value == "Toutes les actions de qualité" for s in at.get("segmented_control"))
     assert any(m.label == "Au bon prix" for m in at.metric)
-    # Classement selon le style (GARP sans profil), boutons d'action au-dessus du tableau.
-    style = [s for s in at.get("segmented_control") if s.label == "Classer selon le style"][0]
-    assert style.value == "garp"
-    style.set_value("valeur")
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert any("note_style" in df.value.columns for df in at.dataframe)
+    # Classement par la note GARP, sans choix de style ; boutons d'action au-dessus du tableau.
+    assert not [s for s in at.get("segmented_control") if s.label == "Classer selon le style"]
+    assert any("score" in df.value.columns for df in at.dataframe)
     libelles = [b.label for b in at.button]
     assert "Ouvrir la fiche" in libelles and "Ajouter à la watchlist (0)" in libelles
 
@@ -143,24 +139,6 @@ def test_grands_investisseurs_dans_la_version_installee(monkeypatch):
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
     assert not any(b.label == "Mettre à jour" for b in at.button)
     assert any("chaque nuit par GitHub" in c.value for c in at.caption)
-
-def test_mon_style_questionnaire_et_comparaison():
-    """Le questionnaire propose un style et l'explique ; la comparaison compte les actions retenues par style."""
-    from pf import styles as sty
-
-    at = _app("style")
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert len([m for m in at.metric if m.label.split(" (")[0] in {s.libelle for s in sty.STYLES.values()}]) == 5
-    for q in sty.QUESTIONS:  # réponses « valeur » partout
-        cle = max(q.reponses, key=lambda k, q=q: q.reponses[k][1].get("valeur", 0))
-        at.radio(key=f"style_q_{q.cle}").set_value(cle)
-    [b for b in at.button if b.label == "Voir le style proposé"][0].click()
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert any("**Valeur**" in m.value for m in at.markdown)
-    assert any(b.label == "Retenir ce style" for b in at.button)
-
 
 def test_barre_laterale_de_la_version_installee(monkeypatch):
     """Version installée sans jeton (dépôt public) : ni mise à jour Yahoo ni SEC, les données de la nuit sans
@@ -223,3 +201,21 @@ def test_application_complete():
     at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=300)
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
+
+
+def test_ponderation_garp_depuis_le_tableau_de_bord():
+    """Les curseurs du tableau de bord règlent les poids de la note GARP (rétablis à la fin du test)."""
+    from pf import scoring
+
+    try:
+        at = _app("accueil")
+        at.run()
+        assert not at.exception, [str(e.value)[:300] for e in at.exception]
+        assert any(e.label.startswith("Pondération de la note GARP : Croissance 40 %") for e in at.expander)
+        at.slider(key="garp_croissance").set_value(0)
+        at.run()
+        assert not at.exception, [str(e.value)[:300] for e in at.exception]
+        assert scoring.poids_garp()["croissance"] == 0
+        assert any(e.label.startswith("Pondération de la note GARP : Croissance 0 %") for e in at.expander)
+    finally:
+        scoring.enregistrer_poids_garp(None)
