@@ -42,7 +42,7 @@ La piste « points qui montent » a servi un jour, le 18/11/2026. Le logo rempla
 |---|---|
 | `assets/blender/embleme.png` | Emblème seul, fond transparent, 1024 px : la source de tout le reste |
 | `assets/garp.png`, `assets/garp.ico` | Icône arrondie : fenêtre de l'outil, raccourcis Windows, onglet du navigateur |
-| `assets/entete.png` | Version compacte du bandeau (emblème, « G.A.R.P » en blanc, promesse en ocre, sous-titre en gris, fond anthracite arrondi) : en-tête de la barre latérale, écran d'ouverture |
+| `assets/entete.png` | Icône arrondie, « G.A.R.P » en blanc et, dessous, la promesse en ocre et le sous-titre en gris, sur fond transparent : en-tête de la barre latérale, écran d'ouverture |
 | `docs/bandeau.png` | Bandeau des README et des présentations |
 | `installateur/*.bmp` | Images de l'assistant d'installation Windows (son icône : `assets/garp.ico`) |
 
@@ -88,7 +88,7 @@ Les couleurs d'état (vert pour une hausse, rouge pour une baisse ou une exclusi
 ## Typographie
 
 - **Outil** : titres en Manrope (licence OFL, embarquée dans `static/polices/`, aucun téléchargement à l'usage), texte courant en Source Sans 3, la police de Streamlit.
-- **En-tête de la barre latérale et écran d'ouverture** : `assets/entete.png` (version compacte du bandeau), produite par `composer_icones.py`.
+- **En-tête de la barre latérale et écran d'ouverture** : `assets/entete.png` (icône, « G.A.R.P » en blanc, promesse et sous-titre), produite par `composer_icones.py`.
 - **Bandeau et présentations** : Segoe UI Bold pour le nom, Segoe UI pour l'accroche.
 - **Le nom** s'écrit toujours « G.A.R.P », avec ses points et sans point final : ni « GARP », ni « Garp », ni « G.A.R.P. ». Dans une phrase qui se termine par le nom, le point de la phrase suffit. L'expression anglaise s'écrit *Growth at a reasonable price*.
 
