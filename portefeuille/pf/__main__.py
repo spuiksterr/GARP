@@ -266,11 +266,17 @@ def cmd_investisseurs(a):
     from . import congres, investisseurs
     print("Portefeuilles 13F des investisseurs suivis (config/investisseurs.csv)…")
     r1 = investisseurs.mettre_a_jour(force=a.force, progress=print)
-    print(f"  {r1.get('nouvelles', 0)} trimestres lus" + (f", erreurs : {r1['erreurs']}" if r1.get("erreurs") else ""))
+    if r1.get("saute"):
+        print(f"  Non lus : {r1['saute']}")
+    else:
+        print(f"  {r1.get('nouvelles', 0)} trimestres lus" + (f", erreurs : {r1['erreurs']}" if r1.get("erreurs") else ""))
     print("Transactions des élus suivis (config/elus.csv)…")
     r2 = congres.mettre_a_jour(force=a.force, progress=print)
     print(f"  {r2['nouveaux']} rapports lus, dont {r2['scannes']} scannés (illisibles)"
           + (f", erreurs : {r2['erreurs']}" if r2["erreurs"] else ""))
+    if r1.get("saute"):  # visible dans le flux de la nuit (étape en orange) au lieu de « 0 trimestres lus »
+        raise SystemExit("Portefeuilles 13F non lus : adresse de contact SEC absente (secret SEC_CONTACT du dépôt "
+                         "GitHub, ou contact_sec de profil/prive.json).")
 
 
 def cmd_contexte(a):

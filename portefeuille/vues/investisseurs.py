@@ -7,7 +7,7 @@ import unicodedata
 import pandas as pd
 import streamlit as st
 
-from pf import congres, ui
+from pf import autonome, congres, ui
 from pf import investisseurs as inv
 
 sc = ui.require_data()
@@ -111,14 +111,21 @@ c1, c2 = st.columns([3, 1], vertical_alignment="center")
 c1.caption(f"Portefeuilles 13F lus le {pd.Timestamp(v13f):%d/%m/%Y à %H:%M}" if v13f else "Portefeuilles 13F jamais lus.")
 c1.caption(f"Transactions des élus lues le {pd.Timestamp(vcongres):%d/%m/%Y à %H:%M}" if vcongres
            else "Transactions des élus jamais lues.")
-if c2.button("Mettre à jour", icon=":material/refresh:", width="stretch",
-             help="Lit les nouvelles déclarations : gérants consultés au plus une fois par semaine, élus chaque jour. "
-                  "Aussi fait par la mise à jour générale."):
+if autonome.actif():
+    # Version installée : les déclarations arrivent avec les données de la nuit (lues chaque nuit par GitHub).
+    c2.caption("Relues chaque nuit par GitHub, avec les données de la nuit.")
+elif c2.button("Mettre à jour", icon=":material/refresh:", width="stretch",
+               help="Lit les nouvelles déclarations : gérants consultés au plus une fois par semaine, élus chaque "
+                    "jour. Les gérants sont aussi relus par la mise à jour complète."):
     with st.status("Lecture des déclarations…", expanded=True) as statut:
         ligne = st.empty()
         r1 = inv.mettre_a_jour(progress=lambda m: ligne.caption(m.strip()))
         r2 = congres.mettre_a_jour(progress=lambda m: ligne.caption(m.strip()))
         st.cache_data.clear()
+        if r1.get("saute"):
+            statut.update(label="Portefeuilles 13F non lus : la SEC exige une adresse de contact (contact_sec dans "
+                                "profil/prive.json, voir « Méthode et routine »).", state="error")
+            st.stop()
         statut.update(label=f"Fait : {r1.get('nouvelles', 0)} trimestres de gérants et {r2['nouveaux']} rapports d'élus lus.",
                       state="complete", expanded=False)
     st.rerun()

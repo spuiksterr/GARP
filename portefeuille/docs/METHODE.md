@@ -239,6 +239,7 @@ Page « Grands investisseurs » (espace « Explorer ») : ce que détiennent et 
 **Gérants (formulaires 13F)**
 - **Source.** Tout gérant qui détient plus de 100 millions de dollars d'actions américaines déclare ses positions à la SEC dans les 45 jours qui suivent la fin de chaque trimestre.
 - **Ce que montre la page.** Le portefeuille de chaque investisseur suivi, et ses mouvements d'un trimestre à l'autre : entrée, renforcement, allègement, sortie, d'après le nombre d'actions. S'y ajoutent les mouvements récents de tous les investisseurs et les titres qu'ils partagent (les classes d'actions d'un même émetteur sont réunies).
+- **Mise à jour.** Chaque gérant est relu au plus une fois par semaine : par la mise à jour complète (ou `pf maj`, pas la mise à jour rapide), par le bouton de la page, ou chaque nuit par GitHub pour la version installée, qui reçoit les déclarations avec les données de la nuit. La SEC exige une adresse de contact (`contact_sec` de `profil/prive.json`, secret `SEC_CONTACT` du dépôt) : sans elle, rien n'est lu, et la mise à jour le signale.
 - **Rectificatifs.** Les positions d'abord tenues confidentielles, puis révélées par un rectificatif (« NEW HOLDINGS »), sont ajoutées à leur trimestre.
 - **Tickers.** Ils viennent d'OpenFIGI (Bloomberg), à partir du code CUSIP. À défaut, un rapprochement par le nom est fait, seulement s'il est sans ambiguïté. Un clic sur une ligne de votre univers ouvre sa fiche.
 - **Limites.**
