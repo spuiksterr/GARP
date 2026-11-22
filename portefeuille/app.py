@@ -16,7 +16,7 @@ st.set_page_config(page_title="G.A.R.P", page_icon=ICONE, layout="wide")
 st.logo(str(Path(__file__).resolve().parent / "assets" / "entete.png"), size="large", icon_image=ICONE)
 st.html("""<style>
 [data-testid="stSidebarHeader"] { height: auto; padding-top: 1.5rem; padding-bottom: 1rem; align-items: center; }
-[data-testid="stSidebarLogo"] { height: auto; width: 100%; max-width: 100%; }
+[data-testid="stSidebarLogo"] { height: 5rem; max-width: 100%; object-fit: contain; }
 /* Barre du haut épurée : ni bonhomme animé ni bouton « Stop » pendant les calculs. */
 [data-testid="stStatusWidget"] { display: none; }
 /* Chiffre principal des blocs du tableau de bord, en ocre de la marque (lisible sur les deux thèmes en grand). */
