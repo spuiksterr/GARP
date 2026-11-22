@@ -13,7 +13,7 @@ strat = load_strategy()
 cfg = strat["construction"]
 version = ui.data_version()
 
-st.title("Construction de portefeuille")
+st.title("Construction automatique")
 st.caption("Un portefeuille diversifié construit uniquement par des règles, à partir de la méthode de notation de votre "
            "choix. Il sert de point de comparaison et de liste d'idées à étudier : un bon classement n'est pas une "
            "recommandation, seule l'analyse d'une valeur (/analyse-valeur) peut justifier un achat.")

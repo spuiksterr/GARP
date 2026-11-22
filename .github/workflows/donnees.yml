@@ -1,0 +1,81 @@
+name: Données de l'application
+
+# Chaque nuit après la clôture américaine : mise à jour sur les serveurs de GitHub (cache conservé d'une nuit à
+# l'autre), puis publication dans la release « donnees » : climax-*.json.gz pour l'application du téléphone,
+# climax-outil.zip pour l'outil du PC installé (pf export-outil).
+# Aucune donnée personnelle : le profil est celui d'exemple. Les sources SEC (recoupement des comptes, 13F,
+# dirigeants, ventilation du chiffre d'affaires) ne sont lues que si le secret SEC_CONTACT du dépôt donne
+# l'adresse de contact que la SEC exige ; les transactions des élus se lisent sans.
+on:
+  schedule:
+    - cron: "30 4 * * 2-6"
+  # Plus de passage à chaque envoi de branche : sans la mémoire de la veille, il refaisait une mise à jour
+  # complète (près de 2 heures). Pour essayer un export : gh workflow run donnees.yml --ref <branche>.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: donnees
+  cancel-in-progress: false
+
+jobs:
+  donnees:
+    runs-on: ubuntu-latest
+    # Sans cache (nouvelle branche, ou cache expiré après 7 jours sans passage), la mise à jour complète des
+    # quelque 1 760 valeurs dépasse 2 heures : 5 h 30, sous le maximum de 6 heures des serveurs de GitHub.
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: portefeuille
+    env:
+      PYTHONIOENCODING: utf-8
+      OPENBLAS_NUM_THREADS: "1"
+      GH_TOKEN: ${{ github.token }}
+      PF_CONTACT_SEC: ${{ secrets.SEC_CONTACT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: portefeuille/requirements.txt
+      - run: python -m pip install -e .
+
+      - name: Cache des données de la veille
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: portefeuille/data
+          key: donnees-${{ github.run_id }}
+          restore-keys: donnees-
+
+      - name: Mise à jour (complète au premier passage et chaque semaine, rapide les autres nuits)
+        run: |
+          if [ -z "${{ steps.cache.outputs.cache-matched-key }}" ]; then pf maj --complet; else pf maj --auto; fi
+
+      - name: Grands investisseurs (13F) et élus
+        continue-on-error: true
+        run: pf investisseurs
+
+      - name: Export pour l'application (avec 10 minutes de lecture des sources SEC des fiches)
+        run: pf export-app --vers ../sortie --sources-sec 10
+
+      - name: Archive pour l'outil du PC installé (Climax-Setup)
+        run: pf export-outil --vers ../sortie
+
+      - name: Garder le cache pour la nuit suivante
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: portefeuille/data
+          key: donnees-${{ github.run_id }}
+
+      - name: Publication dans la release « donnees »
+        working-directory: .
+        run: |
+          gh release view donnees >/dev/null 2>&1 || gh release create donnees --prerelease \
+            --title "Données de l'application" \
+            --notes "Fichier mis à jour chaque nuit par le flux « Données de l'application ». Ne pas supprimer."
+          gh release upload donnees sortie/climax-*.json.gz sortie/climax-outil.zip --clobber

@@ -11,6 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from . import autonome
 from .config import (
     CAS_PARTICULIERS_CSV,
     METRICS_PARQUET,
@@ -26,19 +27,46 @@ from .criteres import Critere, texte_valeur
 from .data import currency_map, load_fx, load_prices, prices_in_eur
 from .formats import eur, nombre, pct  # noqa: F401  (réexportés pour les pages)
 from .formats import nombre as num  # noqa: F401  (réexporté pour les pages : ui.num)
-from .maj import bilan, jours_depuis_complete, tout_mettre_a_jour
 from .metrics import load_metrics
 from .regards import AJUSTEMENTS_CSV
-from .scoring import build_screener
+from .scoring import build_screener, screener_prepare
 
 # Palette de référence validée (ordre fixe, jamais recyclé) : les mêmes huit teintes, à des pas différents
 # pour le fond clair et le fond sombre (validées en vision normale et en daltonisme sur chaque fond).
 THEMES = {
     "light": {"series": ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"],
-              "surface": "#fcfcfb", "infobulle": "#ffffff", "encre": "#0b0b0b", "neutre": "#f0efec"},
+              "surface": "#fcfcfb", "infobulle": "#ffffff", "encre": "#0b0b0b", "neutre": "#f0efec",
+              "accent": "#8a5a12"},
     "dark": {"series": ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300", "#9085e9", "#e66767"],
-             "surface": "#1a1a19", "infobulle": "#242422", "encre": "#f0efec", "neutre": "#383835"},
+             "surface": "#1a1a19", "infobulle": "#242422", "encre": "#f0efec", "neutre": "#383835",
+             "accent": "#c98b2e"},
 }
+# Ocre de la marque (docs/MARQUE.md) : le portefeuille et ses répartitions ; l'indice de comparaison en gris (GRIS).
+# Ocre foncé en thème clair pour le contraste. Les graphiques à plusieurs séries gardent la palette validée.
+
+# Verdicts de prix (pf/prix_achat.py) : vert au bon prix, ambre au prix correct, gris sinon ; jamais la couleur seule,
+# le mot est toujours écrit.
+COULEURS_VERDICT = {"Au bon prix": "green", "Prix correct": "orange", "À attendre": "gray", "Non évalué": "gray"}
+
+
+def accent() -> str:
+    return couleurs()["accent"]
+
+
+def colonne_verdict(label: str = "Verdict", help: str | None = None):
+    """Colonne de tableau où le verdict s'affiche en pastille colorée (valeurs : listes d'un seul verdict, voir
+    pastilles_verdict)."""
+    return st.column_config.MultiselectColumn(label, options=list(COULEURS_VERDICT),
+                                             color=list(COULEURS_VERDICT.values()), help=help)
+
+
+def pastilles_verdict(serie: pd.Series) -> pd.Series:
+    """Verdicts prêts pour colonne_verdict : chaque valeur devient une liste d'un élément."""
+    return serie.map(lambda v: [v] if isinstance(v, str) and v else [])
+
+
+def badge_verdict(verdict: str) -> None:
+    st.badge(verdict, color=COULEURS_VERDICT.get(verdict, "gray"))
 # Trame des graphiques commune aux deux modes : gris moyen lisible sur fond clair comme sombre, et
 # translucide pour les traits. Un graphique reste lisible même dessiné juste avant un changement de
 # thème (Streamlit ne relance pas la page à ce moment-là).
@@ -430,11 +458,15 @@ def screener(poids: tuple | None = None) -> pd.DataFrame:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def _screener(poids: tuple | None, version: float) -> pd.DataFrame:
-    if load_metrics().empty:
-        return pd.DataFrame()
     strat = load_strategy()
     if poids:
         strat["poids_piliers"] = dict(poids)
+    else:
+        pret = screener_prepare(strat)  # calculé par le flux de la nuit, s'il correspond aux données du poste
+        if pret is not None:
+            return pret
+    if load_metrics().empty:
+        return pd.DataFrame()
     return build_screener(strategy=strat)
 
 
@@ -472,6 +504,8 @@ def data_date() -> str | None:
 
 
 def run_update(full: bool = False, rapide: bool = False) -> dict:
+    from .maj import bilan, tout_mettre_a_jour  # import différé : la version installée ne met pas à jour
+
     with st.status("Mise à jour rapide…" if rapide else "Mise à jour des données…", expanded=True) as status:
         line = st.empty()
         res, sc = tout_mettre_a_jour(complet=full, rapide=rapide, progress=lambda msg: line.caption(msg.strip()))
@@ -502,6 +536,12 @@ def sidebar() -> None:
                 st.switch_page("vues/fiche.py")
         d = data_date()
         st.caption(f"Cours au {d}" if d else "Aucune donnée téléchargée")
+        if autonome.actif():
+            _barre_autonome()
+            st.caption("Outil d'aide à la décision, pas un conseil en investissement personnalisé.")
+            return
+        from .maj import jours_depuis_complete
+
         for ligne in st.session_state.get("bilan_maj", []):
             st.caption(ligne)
         jours = jours_depuis_complete()
@@ -524,8 +564,134 @@ def sidebar() -> None:
         st.caption("Outil d'aide à la décision, pas un conseil en investissement personnalisé.")
 
 
+def telecharger_nuit(jeton: str | None) -> bool:
+    """Version installée : télécharge et installe les données publiées la nuit sur GitHub."""
+    with st.status("Téléchargement des données de la nuit…", expanded=True) as status:
+        barre = st.progress(0.0)
+        try:
+            autonome.telecharger_donnees(jeton, progression=barre.progress)
+        except (autonome.ErreurGitHub, ValueError, OSError) as e:
+            status.update(label=f"Téléchargement impossible : {e}", state="error")
+            return False
+        st.cache_data.clear()
+        status.update(label="Données de la nuit installées", state="complete", expanded=False)
+    return True
+
+
+@st.dialog("Jeton GitHub (facultatif)")
+def _dialogue_jeton() -> None:
+    st.markdown(
+        "Les données arrivent chaque nuit du dépôt public du projet sur GitHub, sans jeton. Un jeton en "
+        "**lecture seule** n'est utile que si GitHub limite les requêtes anonymes (60 par heure) :\n\n"
+        f"1. [créer le jeton sur GitHub]({autonome.URL_CREATION_JETON}) (formulaire pré-rempli : choisissez "
+        "« Public repositories », puis « Generate token ») ;\n"
+        "2. copiez-le et collez-le ci-dessous.")
+    valeur = st.text_input("Jeton GitHub", type="password", placeholder="github_pat_…")
+    if st.button("Enregistrer", type="primary", disabled=not valeur.strip()):
+        try:
+            autonome.verifier_jeton(valeur.strip())
+        except autonome.ErreurGitHub as e:
+            st.error(str(e))
+            return
+        autonome.enregistrer_jeton(valeur)
+        st.session_state.pop("autonome_verifie", None)
+        st.rerun()
+    st.caption("Le jeton est chiffré par Windows pour votre session et n'est envoyé qu'à GitHub.")
+    if autonome.jeton() and st.button("Retirer le jeton", type="tertiary"):
+        autonome.oublier_jeton()
+        st.session_state.pop("autonome_verifie", None)
+        st.rerun()
+
+
+def _date_archive(iso: str) -> str:
+    try:
+        return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone().strftime("%d/%m/%Y à %Hh%M")
+    except ValueError:
+        return iso
+
+
+@st.cache_resource
+def _tache_nuit() -> autonome.TacheNuit:
+    """Une seule tâche de fond par processus : partagée entre les ouvertures de page."""
+    return autonome.TacheNuit()
+
+
+def _suivi_nuit(tache: autonome.TacheNuit) -> None:
+    """État de la recherche des données de la nuit ; bouton pour charger celles qui ont été téléchargées."""
+    if tache.statut == "verification":
+        st.caption("Recherche de nouvelles données…")
+    elif tache.statut == "telechargement":
+        st.progress(tache.progression, text="Téléchargement des données de la nuit…")
+    elif tache.statut == "erreur":
+        st.caption(f":orange[{tache.message}]")
+    elif tache.statut == "pret" and tache.archive:
+        st.info(f"Nouvelles données de la nuit, publiées le {_date_archive(tache.archive['date'])}.",
+                icon=":material/download_done:")
+        if st.button("Charger les nouvelles données", type="primary", icon=":material/refresh:", width="stretch"):
+            with st.spinner("Installation des données…"):
+                try:
+                    autonome.installer_en_attente(tache)
+                except (ValueError, OSError) as e:
+                    st.error(f"Installation impossible : {e}")
+                    return
+            st.cache_data.clear()
+            st.rerun(scope="app")
+    # Nouvelle version du logiciel, trouvée par la même recherche de fond.
+    installee, derniere = autonome.version_installee(), tache.version
+    jeton = autonome.jeton()
+    if installee and derniere and derniere["numero"] > installee:
+        if st.button(f"Installer la version {derniere['numero']}", icon=":material/system_update:", width="stretch"):
+            with st.spinner("Téléchargement de la nouvelle version…"):
+                try:
+                    autonome.installer_version(jeton, derniere)
+                    st.info("L'installateur s'ouvre : il fermera G.A.R.P, puis le rouvrira.")
+                except autonome.ErreurGitHub as e:
+                    st.error(str(e))
+
+
+def _barre_autonome() -> None:
+    """Barre latérale de la version installée : données de la nuit et nouvelles versions, depuis GitHub (dépôt
+    public : sans jeton, sauf si l'utilisateur en a ajouté un)."""
+    jeton = autonome.jeton()
+    tache = _tache_nuit()
+    etat = autonome.etat_local()
+    if "autonome_verifie" not in st.session_state:  # une fois par ouverture : nouvelles données, nouvelle version
+        st.session_state["autonome_verifie"] = True
+        if not etat.get("archive"):
+            # Premier lancement : rien à montrer en attendant, le téléchargement se fait sous les yeux.
+            try:
+                if not autonome.donnees_a_jour(jeton)[0] and telecharger_nuit(jeton):
+                    st.rerun()
+            except autonome.ErreurGitHub as e:
+                st.caption(f":orange[{e}]")
+        else:
+            autonome.chercher_en_arriere_plan(tache, jeton)
+    if etat.get("archive"):
+        st.caption(f"Données de la nuit publiées le {_date_archive(etat['archive'])}.")
+    # Suivi de la tâche : rafraîchi toutes les 2 secondes tant qu'elle cherche ou télécharge.
+    st.fragment(run_every=2 if tache.en_cours() else None)(_suivi_nuit)(tache)
+    if tache.statut != "pret" and st.button(
+            "Données de la nuit", icon=":material/download:", width="stretch", disabled=tache.en_cours(),
+            help="Cherche les dernières données publiées sur GitHub (cours, fondamentaux, indicateurs, scores) et les "
+                 "télécharge en arrière-plan. Fait aussi à chaque ouverture de G.A.R.P."):
+        autonome.chercher_en_arriere_plan(tache, jeton)
+        st.rerun()
+    if installee := autonome.version_installee():
+        st.caption(f"G.A.R.P version {installee}.")
+    if st.button("Jeton GitHub (facultatif)", icon=":material/key:", type="tertiary"):
+        _dialogue_jeton()
+
+
 def require_data() -> pd.DataFrame:
     sc = screener()
+    if sc.empty and autonome.actif():
+        st.info("Aucune donnée pour l'instant : les données de la nuit se téléchargent depuis GitHub, en une "
+                "minute environ.", icon=":material/download:")
+        jeton = autonome.jeton()
+        if st.button("Télécharger les données de la nuit", type="primary", icon=":material/download:"):
+            if telecharger_nuit(jeton):
+                st.rerun()
+        st.stop()
     if sc.empty:
         st.info("Aucune donnée pour l'instant. Lancez la première mise à jour (environ une heure).")
         if st.button("Télécharger les données", type="primary", icon=":material/download:"):

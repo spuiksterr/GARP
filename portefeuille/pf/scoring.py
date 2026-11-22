@@ -8,17 +8,26 @@ puis combiner les piliers avec les poids de `config/strategie.json`.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from . import criteres
-from .config import load_strategy
+from .config import CACHE_DIR, METRICS_PARQUET, ecrire_json, ecriture_atomique, lire_json, load_strategy
 from .formats import nombre, pct
 from .metrics import compute_all, load_metrics, metrics_a_jour
-from .regards import notes_frame
+from .regards import AJUSTEMENTS_CSV, notes_frame
 from .sante import health_alerts, health_points
+
+# Screener tout prêt, calculé par le flux de la nuit (pf export-outil) : la version installée l'ouvre en 0,05 s au
+# lieu de 2 s de calcul. Il ne sert que si son empreinte correspond à ce qui est sur le poste.
+SCREENER_PARQUET = CACHE_DIR / "screener.parquet"
+SCREENER_META = CACHE_DIR / "screener.meta.json"
+_CODE_DU_CALCUL = ("scoring.py", "regards.py", "criteres.py", "sante.py")
 
 PILIERS = {
     "qualite": [
@@ -165,6 +174,43 @@ def composite_score(df: pd.DataFrame, weights: dict | None = None) -> pd.DataFra
     w = pd.Series(weights, dtype=float).reindex(parts.columns).fillna(0.0)
     pts["score"] = (parts * w).sum(axis=1) / w.sum()
     return pts
+
+
+def _empreinte(strategy: dict) -> dict:
+    """Ce dont dépend le screener : stratégie, indicateurs, corrections des regards et code du calcul. Les fins de
+    ligne sont normalisées (GitHub construit sous Linux et sous Windows)."""
+    def h(octets: bytes) -> str:
+        return hashlib.sha1(octets.replace(b"\r\n", b"\n")).hexdigest()
+
+    ici = Path(__file__).resolve().parent
+    return {
+        "strategie": h(json.dumps(strategy, sort_keys=True, ensure_ascii=False).encode("utf-8")),
+        "indicateurs": h(METRICS_PARQUET.read_bytes()) if METRICS_PARQUET.exists() else "",
+        "ajustements": h(AJUSTEMENTS_CSV.read_bytes()) if AJUSTEMENTS_CSV.exists() else "",
+        "code": h(b"".join((ici / f).read_bytes() for f in _CODE_DU_CALCUL)),
+    }
+
+
+def enregistrer_screener(strategy: dict | None = None) -> pd.DataFrame:
+    """Calcule le screener et l'enregistre avec son empreinte (flux de la nuit, avant l'archive de l'outil)."""
+    strategy = strategy or load_strategy()
+    sc = build_screener(strategy=strategy)
+    ecriture_atomique(SCREENER_PARQUET, sc.to_parquet)
+    ecrire_json(SCREENER_META, _empreinte(strategy), indent=1)
+    return sc
+
+
+def screener_prepare(strategy: dict | None = None) -> pd.DataFrame | None:
+    """Le screener enregistré, s'il a été calculé avec exactement ce qui est sur le poste ; sinon None."""
+    if not SCREENER_PARQUET.exists():
+        return None
+    meta = lire_json(SCREENER_META)
+    if not meta or meta != _empreinte(strategy or load_strategy()):
+        return None
+    try:
+        return pd.read_parquet(SCREENER_PARQUET)
+    except (OSError, ValueError):
+        return None
 
 
 def build_screener(metrics: pd.DataFrame | None = None, strategy: dict | None = None) -> pd.DataFrame:

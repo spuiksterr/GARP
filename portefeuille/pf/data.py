@@ -24,11 +24,17 @@ import numpy as np
 import pandas as pd
 
 # yfinance déclenche des avertissements de dépréciation de pandas en rafale : on ne fait taire que les
-# siens, pour que ceux de notre propre code restent visibles.
+# siens, pour que ceux de notre propre code restent visibles. Il n'est importé qu'au téléchargement
+# (_yf) : 1,4 s de moins au démarrage de l'interface, qui n'en a pas besoin pour afficher.
 warnings.filterwarnings("ignore", module=r"yfinance")
-import yfinance as yf  # noqa: E402
 
-from . import esef, sec  # noqa: E402
+
+def _yf():
+    import yfinance
+
+    return yfinance
+
+from . import esef, homme_cle, sec  # noqa: E402
 
 ESEF_PAR_MAJ = 60  # nouvelles sociétés européennes lues par mise à jour (une vingtaine de secondes chacune)
 from .config import (  # noqa: E402
@@ -54,6 +60,8 @@ INFO_KEYS = [
     "recommendationMean", "recommendationKey", "numberOfAnalystOpinions", "targetMeanPrice",
     "targetLowPrice", "targetHighPrice", "sharesOutstanding", "fullTimeEmployees",
     "longBusinessSummary", "website",
+    # Risque homme-clé (pf/homme_cle.py) : part des initiés, risque du conseil selon ISS (1 à 10).
+    "heldPercentInsiders", "boardRisk",
 ]
 
 # Sections d'une fiche de fondamentaux ; sans les trois premières, aucun indicateur n'est fiable.
@@ -137,7 +145,7 @@ def _with_retry(fn: Callable, tries: int = 3, pause: float = 2.0):
 # --------------------------------------------------------------------------- fondamentaux
 
 def fetch_fundamentals(ticker: str) -> dict:
-    t = yf.Ticker(ticker)
+    t = _yf().Ticker(ticker)
     info = _with_retry(lambda: t.info) or {}
     if not info.get("marketCap") and not (info.get("currentPrice") or info.get("regularMarketPrice")):
         raise ValueError(f"{ticker} : aucune donnée renvoyée par Yahoo (ticker invalide ou renommé ?)")
@@ -146,6 +154,7 @@ def fetch_fundamentals(ticker: str) -> dict:
         "fetched": datetime.now().isoformat(timespec="seconds"),
         "info": {k: _clean(info.get(k)) for k in INFO_KEYS},
     }
+    data["info"]["dirigeants"] = homme_cle.dirigeants_yahoo(info.get("companyOfficers"))
     for key, attr in [
         ("income", "financials"), ("balance", "balance_sheet"), ("cashflow", "cashflow"),
         ("ttm_income", "ttm_income_stmt"), ("ttm_cashflow", "ttm_cashflow"),
@@ -255,7 +264,7 @@ def _download_close(tickers: list[str], start: str) -> pd.DataFrame:
     try:
         with warnings.catch_warnings():  # dépréciations pandas en rafale, émises depuis les fils de yfinance
             warnings.simplefilter("ignore")
-            raw = yf.download(
+            raw = _yf().download(
                 tickers, start=start, auto_adjust=True, progress=False, threads=True, group_by="column"
             )
     except Exception:

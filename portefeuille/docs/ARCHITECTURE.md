@@ -23,7 +23,37 @@ config/univers.csv, config/strategie.json, config/cas_particuliers.csv ───
                               pf/ui.py (cache Streamlit)     pf/__main__.py (CLI)       pf/contexte.py (textes pour Claude)
                                      │
                                      ▼
-                              vues/*.py (14 pages, app.py)
+                              vues/*.py (15 pages, app.py)
+
+Application autonome : chaque nuit, .github/workflows/donnees.yml lance pf maj sur GitHub (cache conservé),
+puis pf export-app (pf/export_app.py) publie climax-donnees.json.gz dans la release « donnees » ; l'application
+Flutter (app/) le télécharge avec un jeton en lecture seule (l'outil du PC installé, sans jeton : le dépôt est public). Aucune donnée personnelle n'y est exportée.
+Le portefeuille de l'application s'importe dans l'appareil (app/lib/import_portefeuille.dart : export de
+courtier, tableau collé ou saisie ; reconnaissance par ISIN retenu, ticker, puis nom ; poids d'après les
+montants ou les quantités × cours_eur de l'export). L'export publie aussi les méthodes de notation
+(`NOTATIONS` de pf/portfolio.py, avec leurs poids) et les six critères avec leurs seuils : app/lib/methodes.dart
+recalcule les notes à l'identique (rangs centiles pondérés). Ajouter une méthode dans `NOTATIONS` suffit pour
+qu'elle apparaisse dans l'application, si ses composantes sont dans `COLONNES` de l'export.
+Deux fichiers complémentaires (pf/export_fiches.py) : `climax-fiches.json.gz` (historique financier, repères
+et séries des multiples, description, dirigeants, ventilation) et `climax-investisseurs.json.gz` (13F, élus).
+Les calculs de l'application reprennent ceux de `pf/` : app/lib/valorisation.dart (valuation.py, prix_juste.py,
+scenarios.py), risques.dart (risques.py, simulation.py, backtest.py, en hebdomadaire), construction.dart
+(portfolio.py), suivi.dart (contribution_plan de tracker.py, regles.py), actualites.dart (actualites.py) ;
+recherche.dart ajoute la recherche personnalisée (prix juste au rendement exigé du profil, marge de sécurité).
+Les sources SEC ne sont lues sur GitHub qu'avec le secret `SEC_CONTACT` (variable `PF_CONTACT_SEC`).
+L'interface de l'application imite celle de Streamlit : app/lib/interface.dart reprend le thème de
+`.streamlit/config.toml` et les briques de pf/ui.py (titres, st.metric, encadrés, onglets, tableaux), et
+app/lib/navigation.dart les rubriques de app.py (barre latérale). Une page ajoutée au PC s'ajoute à `Rubrique`.
+
+Outil du PC installé (Climax-Setup, Windows) : cet outil lui-même, avec son Python
+(app/windows/installateur/preparer_outil.ps1). Climax.pyw → pf/autonome.py (autonome.json présent) :
+PF_DOSSIER = %LOCALAPPDATA%\Climax\donnees, PF_AUTONOME=1. Chaque nuit, pf export-outil publie
+climax-outil.zip (config/, data/cache/, data/historique/) ; la barre latérale le télécharge et l'installe
+fichier par fichier, sans toucher au profil ni au journal des transactions. Pas de pf maj sur ce poste.
+L'archive contient aussi le screener tout prêt (data/cache/screener.parquet, scoring.enregistrer_screener) avec son
+empreinte (stratégie, indicateurs, corrections des regards, code du calcul) : ui.screener le lit en 0,05 s si
+l'empreinte correspond au poste, sinon le recalcule. scipy, yfinance et pf.maj ne sont importés qu'à l'usage :
+l'interface se charge en 1,5 s environ au lieu de 10.
 
 Sources annexes, lues à part : 13F (investisseurs → sec/13f/), élus (congres → congres/),
 formulaires 4 (dirigeants), presse Google News (actualites → actualites/), composition des indices (indices).
@@ -86,11 +116,14 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `metrics` | Indicateurs par valeur (`compute_one`, ~200 lignes) et pour tout l'univers (`compute_all`) |
 | `valuation` | DCF par les « value drivers », TRI et croissance implicites |
 | `sante` | Piotroski, Altman, Beneish |
+| `homme_cle` | Risque homme-clé (0 à 10) : dirigeants Yahoo gardés dans le cache des fondamentaux (`info.dirigeants`), part des initiés, risque du conseil ISS ; corrections dans `config/homme_cle.csv` ; `pf homme-cle` relit les dirigeants sans attendre le renouvellement des fiches |
 | `moat` | Moat estimé |
 | `criteres` | Six critères de qualité remplis ou non |
 | `regards` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith) |
 | `scoring` | Filtres d'exclusion, piliers, score composite, alertes, `build_screener` |
 | `prix_juste` | Prix d'achat juste à un multiple jugé raisonnable |
+| `positions` | Photo du portefeuille : quantités par ligne prises au dernier import (`profil/positions.csv`, remplacée à chaque import) ; valorisée au dernier cours pour les poids réels (onglet Équilibre, tableau de bord, risques). À défaut, positions du journal `data/transactions.csv` (lecture seule) |
+| `prix_achat` | Prix juste au rendement exigé (modèle du TRI implicite, entrées de `export_app._valorisation`), prix d'achat après marge de sécurité, verdict ; réglages dans `profil/prix_achat.json` ; page « La bonne action au bon prix », analyse du portefeuille, en-tête de la fiche et tableau de bord |
 | `scenarios` | Scénarios à 5 ans enregistrés (`profil/scenarios.csv`) |
 | `regles` | Conditions de vente chiffrées (`profil/regles_vente.csv`) |
 | `photos` | Photo datée du screener à chaque mise à jour normale ou complète (`data/historique/scores.parquet`) : évolution du rang, changements de statut, futur test sans biais |
@@ -115,10 +148,17 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `ui` | Briques Streamlit communes : thème, graphiques, tableaux, données en cache, barre latérale |
 | `contexte` | Synthèses texte pour la CLI et les commandes Claude |
 | `__main__` | Ligne de commande `pf <commande>` |
+| `bureau` | Version bureau : fenêtre pywebview ouverte aussitôt sur un écran d'attente en trois étapes (moteur, outil et données, interface, avec le temps écoulé), puis branchée au serveur sans console (`pf bureau`, `Climax.pyw`, raccourcis par `creer_raccourcis.ps1`) ; serveur sur 127.0.0.1 |
+| `serveur` | Lanceur du serveur de la fenêtre (`python -m pf.serveur app.py …`) : charge pf.ui puis démarre Streamlit dans le même processus, pour que la première page trouve les modules en mémoire |
+| `autonome` | Version installée par `Climax-Setup` (repérée par `autonome.json` à côté du code) : données dans `%LOCALAPPDATA%\Climax\donnees`, accès anonyme au dépôt public (jeton GitHub facultatif, chiffré par Windows), téléchargement et installation de `climax-outil.zip`, nouvelles versions |
+| `export_outil` | Archive des données publiques (configuration, cache, historique des scores) pour la version installée : `pf export-outil`, publiée chaque nuit |
+| `import_portefeuille` | Import d'un portefeuille (export du courtier en CSV ou classeur Excel, tableau collé, liste tapée ; chaque feuille Excel avec une ligne d'en-tête reconnue devient un tableau tabulé, `textes_fichier`) : mêmes règles que `app/lib/import_portefeuille.dart` ; page `vues/importer.py` |
+| `export_app` | Fichier de données de l'application (`pf export-app`) : valeurs (avec le cours en euros), cours hebdomadaires, rangs, sans donnée personnelle |
+| `mobile` | Accès depuis le téléphone : `tailscale serve` relaie le serveur local sur le réseau privé (`pf mobile`) |
 
 ## Pages (`vues/`)
 
-Déclarées dans `app.py` (menu Investir / Analyser / Comprendre). Chaque page est un script Streamlit qui lit ses données par `pf.ui` (jamais directement les fichiers du cache). La plus grosse est `fiche.py` (~630 lignes, sections Résumé, Prix juste, Activité, Historique, Valorisation, Thèse).
+Déclarées dans `app.py` : Tableau de bord, « Trouver » (la bonne action au bon prix, screener, fiche, watchlist), « Mon portefeuille » (analyse, import), « Explorer » pour le reste ; tous dépliés (`st.navigation(expanded=True)`). Chaque page est un script Streamlit qui lit ses données par `pf.ui` (jamais directement les fichiers du cache). La plus grosse est `fiche.py` (~630 lignes, sections Résumé, Prix juste, Activité, Historique, Valorisation, Thèse).
 
 ## Recettes
 

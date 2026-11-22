@@ -29,26 +29,35 @@ if sum(poids.values()) == 0:
     poids = {k: 1 for k in poids}
 sc = ui.screener(tuple(sorted((k, v / 100) for k, v in poids.items())))
 
-# Deux lignes de filtres : sur une seule, les choix (« Exclu », « Étroit ») et les libellés étaient coupés.
-f = st.columns([1.1, 1.4, 1.9, 2.6])
+# Les filtres courants en tête ; les autres dans un volet, pour que le tableau arrive vite à l'écran.
+f = st.columns([1.1, 1.4, 3])
 env = f[0].segmented_control("Compte", ["PEA", "CTO"], selection_mode="multi", default=["PEA", "CTO"])
 statut = f[1].segmented_control("Statut", ["Éligible", "Exclu"], selection_mode="multi", default=["Éligible"])
-moat = f[2].segmented_control("Moat estimé", ["Large", "Étroit", "Faible"], selection_mode="multi",
-                              help="Traces d'un avantage concurrentiel dans les comptes. Ce n'est pas le moat de Morningstar.")
-recherche = f[3].text_input("Recherche", placeholder="Nom ou ticker")
-g = st.columns([2, 2, 1.2, 1.2, 1.5])
-secteurs = g[0].multiselect("Secteurs", sorted(sc["secteur"].dropna().unique()), placeholder="Tous les secteurs")
-pays = g[1].multiselect("Pays", sorted(sc["pays"].dropna().unique()), placeholder="Tous les pays")
-pfcf_max = g[2].number_input("P/FCF maximum", min_value=0, max_value=200, value=0, step=5,
-                             help="Prix / flux de trésorerie disponible des 12 derniers mois. 0 : pas de limite. Écarte aussi les valeurs "
-                                  "sans FCF positif, ainsi que les banques et assureurs, pour qui ce ratio n'a pas de sens.")
-crit_min = g[3].number_input("Critères min.", min_value=0, max_value=6, value=0, step=1,
-                             help="Nombre minimal de critères de qualité remplis, sur six : croissance du CA et du free cash flow, ROCE, "
-                                  "dette nette / FCF, nombre d'actions, marge de FCF. Détail et seuils sur la fiche de chaque valeur.")
-g[4].markdown('<div style="height:1.9rem"></div>', unsafe_allow_html=True)  # aligne l'interrupteur sur les champs
-sous_histoire = g[4].toggle("P/FCF décoté", value=False,
-                            help="Ne garder que les actions dont le P/FCF est inférieur à leur niveau médian des dernières clôtures "
-                                 "annuelles (six au plus).")
+recherche = f[2].text_input("Recherche", placeholder="Nom ou ticker")
+actifs = sum(bool(st.session_state.get(k)) for k in ("scr_moat", "scr_secteurs", "scr_pays", "scr_pfcf", "scr_crit",
+                                                     "scr_decote"))
+with st.expander("Plus de filtres" + (f" ({actifs} actif{'s' if actifs > 1 else ''})" if actifs else ""),
+                 icon=":material/filter_list:"):
+    g = st.columns([1.6, 2, 2])
+    moat = g[0].segmented_control("Moat estimé", ["Large", "Étroit", "Faible"], selection_mode="multi", key="scr_moat",
+                                  help="Traces d'un avantage concurrentiel dans les comptes. Ce n'est pas le moat de "
+                                       "Morningstar.")
+    secteurs = g[1].multiselect("Secteurs", sorted(sc["secteur"].dropna().unique()), placeholder="Tous les secteurs",
+                                key="scr_secteurs")
+    pays = g[2].multiselect("Pays", sorted(sc["pays"].dropna().unique()), placeholder="Tous les pays", key="scr_pays")
+    h = st.columns([1.2, 1.2, 1.5, 2])
+    pfcf_max = h[0].number_input("P/FCF maximum", min_value=0, max_value=200, value=0, step=5, key="scr_pfcf",
+                                 help="Prix / flux de trésorerie disponible des 12 derniers mois. 0 : pas de limite. Écarte "
+                                      "aussi les valeurs sans FCF positif, ainsi que les banques et assureurs, pour qui ce "
+                                      "ratio n'a pas de sens.")
+    crit_min = h[1].number_input("Critères min.", min_value=0, max_value=6, value=0, step=1, key="scr_crit",
+                                 help="Nombre minimal de critères de qualité remplis, sur six : croissance du CA et du free "
+                                      "cash flow, ROCE, dette nette / FCF, nombre d'actions, marge de FCF. Détail et seuils "
+                                      "sur la fiche de chaque valeur.")
+    h[2].markdown('<div style="height:1.9rem"></div>', unsafe_allow_html=True)  # aligne l'interrupteur sur les champs
+    sous_histoire = h[2].toggle("P/FCF décoté", value=False, key="scr_decote",
+                                help="Ne garder que les actions dont le P/FCF est inférieur à leur niveau médian des "
+                                     "dernières clôtures annuelles (six au plus).")
 
 view = sc.copy()
 if env:
@@ -71,18 +80,28 @@ if recherche:
     q = recherche.lower()
     view = view[view["nom"].str.lower().str.contains(q, na=False, regex=False) | view.index.str.lower().str.contains(q, regex=False)]
 
-st.markdown(f"**{len(view)} valeurs**")
+t = st.columns([3, 1], vertical_alignment="bottom")
+t[0].markdown(f"**{len(view)} valeurs**")
+avancees = t[1].toggle("Colonnes avancées", key="scr_avancees",
+                       help="Toutes les mesures : piliers, quatre regards, signaux de santé, six critères, P/FCF, "
+                            "volatilité, risque homme-clé…")
 st.caption("Cliquez sur une valeur pour ouvrir sa fiche. La case à gauche d'une ligne l'ajoute à la watchlist "
            "(cochée = suivie) ; décochez-la pour la retirer.")
+# Les colonnes utiles pour juger « de la croissance à un prix raisonnable » ; le reste sur demande.
+ESSENTIELLES = ["rang", "nom", "enveloppe", "secteur", "score", "moat", "criteres", "croissance_attendue",
+                "per_prospectif", "ecart_per_historique", "tri_implicite"]
 cols = ["rang", "nom", "enveloppe", "secteur", "score", "score_piliers", "moat", "criteres", "exercices_historique",
         "ecart_per_historique", "p_fcf", "p_fcf_net", "ecart_p_fcf_historique", "regards_total", "buffett", "munger", "fisher", "smith",
-        "piotroski", "altman_z", "beneish_m", "verif_sec",
+        "piotroski", "altman_z", "beneish_m", "verif_sec", "homme_cle",
         "qualite", "croissance", "valorisation", "momentum", "rentabilite",
         "marge_operationnelle", "croissance_attendue", "per_prospectif", "rendement_fcf",
         "croissance_implicite", "tri_implicite", "mom_12_1", "volatilite",
         "crit_ca", "crit_fcf", "crit_roce", "crit_dette", "crit_actions", "crit_marge", "capitalisation_eur", "alertes", "motifs_exclusion"]
+if not avancees:
+    cols = ESSENTIELLES
 show = view.reindex(columns=cols).copy()  # une colonne pas encore calculée reste vide
-show["capitalisation_eur"] = show["capitalisation_eur"] / 1e9
+if "capitalisation_eur" in show.columns:
+    show["capitalisation_eur"] = show["capitalisation_eur"] / 1e9
 show = ui.as_pct_cols(show, ["rentabilite", "marge_operationnelle", "croissance_attendue", "rendement_fcf",
                              "croissance_implicite", "tri_implicite", "mom_12_1", "volatilite", "ecart_per_historique",
                              "ecart_p_fcf_historique", "crit_ca", "crit_fcf", "crit_roce", "crit_actions", "crit_marge"])
@@ -150,6 +169,10 @@ ui.tableau(
         "altman_z": st.column_config.NumberColumn("Altman", format="%.1f",
                                                   help="Risque de faillite : sous 1,8 zone fragile, au-dessus de 3 zone sûre."),
         "beneish_m": st.column_config.NumberColumn("Beneish", format="%.2f", help="Au-dessus de -1,78 : comptes à examiner, ou forte croissance."),
+        "homme_cle": st.column_config.NumberColumn(
+            "Homme-clé / 10", format="%.1f",
+            help="Risque homme-clé : dépendance à une personne (fondateur aux commandes, PDG, âge du dirigeant, part des "
+                 "initiés, conseil peu indépendant). 6 ou plus : élevé. Détail dans la fiche, section Résumé."),
         "verif_sec": st.column_config.TextColumn("Vérif. SEC", help="Sociétés américaines : comptes Yahoo recoupés avec ceux déposés à la SEC "
                                                  "(CA, résultat net, flux d'exploitation, fonds propres, bilan ; tolérance 3 %)."),
         "qualite": ui.SCORE("Qualité"), "croissance": ui.SCORE("Croiss."),

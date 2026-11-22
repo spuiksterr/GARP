@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 
 from .config import MODELE_CSV, load_model_portfolio, load_strategy
 from .data import currency_map, load_fx, load_prices, prices_in_eur
@@ -55,6 +54,8 @@ NOTATIONS = {
     "valeur": ("Valeur", "Les moins chères par rapport à leurs flux, avec un minimum de qualité.",
                {"valorisation": 0.7, "qualite": 0.3}),
     "momentum": ("Momentum", "Les actions qui montent le plus sur 12 mois (hors dernier mois).", {"momentum": 1}),
+    "criteres": ("Six critères", "La part des six critères de qualité remplis : croissance du chiffre d'affaires "
+                 "et du free cash flow, ROCE, dette, nombre d'actions, marge de FCF.", {"criteres_part": 1}),
 }
 
 # Indicateurs moyens affichés pour un portefeuille (moyenne pondérée)
@@ -264,6 +265,8 @@ def weight(
         for s in sec.unique():
             mask = (sec == s).values.astype(float)
             cons.append({"type": "ineq", "fun": lambda x, m=mask: sector_max - x @ m})
+        from scipy.optimize import minimize  # import différé (démarrage)
+
         res = minimize(lambda x: x @ cov @ x, np.full(n, 1 / n), bounds=bounds, constraints=cons,
                        method="SLSQP", options={"maxiter": 500})
         w = pd.Series(res.x if res.success else np.full(n, 1 / n), index=names).reindex(tickers).fillna(w_min)
@@ -307,6 +310,40 @@ def model_weights(path: Path = MODELE_CSV) -> pd.Series:
         return pd.Series(dtype=float)
     w = mp["poids_cible"].astype(float)  # saisis en % ou en fraction : la normalisation couvre les deux
     return (w / w.sum()).rename("poids")
+
+
+COLONNES_MODELE = ["ticker", "nom", "enveloppe", "poche", "conviction", "poids_cible", "these", "risque_principal",
+                   "condition_vente", "alternative"]
+
+
+def nouvelle_composition(existant: pd.DataFrame, lignes: list[tuple[str, str, str, float]],
+                         noms: dict[str, str] | None = None) -> pd.DataFrame:
+    """Composition modifiée dans l'outil : `lignes` = (ticker, compte, poche, poids). Les poids sont ramenés à 100 %
+    (deux décimales) ; une valeur citée deux fois cumule ses poids ; les colonnes déjà remplies d'une valeur (thèse,
+    condition de vente…) sont gardées. Lève ValueError si aucune ligne n'a de poids positif."""
+    cumul: dict[str, list] = {}
+    for ticker, compte, poche, poids in lignes:
+        if not ticker or not (isinstance(poids, (int, float)) and math.isfinite(poids)) or poids <= 0:
+            continue
+        if ticker in cumul:
+            cumul[ticker][2] += float(poids)
+        else:
+            cumul[ticker] = [compte or "CTO", poche or "Cœur", float(poids)]
+    total = sum(v[2] for v in cumul.values())
+    if total <= 0:
+        raise ValueError("aucune ligne avec un poids positif")
+    anciennes = existant.reset_index() if existant.index.name == "ticker" else existant
+    colonnes = COLONNES_MODELE + [c for c in anciennes.columns if c not in COLONNES_MODELE]
+    deja = anciennes.set_index("ticker") if "ticker" in anciennes.columns else pd.DataFrame()
+    rangs = []
+    for ticker, (compte, poche, poids) in sorted(cumul.items(), key=lambda x: -x[1][2]):
+        r = {c: "" for c in colonnes}
+        if ticker in deja.index:
+            r.update({c: ("" if pd.isna(v) else v) for c, v in deja.loc[ticker].items() if c in r})
+        r.update(ticker=ticker, enveloppe=compte, poche=poche, poids_cible=round(poids / total * 100, 2))
+        r["nom"] = r["nom"] or (noms or {}).get(ticker, ticker)
+        rangs.append(r)
+    return pd.DataFrame(rangs, columns=colonnes)
 
 
 def compte_principal(w: pd.Series | None = None, mp: pd.DataFrame | None = None) -> str:

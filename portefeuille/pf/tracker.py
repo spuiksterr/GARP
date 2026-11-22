@@ -21,7 +21,6 @@ from datetime import date, datetime
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import brentq
 
 from .config import SAUVEGARDES_DIR, TRANSACTIONS_CSV, read_csv_fr, write_csv_fr
 from .data import currency_map, fx_rate, load_fx, load_prices, prices_in_eur
@@ -289,6 +288,8 @@ def xirr(dates: list, amounts: list[float]) -> float:
         return float((amt / (1 + rate) ** years).sum())
 
     try:
+        from scipy.optimize import brentq  # import différé (démarrage)
+
         return brentq(npv, -0.99, 10.0)
     except ValueError:
         return math.nan

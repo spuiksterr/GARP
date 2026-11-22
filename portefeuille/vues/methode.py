@@ -2,7 +2,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from pf import ui
+from pf import autonome, ui
 from pf.data import load_controles
 
 doc = Path(__file__).resolve().parent.parent / "docs" / "METHODE.md"
@@ -32,6 +32,10 @@ with st.expander("État des sources et des recoupements", expanded=True):
                 f"{v.get('Confirmé', 0)} confirmées, {v.get('Écart', 0)} avec un écart de plus de 3 %, "
                 f"{v.get('Non comparable', 0)} non comparables ; Yahoo en retard d'un exercice pour {retard}."
             )
+        elif autonome.actif():
+            st.markdown("- **Comptes des sociétés américaines** : pas encore recoupés avec la SEC. Le flux de la nuit "
+                        "le fera sur GitHub dès que l'adresse de contact exigée par la SEC y sera renseignée (secret "
+                        "SEC_CONTACT du dépôt).")
         else:
             st.markdown("- **Comptes des sociétés américaines** : pas encore recoupés avec la SEC "
                         "(renseigner « contact_sec » dans profil/prive.json, puis mettre à jour).")
@@ -40,4 +44,8 @@ with st.expander("État des sources et des recoupements", expanded=True):
     st.caption("Les sociétés européennes n'ont pas de seconde source gratuite et à jour : leurs chiffres clés "
                "se vérifient dans le rapport annuel lors d'une analyse approfondie.")
 
-st.markdown(doc.read_text(encoding="utf-8"))
+if doc.exists():
+    st.markdown(doc.read_text(encoding="utf-8"))
+else:  # installation incomplète : la page reste utilisable
+    st.info("Le document de méthode est absent de cette installation : réinstallez G.A.R.P, ou lisez "
+            "portefeuille/docs/METHODE.md sur GitHub.", icon=":material/menu_book:")

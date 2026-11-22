@@ -1,4 +1,8 @@
-# Climax
+![G.A.R.P : la croissance, au juste prix.](portefeuille/docs/bandeau.png)
+
+# G.A.R.P
+
+*Growth at a reasonable price* : la croissance, au juste prix. Le projet s'appelait Climax jusqu'au 18/11/2026 ; le dépôt, les fichiers et les dossiers techniques gardent ce nom.
 
 Application personnelle d'analyse d'actions et de construction de portefeuille de long terme, pensée pour un investisseur français (PEA et compte-titres).
 
@@ -17,6 +21,10 @@ installer.bat   :: une seule fois : environnement Python et premier télécharge
 lancer.bat      :: interface dans le navigateur, http://localhost:8501
 ```
 
+Version bureau : icône **G.A.R.P (projet)** (créée par `portefeuille\creer_raccourcis.ps1`), ou `pf bureau`. Version téléphone : `pf mobile`, par le réseau privé Tailscale (voir le README détaillé).
+
+**Application autonome** (Android et Windows, sans PC allumé) : GitHub calcule les données chaque nuit et les publie ; l'application s'installe et se met à jour depuis les Releases du dépôt. Voir [app/README.md](app/README.md).
+
 Ligne de commande : `portefeuille\.venv\Scripts\python.exe -m pf --help`, depuis `portefeuille/`.
 
 ## Organisation
@@ -29,6 +37,8 @@ Ligne de commande : `portefeuille\.venv\Scripts\python.exe -m pf --help`, depuis
 | `portefeuille/vues/`, `portefeuille/app.py` | Interface Streamlit |
 | `portefeuille/tests/` | Tests (`pytest tests -q`, et `-m pages` pour l'affichage) |
 | `portefeuille/config/` | Univers, réglages, portefeuille modèle et listes de suivi |
+| [app/](app/README.md) | Application Android et Windows (Flutter) : données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
+| [portefeuille/docs/MARQUE.md](portefeuille/docs/MARQUE.md) | Marque : positionnement, logo, couleurs, ton, textes de présentation |
 | `.claude/skills/` | Commandes Claude Code |
 | [FEUILLE_DE_ROUTE.md](FEUILLE_DE_ROUTE.md) | Améliorations prévues, en tickets confiés à des agents |
 | [CLAUDE.md](CLAUDE.md) | Conventions de travail pour Claude |

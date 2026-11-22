@@ -58,3 +58,131 @@ def test_simulation_page_risques():
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
     assert any("Alphabet" in m.value and "→" in m.value for m in at.markdown)
     assert any("Nombre effectif de lignes" in df.value.to_string() for df in at.dataframe)
+
+
+def test_import_d_un_portefeuille_colle():
+    """Lignes collées, lues puis présentées pour vérification (sans enregistrer)."""
+    at = _app("importer")
+    at.run()
+    at.text_area[0].set_value("Air Liquide 30\nMSFT 50\nAXA 20\nSociété inconnue 5")
+    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    metriques = {m.label: m.value for m in at.metric}
+    assert metriques["Lignes retenues"] == "4" and metriques["Hors des données"] == "1"
+    assert any(b.label.startswith("Enregistrer (3 lignes)") for b in at.button)
+
+
+def test_vigilance_homme_cle(monkeypatch):
+    """Une ligne relue au risque homme-clé élevé, les autres sans note (cases vides) : le tableau de bord le signale."""
+    import yfinance
+
+    from pf import homme_cle
+
+    class Faux:
+        def __init__(self, ticker):
+            self.info = {"companyOfficers": [{"name": "Test Fondateur", "title": "Founder, Chairman & CEO", "age": 71}],
+                         "heldPercentInsiders": 0.4}
+
+    monkeypatch.setattr(yfinance, "Ticker", Faux)
+    homme_cle.relire(["MSFT"], pause=0)
+    at = _app("accueil")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert any("Homme-clé" in df.value.to_string() for df in at.dataframe)
+
+
+def test_import_avec_quantites_propose_la_photo():
+    """Lignes avec quantités : l'enregistrement de la photo du portefeuille est proposé, pour toutes les lignes."""
+    at = _app("importer")
+    at.run()
+    at.text_area[0].set_value("Nom;Quantité\nAir Liquide;10\nAlphabet;5\nLVMH;2")
+    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    bascule = [t for t in at.toggle if t.label.startswith("Enregistrer aussi mes quantités")][0]
+    assert "(3 lignes)" in bascule.label  # la photo remplace tout : rien n'est écarté
+    assert bascule.value
+
+
+def test_mon_portefeuille_analyse_et_equilibre_propose():
+    """Analyse des lignes (verdict de prix, qualité) et onglet « Équilibre » : poids réels du journal face aux cibles."""
+    at = _app("modele")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert any(m.label == "Hors des filtres" for m in at.metric)
+    assert any("verdict" in df.value.columns for df in at.dataframe)  # analyse des lignes
+    assert any(m.label == "Lignes loin de leur cible" for m in at.metric)  # onglet Équilibre (journal du jeu d'essai)
+    assert any("a_ajuster_eur" in df.value.columns for df in at.dataframe)
+
+
+def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
+    at = _app("prix_achat")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert at.segmented_control[0].value == "Toutes les actions de qualité" or any(
+        s.value == "Toutes les actions de qualité" for s in at.get("segmented_control"))
+    assert any(m.label == "Au bon prix" for m in at.metric)
+
+
+def test_barre_laterale_de_la_version_installee(monkeypatch):
+    """Version installée sans jeton (dépôt public) : ni mise à jour Yahoo ni SEC, les données de la nuit sans
+    jeton, et le jeton proposé en option."""
+    from streamlit.testing.v1 import AppTest
+
+    from pf import autonome
+
+    monkeypatch.setenv("PF_AUTONOME", "1")
+    monkeypatch.setattr(autonome, "jeton", lambda: None)
+    monkeypatch.setattr(autonome, "etat_local", lambda: {"archive": "2026-11-18T00:18:59Z"})
+    lancees = []
+    monkeypatch.setattr(autonome, "chercher_en_arriere_plan", lambda tache, jeton_: lancees.append(jeton_))
+    warnings.filterwarnings("ignore")
+    os.chdir(RACINE)
+    at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=300)
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    libelles = [b.label for b in at.sidebar.button]
+    assert "Données de la nuit" in libelles and "Jeton GitHub (facultatif)" in libelles
+    assert "Mise à jour rapide" not in libelles and "Relier à GitHub" not in libelles
+    assert lancees == [None]  # recherche anonyme
+
+
+def test_nouvelles_donnees_proposees_sans_attendre(monkeypatch):
+    """Version installée avec des données : la page s'affiche aussitôt, la recherche part en arrière-plan, et des
+    données téléchargées entre-temps sont proposées au chargement."""
+    from streamlit.testing.v1 import AppTest
+
+    from pf import autonome, ui
+
+    monkeypatch.setenv("PF_AUTONOME", "1")
+    monkeypatch.setattr(autonome, "jeton", lambda: "jeton")
+    monkeypatch.setattr(autonome, "etat_local", lambda: {"archive": "2026-11-18T00:18:59Z"})
+    lancees = []
+
+    def recherche_simulee(tache, jeton_):
+        lancees.append(jeton_)
+        tache.statut, tache.archive = "pret", {"id": 1, "taille": 1, "date": "2026-11-19T00:18:59Z"}
+        tache.fichier = Path("inutile.zip")
+
+    monkeypatch.setattr(autonome, "chercher_en_arriere_plan", recherche_simulee)
+    ui._tache_nuit.clear()
+    warnings.filterwarnings("ignore")
+    os.chdir(RACINE)
+    at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=300)
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert lancees == ["jeton"]
+    assert any(b.label == "Charger les nouvelles données" for b in at.sidebar.button)
+    ui._tache_nuit.clear()
+
+
+def test_application_complete():
+    """app.py : configuration de la page (icône), navigation et barre latérale."""
+    from streamlit.testing.v1 import AppTest
+
+    warnings.filterwarnings("ignore")
+    os.chdir(RACINE)
+    at = AppTest.from_file(str(RACINE / "app.py"), default_timeout=300)
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]

@@ -16,14 +16,30 @@ La méthode complète est dans [docs/METHODE.md](docs/METHODE.md) (aussi visible
 ## Démarrer
 
 1. Double-cliquez sur `installer.bat` (une seule fois : environnement Python et premier téléchargement des données, environ 5 minutes). Déjà fait sur ce poste.
-2. Double-cliquez sur `lancer.bat` : l'interface s'ouvre dans le navigateur sur http://localhost:8501.
+2. Ouvrez **G.A.R.P (projet)** (icône sur le bureau et dans le menu Démarrer ; « G.A.R.P » tout court est la version installée par `Climax-Setup`) : l'application s'ouvre dans sa propre fenêtre, et s'arrête quand on la ferme. Raccourcis à recréer après un déplacement du dossier : clic droit sur `creer_raccourcis.ps1` > « Exécuter avec PowerShell ». Toujours possible : `lancer.bat`, qui l'ouvre dans le navigateur sur http://localhost:8501. La fenêtre est toujours en thème sombre.
+
+**Sur un autre PC, sans Python ni ce dossier** : l'installateur `Climax-Setup-b<n>.exe` des Releases GitHub installe ce même outil avec tout ce qu'il lui faut (voir [app/README.md](../app/README.md)). Il se relie au dépôt par un jeton en lecture et télécharge chaque nuit les données calculées par GitHub (`pf export-outil`) au lieu de les calculer ; « Importer mon portefeuille » reprend les lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`).
 3. Dans l'interface (barre latérale), bouton « Mise à jour rapide » avant chaque session : cours, changes et scores en quelques minutes. Une fois par semaine, « Mise à jour complète » : fondamentaux par roulement et comptes déposés (SEC, rapports européens), environ 10 minutes. La barre latérale signale une mise à jour complète vieille de plus d'une semaine.
+
+## Sur le téléphone
+
+L'application tourne sur le PC ; le téléphone y accède de partout par un réseau privé chiffré (Tailscale, gratuit
+pour un usage personnel). Rien n'est ouvert sur Internet et vos données restent sur le PC.
+
+1. Installez Tailscale sur le PC et sur le téléphone (https://tailscale.com/download, ou l'App Store / le Play
+   Store), et connectez-vous **avec le même compte** sur les deux.
+2. Sur le PC : `.venv\Scripts\python.exe -m pf mobile`. La commande affiche l'adresse à ouvrir sur le téléphone
+   (`https://<nom-du-pc>.<…>.ts.net`). À faire une fois : le réglage est mémorisé par Tailscale.
+3. Sur le téléphone : ouvrez cette adresse, puis menu du navigateur > « Ajouter à l'écran d'accueil ».
+
+Le PC doit être allumé et l'application lancée (fenêtre G.A.R.P ouverte, ou `lancer.bat` pour la laisser tourner
+sans fenêtre). `pf mobile --arreter` coupe l'accès.
 
 ## Routine conseillée
 
 | Quand | Quoi |
 |---|---|
-| Chaque mois | Mise à jour, alertes du tableau de bord, page « Apport du mois », saisie des ordres exécutés |
+| Chaque mois | Mise à jour, tableau de bord, « La bonne action au bon prix », proposition d'apport (onglet « Équilibre » du portefeuille) |
 | Chaque trimestre | `/revue-portefeuille` dans Claude Code après les publications de résultats |
 | Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleurs scores hors portefeuille |
 | Chaque année | Bilan contre l'ETF MSCI World, rééquilibrage par les apports |
@@ -40,6 +56,7 @@ Depuis ce dossier : `.venv\Scripts\python.exe -m pf <commande>`, ou `.venv\Scrip
 | `risques` | Risques du portefeuille : concentration, devises, corrélations, pertes passées, scénarios de choc |
 | `idees` | Valeurs retenues par plusieurs méthodes de notation, et titres détenus par plusieurs grands investisseurs |
 | `regards --top 50` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith) ; `--tous` pour toutes les actions, exclues comprises |
+| `homme-cle` | Risque homme-clé (0 à 10) du portefeuille et de la watchlist, en relisant tout de suite leurs dirigeants ; `homme-cle TSLA META` pour des valeurs précises, `--tous` pour l'univers (environ 40 minutes) |
 | `esef` | Allonge l'historique des valeurs européennes avec leurs rapports annuels (ESEF). Premier passage : deux à trois heures, au rythme imposé par la base ; ensuite `maj` s'en charge |
 | `investisseurs` | Portefeuilles 13F des grands investisseurs suivis et transactions des élus américains (aussi fait par `maj` et par le bouton de la page « Grands investisseurs ») ; `--force` pour tout relire |
 | `indices` | Ajoute à l'univers les nouveaux entrants du S&P 500, du STOXX 600 et du Nasdaq Global Select (au moins 1 milliard de dollars, vérifié auprès de Yahoo ; `--sans-nasdaq` pour aller vite). À lancer chaque trimestre, puis `maj` |
@@ -90,9 +107,9 @@ Vos fichiers personnels sont dans `profil/`. Ce dossier n'est pas envoyé sur Gi
 
 Une ligne déjà détenue s'enregistre comme une opération `REPRISE` : quantité, PRU et coût total en euros indiqués par le courtier (colonne `montant_eur`). Le prix de revient et les plus-values latentes sont ainsi ceux du courtier. La performance, elle, part de la valeur de marché du jour de la reprise : les gains acquis avant le suivi ne la gonflent pas, et la comparaison avec l'ETF reste équitable.
 
-Watchlist : page « Watchlist » (menu Analyser). On y ajoute une valeur depuis la page elle-même, depuis le bouton « Ajouter à la watchlist » de sa fiche, ou en cochant une ligne du screener ; un clic sur une ligne ouvre la fiche. Elle est enregistrée dans `profil/watchlist.csv`, avec la date et le cours d'ajout. La liste de surveillance (`profil/surveillance.csv`, conditions d'entrée décidées lors des analyses) s'y consulte dans un second onglet.
+Watchlist : page « Watchlist » (espace « Acheter au bon prix »). On y ajoute une valeur depuis la page elle-même, depuis le bouton « Ajouter à la watchlist » de sa fiche, ou en cochant une ligne du screener ; un clic sur une ligne ouvre la fiche. Elle est enregistrée dans `profil/watchlist.csv`, avec la date et le cours d'ajout. La liste de surveillance (`profil/surveillance.csv`, conditions d'entrée décidées lors des analyses) s'y consulte dans un second onglet.
 
-Grands investisseurs : page du menu Analyser. On y voit les portefeuilles déclarés (formulaires 13F) de 16 investisseurs reconnus (Buffett, Ackman, Li Lu, Klarman, Terry Smith, Nick Train…) et leurs mouvements trimestriels, ainsi que les transactions déclarées par 9 élus de la Chambre des représentants (Nancy Pelosi…). Les listes se modifient dans l'onglet « Gérer les listes » (fichiers `config/investisseurs.csv` et `config/elus.csv`). Méthode et limites : `docs/METHODE.md`, section « Grands investisseurs ».
+Grands investisseurs : page de l'espace « Explorer ». On y voit les portefeuilles déclarés (formulaires 13F) de 16 investisseurs reconnus (Buffett, Ackman, Li Lu, Klarman, Terry Smith, Nick Train…) et leurs mouvements trimestriels, ainsi que les transactions déclarées par 9 élus de la Chambre des représentants (Nancy Pelosi…). Les listes se modifient dans l'onglet « Gérer les listes » (fichiers `config/investisseurs.csv` et `config/elus.csv`). Méthode et limites : `docs/METHODE.md`, section « Grands investisseurs ».
 
 Prix visé : dans la fiche, la section « Prix juste » calcule le cours auquel l'action se paierait au multiple choisi (P/FCF, P/FCF hors SBC, PER ou prix / chiffre d'affaires), avec les médianes historiques comme repères. Le bouton « Ajouter à la watchlist » de cette section enregistre ce prix. Quand le cours passe dessous, la watchlist et le tableau de bord le signalent. Méthode et limites : `docs/METHODE.md`, section « Prix juste et prix visé ».
 
@@ -102,10 +119,21 @@ Sécurité : l'interface n'est accessible que depuis cet ordinateur (`.streamlit
 
 Une valeur hors univers doit être ajoutée à `config/univers.csv`. Pour un ETF ou un ETC, choisissez le secteur « Fonds & matières premières » : il sera suivi sur son cours, sans filtres ni score.
 
+## Organisation de l'outil
+
+G.A.R.P sert d'abord à **trouver la bonne action au bon prix**. Votre portefeuille, importé de votre courtier, est analysé avec les mêmes outils ; l'équilibre n'y est qu'un onglet de propositions.
+
+- **Tableau de bord** : les actions de qualité au bon prix aujourd'hui, le verdict de vos lignes, les points de vigilance.
+- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
+- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles).
+- **Explorer** : Actualités, Risques, Quatre regards, Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
+
+Les quantités de vos lignes viennent du dernier import (photo du portefeuille, `profil/positions.csv`), remplacée à chaque réimport : rien à saisir à la main. Performance et fiscalité restent chez le courtier ; l'ancien journal des opérations (`data/transactions.csv`) n'est plus tenu par l'interface, mais reste lu s'il n'y a pas encore de photo.
+
 ## Pages ajoutées en novembre 2026
 
-- **Actualités** (menu Investir) : presse française, déclarations officielles à la SEC, dates de résultats et signaux de l'outil pour vos lignes et votre watchlist. Les 5 dernières figurent au tableau de bord.
-- **Risques** (menu Investir) : concentration, devises, secteurs, part du risque, corrélations, pertes passées et scénarios de choc (marché -30 %, dollar -10 %, or -20 %).
+- **Actualités** (espace « Explorer ») : presse française, déclarations officielles à la SEC, dates de résultats et signaux de l'outil pour vos lignes et votre watchlist. Les 5 dernières figurent au tableau de bord.
+- **Risques** (espace « Explorer » ; la concentration est aussi dans l'onglet « Équilibre » du portefeuille) : concentration, devises, secteurs, part du risque, corrélations, pertes passées et scénarios de choc (marché -30 %, dollar -10 %, or -20 %).
 - **Fiche valeur** en sections (Résumé, Prix juste, Activité, Historique, Valorisation, Thèse) : seule la section choisie se calcule. Valorisation : scénarios à 5 ans. Thèse : conditions de vente chiffrées.
 - **Backtest**, second mode « Méthodes de notation : test à date » : les méthodes testées sans regarder l'avenir.
 - **Recherche** dans la barre latérale : tapez un nom ou un ticker pour ouvrir sa fiche depuis n'importe quelle page.

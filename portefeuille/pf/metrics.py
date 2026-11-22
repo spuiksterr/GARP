@@ -11,7 +11,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from . import criteres, postes, sec
+from . import criteres, homme_cle, postes, sec
 from .config import (
     METRICS_META,
     METRICS_PARQUET,
@@ -371,6 +371,7 @@ def compute_all(tickers: list[str] | None = None, save: bool = True) -> pd.DataF
     tickers = tickers or all_tracked_tickers()  # univers + lignes détenues hors univers
     prices, fx, strat = load_prices(), load_fx(), load_strategy()
     funds, cas = fund_tickers(), load_cas_particuliers()
+    corrections = homme_cle.load_ajustements()
     rows = []
     for t in tickers:
         if t in funds:
@@ -390,6 +391,7 @@ def compute_all(tickers: list[str] | None = None, save: bool = True) -> pd.DataF
         info = fund.get("info", {})
         m["nom_yahoo"] = info.get("shortName") or info.get("longName")
         m["industrie"] = info.get("industry")
+        m.update(homme_cle.evaluer(info, *corrections.get(t, (0.0, ""))))
         rows.append(m)
     df = pd.DataFrame(rows).set_index("ticker")
     meta = universe.reindex(df.index)[["nom", "pays", "enveloppe", "secteur", "profil"]]

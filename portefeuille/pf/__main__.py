@@ -178,7 +178,8 @@ def cmd_backtest(a):
 def cmd_suivi(a):
     tx = tracker.load_transactions()
     if tx.empty:
-        print("Aucune opération dans data/transactions.csv. Saisissez vos achats dans l'interface (page « Mon portefeuille »).")
+        print("Aucune opération dans data/transactions.csv : l'interface s'appuie désormais sur la photo du "
+              "portefeuille prise à chaque import (profil/positions.csv).")
         return
     for anomalie in tracker.controle_ventes(tx)[1]:
         print("Journal corrigé :", anomalie)
@@ -239,6 +240,26 @@ def cmd_esef(a):
     if res["introuvables"]:
         print("Introuvables : " + ", ".join(res["introuvables"]))
     print("Lancez ensuite : python -m pf maj (recalcul des indicateurs).")
+
+
+def cmd_homme_cle(a):
+    from . import homme_cle
+    from .config import load_model_portfolio, load_universe
+    from .watchlist import load_watchlist
+    if a.tickers:
+        tickers = a.tickers
+    elif a.tous:
+        tickers = list(load_universe().index)
+    else:
+        tickers = list(dict.fromkeys([*load_model_portfolio().index, *load_watchlist().index]))
+    print(f"Dirigeants de {len(tickers)} valeurs (Yahoo, environ une seconde chacune)…")
+    notes = homme_cle.relire(tickers, progress=lambda i, n, t: print(f"  {i}/{n} {t}", end="\r"))
+    print()
+    for t, n in sorted(notes.items(), key=lambda x: -(x[1]["homme_cle"] if x[1]["homme_cle"] == x[1]["homme_cle"]
+                                                         else -1)):
+        note = "  n.d." if n["homme_cle"] != n["homme_cle"] else f"{n['homme_cle']:.1f}".replace(".", ",") + "/10"
+        print(f"{t:10} {note:>7} {n['homme_cle_niveau']:8} {n['homme_cle_facteurs']}")
+    print("Note reportée dans les indicateurs : screener, composition et fiches l'affichent déjà.")
 
 
 def cmd_investisseurs(a):
@@ -303,6 +324,49 @@ def cmd_export(a):
         if not pos.empty:
             pos.to_excel(xl, sheet_name="Mes positions", index=False)
     print(f"Rapport écrit : {path}")
+
+
+def cmd_bureau(a):
+    from .bureau import ouvrir
+    ouvrir(a.port)
+
+
+def cmd_mobile(a):
+    from . import mobile
+    try:
+        if a.arreter:
+            mobile.desactiver()
+            print("Accès depuis le téléphone coupé.")
+            return 0
+        url = mobile.activer(a.port)
+    except RuntimeError as exc:
+        print(f"Impossible : {exc}.")
+        return 1
+    print(f"Sur le téléphone (connecté à Tailscale) : {url}")
+    print("Puis menu du navigateur > « Ajouter à l'écran d'accueil ». L'application doit tourner sur ce PC "
+          "(fenêtre G.A.R.P ou lancer.bat) ; « pf mobile --arreter » coupe l'accès.")
+    return 0
+
+
+def cmd_export_app(a):
+    from pathlib import Path
+
+    from .export_app import exporter
+    if a.sources_sec:
+        from .export_fiches import prechauffer
+        from .scoring import build_screener
+        print(f"Sources SEC des fiches ({a.sources_sec:g} min au plus) : {prechauffer(build_screener(), a.sources_sec)}")
+    chemin = exporter(Path(a.vers))
+    for f in sorted(chemin.parent.glob("climax-*.json.gz")):
+        print(f"Données de l'application : {f} ({f.stat().st_size / 1e6:.1f} Mo)")
+
+
+def cmd_export_outil(a):
+    from pathlib import Path
+
+    from .export_outil import exporter
+    chemin = exporter(Path(a.vers))
+    print(f"Données de la version autonome : {chemin} ({chemin.stat().st_size / 1e6:.1f} Mo)")
 
 
 def cmd_sauvegarde(a):
@@ -379,6 +443,11 @@ def main(argv=None):
     s = sub.add_parser("investisseurs", help="portefeuilles 13F de grands investisseurs et transactions d'élus américains")
     s.add_argument("--force", action="store_true", help="relire même ce qui a été consulté récemment")
     s.set_defaults(fn=cmd_investisseurs)
+    s = sub.add_parser("homme-cle", help="risque homme-clé : relire les dirigeants (portefeuille et watchlist par "
+                                         "défaut) sans attendre le renouvellement des fiches")
+    s.add_argument("tickers", nargs="*", help="valeurs à relire (sinon portefeuille et watchlist)")
+    s.add_argument("--tous", action="store_true", help="tout l'univers (environ 40 minutes)")
+    s.set_defaults(fn=cmd_homme_cle)
     s = sub.add_parser("indices", help="ajouter à l'univers les nouveaux entrants du S&P 500, du STOXX 600 "
                                          "et du Nasdaq Global Select (au moins 1 milliard de dollars)")
     s.add_argument("--sans-nasdaq", action="store_true", help="indices S&P 500 et STOXX 600 seulement (rapide)")
@@ -411,6 +480,22 @@ def main(argv=None):
     s.set_defaults(fn=cmd_apport)
     s = sub.add_parser("export", help="rapport Excel dans rapports/")
     s.set_defaults(fn=cmd_export)
+    s = sub.add_parser("bureau", help="ouvrir l'application dans sa propre fenêtre (version bureau)")
+    s.add_argument("--port", type=int, default=8501)
+    s.set_defaults(fn=cmd_bureau)
+    s = sub.add_parser("mobile", help="ouvrir l'application au téléphone par le réseau privé Tailscale")
+    s.add_argument("--port", type=int, default=8501)
+    s.add_argument("--arreter", action="store_true", help="couper l'accès depuis le téléphone")
+    s.set_defaults(fn=cmd_mobile)
+    s = sub.add_parser("export-app", help="fichier de données de l'application G.A.R.P (sans donnée personnelle)")
+    s.add_argument("--vers", default="rapports", help="dossier de destination")
+    s.add_argument("--sources-sec", type=float, default=0, metavar="MINUTES",
+                   help="lire d'abord, pendant ce temps au plus, les sources SEC des fiches (dirigeants, ventilation)")
+    s.set_defaults(fn=cmd_export_app)
+    s = sub.add_parser("export-outil", help="archive des données pour la version autonome installée (sans donnée "
+                                             "personnelle)")
+    s.add_argument("--vers", default="rapports", help="dossier de destination")
+    s.set_defaults(fn=cmd_export_outil)
     s = sub.add_parser("sauvegarde", help="archive datée des données personnelles (profil, thèses, opérations, "
                                            "historique des scores) dans le dossier choisi")
     s.add_argument("--vers", help="dossier de destination, mémorisé pour les fois suivantes")

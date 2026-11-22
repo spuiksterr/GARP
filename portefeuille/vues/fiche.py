@@ -4,7 +4,21 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from pf import criteres, dirigeants, historique, photos, postes, prix_juste, regles, scenarios, sec, ui, ventilation
+from pf import (
+    criteres,
+    dirigeants,
+    historique,
+    homme_cle,
+    photos,
+    postes,
+    prix_juste,
+    regles,
+    scenarios,
+    sec,
+    ui,
+    ventilation,
+)
+from pf import prix_achat as pa
 from pf import watchlist as wl
 from pf.config import load_cas_particuliers, load_strategy
 from pf.data import fx_rate, load_fundamentals, load_fx
@@ -26,7 +40,7 @@ r = sc.loc[ticker]
 fund = load_fundamentals(ticker) or {}
 info = fund.get("info", {})
 
-titre, bouton = st.columns([5, 1], vertical_alignment="center")
+titre, bouton = st.columns([3, 1.3], vertical_alignment="center")
 titre.title(f"{r['nom']}")
 if wl.contient(ticker):
     if bouton.button("Dans la watchlist", icon=":material/star:", width="stretch", help="Cliquer pour la retirer de la watchlist"):
@@ -68,6 +82,48 @@ if r.get("alertes"):
     st.warning(r["alertes"], icon=":material/warning:")
 
 est_fonds = r["statut"] == "Fonds"
+# ------------------------------------------------------------------ la décision d'abord : quel prix payer ?
+if not est_fonds:
+    regl = pa.reglages(strat)
+    juste = pa.prix_juste(r, strat["valorisation"], regl["rendement"])
+    achat = juste * (1 - regl["marge"]) if math.isfinite(juste) else math.nan
+    cours = float(r["cours"]) if pd.notna(r.get("cours")) else math.nan
+    verdict = pa.verdict(cours, juste, achat)
+    devise = str(r.get("devise") or "")
+    vise = wl.load_watchlist()["prix_cible"].get(ticker) if wl.contient(ticker) else None
+    with st.container(border=True):
+        unite = f" ({devise})" if devise else ""
+        d = st.columns(4)
+        d[0].metric("Cours" + unite, ui.num(cours, 2) if math.isfinite(cours) else "n.d.")
+        d[1].metric("Votre prix d'achat" + unite, ui.num(achat, 2) if math.isfinite(achat) else "n.d.",
+                    help=f"Prix juste moins votre marge de sécurité de {ui.pct(regl['marge'], 0)}.")
+        d[2].metric("Prix juste" + unite, ui.num(juste, 2) if math.isfinite(juste) else "n.d.",
+                    help=f"Cours auquel l'action rapporterait {ui.pct(regl['rendement'], 1)} par an si sa croissance "
+                         f"attendue ({ui.pct(r.get('croissance_attendue'))} par an) se réalise.")
+        ecart = cours / achat - 1 if math.isfinite(achat) and achat > 0 and math.isfinite(cours) else None
+        with d[3]:
+            st.markdown("Verdict", help=pa.EXPLICATIONS[verdict])
+            st.markdown(f'<div class="garp-verdict garp-verdict-{ui.COULEURS_VERDICT.get(verdict, "gray")}">'
+                        f"{verdict}</div>", unsafe_allow_html=True)
+            if ecart is not None:
+                st.caption(f"{ui.pct(ecart, 0, signe=True)} du prix d'achat")
+        e = st.columns([1, 3.2], vertical_alignment="center")
+        if e[0].button("Suivre à ce prix", icon=":material/flag:", width="stretch", disabled=not math.isfinite(achat),
+                       help="Inscrit votre prix d'achat comme prix visé dans la watchlist : le tableau de bord vous "
+                            "préviendra quand le cours y passera."):
+            wl.fixer_cible(ticker, achat, f"Prix d'achat : rendement {ui.pct(regl['rendement'], 1)}, marge "
+                           f"{ui.pct(regl['marge'], 0)}", cours=cours if math.isfinite(cours) else None)
+            st.toast("Prix visé inscrit dans la watchlist.", icon=":material/flag:")
+            st.rerun()
+        precisions = [f"Au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de "
+                      f"{ui.pct(regl['marge'], 0)}, réglables dans « La bonne action au bon prix »."]
+        if vise is not None and pd.notna(vise):
+            precisions.append(f"Votre prix visé dans la watchlist : {ui.num(float(vise), 2)} {devise}.")
+        if not math.isfinite(juste):
+            precisions.append("Prix juste non calculable (holding, société en perte ou comptes incomplets) : voir la "
+                              "section « Prix juste » pour les multiples.")
+        e[1].caption(" ".join(precisions) + " Détail et autres méthodes : sections « Prix juste » et « Valorisation ». "
+                     "Une estimation, pas un conseil.")
 ticker_us = sec.sec_ticker(ticker) is not None
 ORIGINE_COMPTES = {True: "les comptes déposés à la SEC", False: "les rapports annuels européens (ESEF)"}
 # ------------------------------------------------------------------ sections
@@ -169,6 +225,26 @@ if section == "Résumé":
             if bool(r.get("financiere")):
                 st.caption("Ces trois signaux ne sont pas calculés pour les banques, assureurs et holdings : "
                            "leurs formules supposent un bilan d'entreprise classique.")
+            # Risque homme-clé, recalculé ici depuis la fiche en cache (dirigeants relus par « pf homme-cle »).
+            hc = homme_cle.evaluer(fund.get("info", {}), *homme_cle.load_ajustements().get(ticker, (0.0, "")))
+            k = st.columns([1, 2])
+            note = hc["homme_cle"]
+            k[0].metric("Risque homme-clé", "n.d." if not math.isfinite(note) else f"{ui.num(note, 1)} / 10",
+                        hc["homme_cle_niveau"] if math.isfinite(note) else None,
+                        delta_color="off", delta_arrow="off", border=True,
+                        help="Dépendance de la société à une seule personne, de 0 à 10 : fondateur aux commandes (4), "
+                             "fondateur président du conseil (3), PDG cumulant les deux fonctions (1,5), dirigeant de 65 ans "
+                             "ou plus (1 ou 2), initiés détenant 10 % ou 30 % du capital (1 ou 2), conseil peu indépendant "
+                             "selon ISS (1), moins de 3 000 salariés (1). Faible sous 3, élevé à partir de 6. Un fondateur "
+                             "aux commandes est aussi souvent une force : c'est un point à suivre, pas un défaut.")
+            with k[1]:
+                if math.isfinite(note):
+                    if hc["homme_cle_dirigeant"]:
+                        st.markdown(f"**Dirigeant principal** : {hc['homme_cle_dirigeant']}")
+                    st.markdown(f"**Facteurs** : {hc['homme_cle_facteurs']}.")
+                else:
+                    st.caption("Dirigeants pas encore lus pour cette valeur : ils arrivent avec le renouvellement de sa "
+                               "fiche, ou tout de suite avec la commande « pf homme-cle " + ticker + " ».")
 
     else:
         q = st.columns(4)
@@ -321,7 +397,7 @@ if section == "Prix juste":
                     if vue.dropna().empty:
                         st.caption(f"{nom} incalculable sur la période : résultat négatif ou absent.")
                         continue
-                    fig = ui.lines(pd.DataFrame({nom: vue}), yfmt=",.1f", height=300)
+                    fig = ui.lines(pd.DataFrame({nom: vue}), yfmt=",.1f", height=300, colors={nom: ui.accent()})
                     fig.update_traces(connectgaps=False)
                     bas = float(vue.min())
                     fig.add_hline(y=bas, line_dash="dash", line_width=1.5, line_color=ui.GOOD,
@@ -350,6 +426,14 @@ if section == "Activité":
                 return f"{ui.num(v / seuil, d)} {unite} {devise}"
         return f"{ui.num(v, 0)} {devise}"
 
+
+    if not est_fonds and fund and fund.get("info", {}).get("dirigeants"):
+        st.subheader("Équipe dirigeante")
+        equipe = pd.DataFrame(fund["info"]["dirigeants"])
+        ui.tableau(equipe, hide_index=True, width="stretch", column_config={
+            "nom": "Nom", "fonction": "Fonction (libellé de Yahoo, en anglais)",
+            "age": st.column_config.NumberColumn("Âge", format="%d")})
+        st.caption("Source : Yahoo Finance. Elle nourrit le risque homme-clé de la section Résumé.")
 
     if not est_fonds and fund:
         st.subheader("Achats et ventes des dirigeants")

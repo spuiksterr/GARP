@@ -18,8 +18,6 @@ from __future__ import annotations
 
 import math
 
-from scipy.optimize import brentq
-
 
 def value_driver_ev(
     base: float,
@@ -74,6 +72,8 @@ def implied_growth(
         return lo
     if gap(hi) < 0:
         return hi
+    from scipy.optimize import brentq  # import différé : scipy pèse 3 s au démarrage
+
     return brentq(gap, lo, hi, xtol=1e-5)
 
 
@@ -99,6 +99,8 @@ def implied_irr(
         return lo
     if gap(r_max) > 0:
         return r_max
+    from scipy.optimize import brentq
+
     return brentq(gap, lo, r_max, xtol=1e-5)
 
 

@@ -18,7 +18,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        # Minutes comptées (Windows compte double) : Linux pour chaque demande de fusion, Windows après fusion
+        # sur main (les tests tournent aussi sous Windows sur le poste avant chaque envoi).
+        os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-latest"]') || fromJSON('["ubuntu-latest", "windows-latest"]') }}
     defaults:
       run:
         working-directory: portefeuille

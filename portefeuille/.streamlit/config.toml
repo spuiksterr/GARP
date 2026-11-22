@@ -1,7 +1,19 @@
-# Deux thèmes : l'application suit le réglage clair ou sombre de Windows, et le menu « ⋮ > Settings »
-# permet d'en changer. Couleurs de la palette de référence des graphiques (pf/ui.py).
+# Deux thèmes : l'application suit le réglage clair ou sombre de Windows (la fenêtre G.A.R.P est toujours en
+# sombre). Accent : l'ocre de la marque (docs/MARQUE.md), choisi pour son contraste avec le fond et avec le texte
+# blanc des boutons ; liens dans l'ocre de la marque en sombre, l'ocre foncé en clair.
+[theme]
+# Titres en Manrope (licence OFL, static/polices), embarquée : rien à télécharger à l'usage.
+headingFont = "Manrope, Source Sans Pro, sans-serif"
+headingFontWeights = 700
+
+[[theme.fontFaces]]
+family = "Manrope"
+url = "app/static/polices/Manrope.ttf"
+weight = "200 800"
+
 [theme.light]
-primaryColor = "#2a78d6"
+primaryColor = "#8a5a12"
+linkColor = "#8a5a12"
 backgroundColor = "#fcfcfb"
 secondaryBackgroundColor = "#f3f2ee"
 textColor = "#0b0b0b"
@@ -9,7 +21,8 @@ borderColor = "#d8d7d0"
 baseRadius = "0.6rem"
 
 [theme.dark]
-primaryColor = "#3987e5"
+primaryColor = "#a86c1a"
+linkColor = "#c98b2e"
 backgroundColor = "#1a1a19"
 secondaryBackgroundColor = "#242422"
 textColor = "#f0efec"
@@ -26,6 +39,8 @@ toolbarMode = "viewer"
 address = "localhost"
 headless = true
 runOnSave = false
+# Police des titres servie depuis static/ (seulement à cet ordinateur, comme le reste).
+enableStaticServing = true
 
 [browser]
 gatherUsageStats = false

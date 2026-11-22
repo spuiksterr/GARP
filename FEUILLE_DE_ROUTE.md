@@ -48,7 +48,7 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 
 | N° | Question | Options | Bloque |
 |---|---|---|---|
-| DEC-1 | Où tourne l'application ? | **A.** Sur le PC, GitHub porte le code et le suivi (recommandé : les données personnelles restent locales, Yahoo répond). **B.** Hébergée en ligne. **C.** Mixte : calculs planifiés sur GitHub, affichage local | G-05, D-08, U-08 |
+| DEC-1 | Où tourne l'application ? | **Tranché le 14/11/2026 :** A, sur le PC ; le téléphone y accède par le réseau privé Tailscale (U-11), et une fenêtre dédiée sert de version bureau (U-10) | G-05, D-08, U-08 |
 | DEC-2 | Données personnelles dans le dépôt privé, ou séparées du code ? | **Tranché le 14/11/2026 :** séparées, dans `portefeuille/profil/` exclu du dépôt | G-05 |
 | DEC-3 | Nom de l'application et du dépôt | Dépôt nommé **Climax** le 14/11/2026 ; reste à confirmer si l'application porte le même nom (autres propositions du 12/11 : Futaie, Tronçais, Chênaie) | G-03, U-01 |
 | DEC-4 | Qui fusionne les demandes des agents ? | **Tranché le 14/11/2026 :** relecture et fusion par le propriétaire, jamais de fusion automatique | K-01 |
@@ -231,6 +231,9 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 | U-07 | Mise à jour de l'application depuis GitHub | P1 | S |
 | U-08 | Hébergement en ligne | P3 | L |
 | U-09 | Premier lancement guidé | P3 | M |
+| U-10 | Version bureau : fenêtre dédiée et raccourcis (**fait le 14/11/2026**) | P1 | M |
+| U-11 | Version téléphone par le réseau privé Tailscale (**code fait le 14/11/2026** ; reste à installer Tailscale) | P1 | M |
+| U-12 | Pages lisibles sur un écran de téléphone | P1 | M |
 
 - **U-01.** Le titre est « Portefeuille long terme » (`app.py`). *Dépend de :* DEC-3.
 - **U-02.** Aujourd'hui, ajouter On ou Sterling demande d'éditer `univers.csv` puis de lancer une mise à jour. Un formulaire vérifie le ticker auprès de Yahoo, propose pays, enveloppe et secteur, et charge la valeur. *Dépend de :* DEC-8.
@@ -239,7 +242,48 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 - **U-05.** Un terme par notion, expliqué au survol, à partir du dictionnaire de Q-08. *Dépend de :* Q-08.
 - **U-06.** Les tests d'affichage ne cliquent sur rien. Tester les formulaires (watchlist, règles de vente, scénarios, apport) sur des copies. *Dépend de :* Q-04.
 - **U-07.** Un script récupère la dernière version depuis GitHub, met à jour les dépendances et lance les tests ; la barre latérale affiche la version installée.
+- **U-10.** `pf bureau` et le raccourci « Climax » (`Climax.pyw`, `creer_raccourcis.ps1`) : serveur sans console, fenêtre pywebview (Edge WebView2), arrêt du serveur à la fermeture, ou branchement sur un serveur déjà lancé.
+- **U-11.** `pf mobile` relaie le serveur local par `tailscale serve` (HTTPS, réseau privé seulement). Le propriétaire installe Tailscale sur le PC et le téléphone avec le même compte. Ensuite : vérifier sur le téléphone que la connexion WebSocket de Streamlit passe le relais, et que l'icône s'affiche à l'ajout à l'écran d'accueil.
+- **U-12.** L'interface est pensée pour un grand écran (mise en page large, tableaux de 20 colonnes, quatre chiffres par ligne). Sur un téléphone : tableau de bord et fiche lisibles en une colonne, screener réduit aux colonnes essentielles, boutons atteignables au pouce. Mesurer d'abord avec un navigateur en largeur 390 px. *Dépend de :* U-11.
 - **U-08.** Seulement si DEC-1 = B. Demande un accès protégé et un stockage des données.
+
+### Phase 8 : application autonome (Android et Windows)
+
+| N° | Ticket | P | Taille |
+|---|---|---|---|
+| M-01 | Données calculées chaque nuit sur GitHub et publiées (**fait le 14/11/2026**) | P0 | M |
+| M-02 | Application Flutter : accueil, screener, fiche, portefeuille, watchlist, réglages (**fait le 14/11/2026**) | P0 | L |
+| M-03 | Mises à jour depuis les Releases, APK signé (**fait le 14/11/2026** ; secrets de signature à poser par le propriétaire) | P0 | M |
+| M-04 | Sauvegarde chiffrée du portefeuille de l'application | P1 | M |
+| M-05 | Simulateur et risques dans l'application (**fait le 17/11/2026**) | P2 | L |
+| M-06 | Thèses lisibles dans l'application (**en partie le 17/11/2026** : thèse saisie sur l'appareil ; les fiches `theses/*.md` du PC n'y sont pas) | P2 | M |
+| M-07 | Notifications : statut changé, prix visé, condition de vente | P2 | M |
+| M-08 | Recoupement SEC sur GitHub (historique de 10 ans des valeurs américaines) | P2 | S |
+| M-09 | Import du portefeuille dans l'application : export de courtier, tableau collé, saisie ; vérification ligne par ligne (**fait le 14/11/2026**) | P0 | M |
+| M-10 | Identité visuelle : logo 3D (Blender), icônes Android et Windows, écran de démarrage, accueil du premier lancement, charte `docs/MARQUE.md` (**fait le 14/11/2026**) | P1 | M |
+| M-13 | Installateur Windows (`Climax-Setup.exe`, Inno Setup), mise à jour en un clic, page de téléchargement et QR code (**fait le 14/11/2026**) | P1 | S |
+| M-11 | Ouvrir un export de courtier avec Climax depuis Android (« Partager » ou « Ouvrir avec ») | P2 | S |
+| M-12 | Données lisibles sans jeton (release publique des seules données de marché) | P2 | S |
+| M-14 | Méthodes d'évaluation dans l'application (screener, fiche, accueil, page « Méthodes », consensus) et profil investisseur (**fait le 15/11/2026**) | P1 | M |
+| M-15 | Grands investisseurs (13F) et élus du Congrès dans l'application (**fait le 17/11/2026** ; 13F publiés une fois le secret `SEC_CONTACT` posé) | P1 | M |
+| M-16 | Fiche complète dans l'application : prix juste, valorisation inversée, ventilation du CA, historique, achats des dirigeants (**fait le 17/11/2026**) | P2 | L |
+| M-17 | Construction de portefeuille et backtest des méthodes dans l'application (**fait le 17/11/2026** : backtest du portefeuille face à l'indice ; celui « à date » des méthodes reste sur le PC) | P2 | M |
+| M-18 | Suivi dans l'application : opérations, performance face à l'indice, apport du mois ; actualités (**fait le 17/11/2026**) | P2 | L |
+| M-19 | Nouvelle identité visuelle : logo « Exponentielle » (courbe ocre, barres ivoire, fond anthracite), icônes, thème, charte (**fait le 15/11/2026**) | P1 | S |
+
+- **M-04.** Le portefeuille et la watchlist ne vivent que dans l'appareil. Exporter et importer un fichier chiffré par une phrase de passe (vers OneDrive, ou d'un appareil à l'autre).
+- **M-05.** Reprendre `pf/simulation.py` et `pf/risques.py` : il faut les rendements, donc des cours quotidiens ou hebdomadaires de toutes les lignes (déjà dans l'export, en hebdomadaire).
+- **M-06.** Les thèses (`theses/*.md`) sont personnelles : les publier chiffrées, ou les saisir dans l'application. *Dépend de :* A-11, M-04.
+- **M-07.** Notifications locales après le téléchargement de la nuit. Android demande une autorisation.
+- **M-08.** Demande que le propriétaire confie son adresse de contact SEC à GitHub (secret du dépôt). *Décision.*
+- **M-11.** Filtre d'intention Android sur les fichiers CSV et texte, puis le même écran de vérification.
+- **M-14.** Demande du 15/11/2026 : intégrer à l'application tout l'outil du .bat, à commencer par le choix de la méthode d'évaluation (« 6 critères, Buffett, Munger etc. ») et un profil. Ajout de « Six critères » aux méthodes de `pf/portfolio.py`.
+- **M-15.** Exporter les positions 13F des investisseurs suivis (`config/investisseurs.csv`), les titres les plus partagés et les transactions des élus (`config/elus.csv`). Les 13F demandent l'adresse de contact SEC : le propriétaire a accepté le 15/11/2026 de la confier à un secret GitHub (`SEC_CONTACT`), ce qui règle aussi M-08. Les élus se lisent sans contact.
+- **M-16.** `pf/prix_juste.py`, `valuation.py`, `ventilation.py`, `historique.py`, `dirigeants.py` : exporter leurs résultats par valeur (fichier séparé, chargé à l'ouverture d'une fiche, pour garder l'export principal léger).
+- **M-17.** Construction : reprendre `build_quant_portfolio` en Dart sur les notes de M-14. Backtest : publier les résultats précalculés de `backtest_pit.py` plutôt que de les recalculer sur l'appareil.
+- **M-18.** Le portefeuille de l'application ne connaît que des poids cibles : saisir les opérations (ou des quantités) pour le suivi, l'apport du mois et la performance. Recoupe M-05 (risques) et M-04 (sauvegarde).
+- **M-19.** Après la piste verte (M-10), cinq planches de pistes le 15/11/2026 (performance, anthracite et ocre, C de Climax, mélange « ascension » et « lame », C ocre sur fond blanc) ; le propriétaire a retenu « Exponentielle » sur fond anthracite. Charte `docs/MARQUE.md`, thème de l'application (ocre), toutes les icônes, écran de démarrage, installateur et QR code mis à jour.
+- **M-12.** Le jeton est l'étape la plus difficile du premier lancement. Publier le fichier de données (aucune donnée personnelle) dans un dépôt public dédié la supprimerait ; à peser avec les conditions d'usage des sources. *Décision.*
 
 ### Phase 7 : travailler avec Claude depuis GitHub
 

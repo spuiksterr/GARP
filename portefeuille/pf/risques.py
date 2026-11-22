@@ -18,9 +18,9 @@ ANNEES = 3
 
 
 def poids_actuels() -> tuple[pd.Series, str]:
-    """(poids par ticker, source) : positions réelles si le journal en contient, sinon poids cibles."""
+    """(poids par ticker, source) : positions réelles si la photo du portefeuille en contient, sinon poids cibles."""
     try:
-        from .tracker import positions
+        from .positions import positions
 
         p = positions()
         if not p.empty and p["valeur_eur"].sum() > 0:

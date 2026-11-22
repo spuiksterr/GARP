@@ -18,6 +18,7 @@ from __future__ import annotations
 import gzip
 import json
 import math
+import os
 import time
 import urllib.request
 from collections.abc import Callable
@@ -70,8 +71,10 @@ FORMAT = 4  # version du cache : un fichier d'un format antérieur est retéléc
 
 
 def contact() -> str:
-    """Adresse de contact exigée par la SEC : profil/prive.json (ancien emplacement : strategie.json)."""
-    return (load_prive().get("contact_sec") or load_strategy().get("sources", {}).get("contact_sec") or "").strip()
+    """Adresse de contact exigée par la SEC : variable PF_CONTACT_SEC (flux GitHub, secret du dépôt), sinon
+    profil/prive.json (ancien emplacement : strategie.json)."""
+    return (os.environ.get("PF_CONTACT_SEC") or load_prive().get("contact_sec")
+            or load_strategy().get("sources", {}).get("contact_sec") or "").strip()
 
 
 def _brut(url: str, agent: str) -> bytes:

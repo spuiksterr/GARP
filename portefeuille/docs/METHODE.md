@@ -124,6 +124,20 @@ La section « Prix juste » de la fiche répond à une question simple : à quel
 - **Limite principale.** Un multiple tombé loin sous sa médiane n'est pas forcément une aubaine : la croissance a pu ralentir, un brevet expirer, un concurrent arriver. La médiane passée n'est un repère que si l'entreprise n'a pas changé. Cours ajustés des dividendes : les multiples passés sont un peu sous-estimés.
 - **Prix visé.** Le bouton « Ajouter à la watchlist » (ou « Viser ce prix » pour une valeur déjà suivie) enregistre le prix et ce qui l'a fixé (« P/FCF 20,0 ») dans `profil/watchlist.csv`. La page Watchlist affiche ensuite le cours, le prix visé et l'écart (−20 % : il faut une baisse de 20 %). Dès que le cours passe sous le prix visé, elle affiche un bandeau et le tableau de bord ajoute un point de vigilance. Le prix visé ne se recalcule pas tout seul : revenez dans la fiche après une publication pour le mettre à jour. Atteindre son prix n'est pas un signal d'achat en soi : c'est le moment de relire la thèse.
 
+## La bonne action au bon prix
+
+La page « La bonne action au bon prix » et l'en-tête de la fiche répondent à la question « à quel prix acheter ? » par un autre chemin que les multiples : le rendement que l'on exige. La page cherche par défaut dans toutes les actions qui passent les filtres de qualité, et montre d'abord celles qui sont au bon prix ou à un prix correct, classées par score ; on peut aussi y analyser son portefeuille ou sa watchlist, et filtrer par compte, critères et moat.
+
+- **Prix juste.** C'est le cours auquel l'action rapporterait exactement votre rendement exigé (9 % par an par défaut), si sa croissance attendue se réalise. Le modèle est celui du TRI implicite (« value drivers », section 4) : croissance retenue pendant 5 ans, ralentissement en 5 ans vers 3 %, rentabilité des nouveaux investissements bornée. Il est aussi utilisé par la page « Pour moi » de l'application du téléphone. Au rendement égal au TRI implicite, le prix juste est le cours actuel : les deux mesures disent la même chose.
+- **Prix d'achat.** C'est le prix juste diminué de la marge de sécurité (20 % par défaut), qui couvre l'erreur d'estimation : une croissance surestimée de quelques points suffit à faire baisser fortement le prix juste.
+- **Verdict.** « Au bon prix » quand le cours est au plus au prix d'achat ; « prix correct » entre le prix d'achat et le prix juste ; « à attendre » au-dessus du prix juste ; « non évalué » pour une holding, une société en perte ou un fonds.
+- **Réglages.** Rendement exigé et marge se règlent sur la page et sont retenus (`profil/prix_achat.json`). « Viser le prix d'achat » ou « Suivre à ce prix » l'inscrit comme prix visé dans la watchlist : le tableau de bord prévient quand le cours y passe.
+- **Limite.** Le prix juste dépend surtout de la croissance retenue, qui reste une estimation. C'est un repère pour comparer et attendre son prix, pas un signal d'achat : la thèse et l'analyse qualitative décident.
+
+## Équilibre du portefeuille (proposition)
+
+L'onglet « Équilibre (proposition) » de « Analyse de mon portefeuille » compare les poids réels (quantités du dernier import × derniers cours, en euros) aux poids cibles. Il chiffre l'écart de chaque ligne, rappelle les seuils de concentration (`suivi.garde_fous`) et montre comment un apport rapprocherait le portefeuille de sa cible sans rien vendre. C'est une proposition : rien n'y est enregistré, et ni les écarts ni la concentration ne figurent parmi les points de vigilance du tableau de bord.
+
 ## Un seul historique, des données datées du même jour
 
 - **Un seul historique.** Tous les calculs lisent les comptes par le même module (`pf/postes.py`) : une seule correspondance avec les postes Yahoo, et un historique prolongé par la SEC quand le raccord est vérifié. Croissance du chiffre d'affaires, marge de FCF et évolution du nombre d'actions ont donc la même valeur dans le screener, la fiche, les filtres et les six critères, sur la même fenêtre (cinq ans au plus, trois pour les sociétés européennes). Le ROIC (rentabilité du capital investi, celle des filtres et du moat) et le ROCE (résultat opérationnel sur capitaux employés, celui des critères) restent deux mesures différentes : le premier retire la trésorerie, le second non.
@@ -154,7 +168,7 @@ La section « Prix juste » de la fiche répond à une question simple : à quel
 
 ## Construction de portefeuille
 
-La page « Construction de portefeuille » (menu Analyser) construit un portefeuille par des règles seules. Il sert de point de comparaison et de liste d'idées, pas de cible : il ne modifie jamais vos poids cibles.
+La page « Construction automatique » (espace « Explorer ») construit un portefeuille par des règles seules. Il sert de point de comparaison et de liste d'idées, pas de cible : il ne modifie jamais vos poids cibles.
 
 - **Méthode de notation.** Elle classe les candidats. Chaque note est ramenée à son rang dans l'univers (0 à 100) pour rester comparable, et le score composite départage les ex aequo. Méthodes proposées :
   - **Score composite** : la note de l'outil ;
@@ -200,7 +214,7 @@ Le backtest du portefeuille note les actions avec les comptes d'aujourd'hui : il
 
 ## Grands investisseurs
 
-Page « Grands investisseurs » (menu Analyser) : ce que détiennent et achètent des investisseurs reconnus, pour trouver des idées à étudier. C'est une source d'inspiration, pas un signal : elle n'entre ni dans le score ni dans les filtres.
+Page « Grands investisseurs » (espace « Explorer ») : ce que détiennent et achètent des investisseurs reconnus, pour trouver des idées à étudier. C'est une source d'inspiration, pas un signal : elle n'entre ni dans le score ni dans les filtres.
 
 **Gérants (formulaires 13F)**
 - **Source.** Tout gérant qui détient plus de 100 millions de dollars d'actions américaines déclare ses positions à la SEC dans les 45 jours qui suivent la fin de chaque trimestre.
@@ -260,6 +274,44 @@ Ils sont calculés sur les deux derniers exercices annuels et s'affichent dans l
 - **Altman (Z-Score de 1968)** : risque de faillite. Sous 1,81 : zone fragile ; au-dessus de 2,99 : zone sûre. Pensé pour les industriels, il sous-note les entreprises aux gros actifs et celles dont les rachats d'actions ont réduit les réserves.
 - **Beneish (M-Score à 8 variables)** : les comptes sont-ils crédibles ? Au-dessus de -1,78, le profil ressemble à celui des manipulateurs comptables. Ce n'est pas une preuve : une forte croissance ou une grosse acquisition déclenchent le même signal. Chaque indice est plafonné à 5 pour qu'une acquisition ou un paiement ponctuel n'écrase pas les autres variables. Les frais commerciaux manquent pour une partie des sociétés : leur indice est alors neutralisé.
 
+## Le risque homme-clé
+
+Que deviendrait la société sans une personne précise ? C'est le *key man risk* : un fondateur visionnaire, un PDG qui concentre les pouvoirs ou une famille qui contrôle le capital rendent la société dépendante d'une seule personne (décès, départ, succession mal préparée, décisions sans contre-pouvoir).
+
+La note va de 0 à 10 (10 : dépendance la plus forte). Elle additionne des faits publiés par Yahoo :
+
+| Facteur | Points |
+|---|---|
+| Le fondateur dirige encore la société (directeur général) | 4 |
+| Le fondateur préside le conseil, sans être directeur général | 3 |
+| Le directeur général préside aussi le conseil (PDG) | 1,5 |
+| Directeur général de 70 ans ou plus ; de 65 à 69 ans | 2 ; 1 |
+| Initiés (dirigeants, familles fondatrices) détenant 30 % du capital ou plus ; de 10 à 30 % | 2 ; 1 |
+| Conseil peu indépendant : risque du conseil de 8 ou plus sur 10 selon ISS | 1 |
+| Moins de 3 000 salariés | 1 |
+
+Les niveaux sont les suivants : faible sous 3, modéré de 3 à 5,5, élevé à partir de 6. Quelques repères au 18/11/2026 :
+- Meta 6,5 (Mark Zuckerberg, fondateur et PDG) ;
+- Tesla 6 ;
+- LVMH 5,5 (Bernard Arnault, PDG de 76 ans, famille à 50 %) ;
+- Amazon 4 (Jeff Bezos préside le conseil) ;
+- JPMorgan 2,5 ;
+- Air Liquide et ASML 0.
+
+`config/homme_cle.csv` (`ticker;ajustement;motif`) corrige ce que les données ne disent pas. Par exemple, Yahoo ne publie pas les dirigeants de NVIDIA, que son cofondateur Jensen Huang dirige depuis 1993 : 4 points de plus, avec le motif.
+
+Où la lire :
+- **fiche valeur** : la note et ses facteurs dans la section Résumé, l'équipe dirigeante dans la section Activité ;
+- **screener et composition** : la colonne « Homme-clé » ;
+- **tableau de bord** : un point de vigilance pour une ligne du portefeuille au risque élevé, d'au moins 5 % du poids.
+
+Elle n'entre ni dans le score composite ni dans les filtres d'exclusion. Un fondateur aux commandes est aussi souvent une force : vision longue, intérêts alignés avec les actionnaires. La note signale une question à poser dans la thèse (que se passerait-il sans cette personne ?), pas un défaut.
+
+Les dirigeants arrivent avec le renouvellement des fiches de fondamentaux, en un mois environ pour tout l'univers. `pf homme-cle` les relit tout de suite, pour le portefeuille et la watchlist (une seconde par valeur ; `--tous` pour l'univers, environ 40 minutes). Les limites :
+- la liste de Yahoo manque parfois ;
+- un fondateur n'est repéré que si sa fonction le mentionne (« Founder ») ;
+- la part des initiés mêle dirigeants, familles et holdings de contrôle.
+
 ## Le crible des quatre regards
 
 La page « Quatre regards » note chaque action de la base de 1 à 5, exclues comprises, pour décider lesquelles méritent une analyse complète. Les notes figurent aussi dans le screener, la fiche valeur et l'export Excel. Les fonds ne sont pas notés. Les notes viennent de règles fixes :
@@ -300,7 +352,7 @@ Une ligne qui dépasse le double de son poids cible peut être allégée, de pr�
 
 | Fréquence | Durée | Quoi |
 |---|---|---|
-| Chaque mois | 15 min | Mise à jour complète (les mises à jour rapides suffisent entre-temps), regarder les alertes du tableau de bord, investir l'apport (page « Apport du mois »), saisir les ordres exécutés |
+| Chaque mois | 15 min | Mise à jour complète (les mises à jour rapides suffisent entre-temps), regarder le tableau de bord et « La bonne action au bon prix », voir la proposition d'apport (onglet « Équilibre » de « Analyse de mon portefeuille »), réimporter son portefeuille après des achats |
 | Chaque trimestre | 1 h | Après les publications : relire les conditions de vente, noter les faits marquants dans les fiches (commande Claude `/revue-portefeuille`) |
 | Chaque semestre | 1 h | Revoir la poche opportunités au regard du score et du TRI implicite ; étudier les meilleurs scores hors portefeuille (`/analyse-valeur`) |
 | Chaque année | 2 h | Bilan contre l'ETF MSCI World ; rééquilibrage si une ligne dépasse 2x sa cible ou un secteur 30 % ; mise à jour de l'univers |
