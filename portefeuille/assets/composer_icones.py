@@ -141,20 +141,27 @@ def bandeau(embleme: Image.Image, largeur: int = 1600, hauteur: int = 480) -> Im
     return fond
 
 
-def entete(embleme: Image.Image, hauteur: int = 192) -> Image.Image:
-    """En-tête de la barre latérale de l'outil : l'icône arrondie et « G.A.R.P » en ocre, fond transparent. L'icône
-    garde son fond anthracite et le nom est ocre : lisibles sur le thème sombre comme sur le clair."""
-    ic = icone(embleme, hauteur)
-    f = police(round(hauteur * 0.56))
-    texte = "G.A.R.P"
-    boite = ImageDraw.Draw(Image.new("RGBA", (1, 1))).textbbox((0, 0), texte, font=f)
-    ecart = round(hauteur * 0.2)
-    largeur = hauteur + ecart + (boite[2] - boite[0]) + round(hauteur * 0.05)
-    out = Image.new("RGBA", (largeur, hauteur), (0, 0, 0, 0))
-    out.alpha_composite(ic, (0, 0))
-    d = ImageDraw.Draw(out)
-    d.text((hauteur + ecart - boite[0], (hauteur - (boite[3] - boite[1])) / 2 - boite[1]), texte, fill=OCRE, font=f)
-    return out
+def entete(embleme: Image.Image, hauteur: int = 300) -> Image.Image:
+    """En-tête de la barre latérale de l'outil, sur le modèle du bandeau : emblème, « G.A.R.P » en blanc, promesse en
+    ocre et sous-titre en gris, sur le dégradé anthracite aux coins arrondis (lisible sur les deux thèmes). Plus
+    compact que le bandeau : affiché sur 240 pixels de large, les deux phrases restent lisibles."""
+    h = hauteur
+    f_nom, f_promesse, f_sous = police(round(h * 0.31)), police(round(h * 0.125), gras=False), police(round(h * 0.112), gras=False)
+    lignes = [("G.A.R.P", f_nom, BLANC, 0.16), ("La croissance, au juste prix.", f_promesse, OCRE, 0.53),
+              ("Growth at a reasonable price", f_sous, (165, 167, 173), 0.71)]
+    mesure = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+    cote = round(h * 0.6)
+    x = round(h * 0.07) + cote + round(h * 0.06)
+    largeur = x + max(mesure.textbbox((0, 0), t, font=f)[2] for t, f, _, _ in lignes) + round(h * 0.08)
+    fond = degrade(max(largeur, h)).crop((0, 0, largeur, h)).convert("RGBA")
+    fond.alpha_composite(avec_ombre(embleme, cote, 0.92), (round(h * 0.07), (h - cote) // 2))
+    d = ImageDraw.Draw(fond)
+    for texte, f, couleur, y in lignes:
+        d.text((x, h * y), texte, fill=couleur, font=f)
+    masque = Image.new("L", fond.size, 0)
+    ImageDraw.Draw(masque).rounded_rectangle((0, 0, largeur - 1, h - 1), radius=round(h * 0.12), fill=255)
+    fond.putalpha(masque)
+    return fond
 
 
 def icones(source: Path) -> None:
