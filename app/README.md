@@ -2,6 +2,8 @@
 
 Sur Windows, `GARP-Setup` installe l'outil du PC lui-même (celui de `lancer.bat`, voir [portefeuille/README.md](../portefeuille/README.md)), avec son propre Python : rien d'autre à installer, et l'affichage est exactement celui de l'outil. Le reste de cette page décrit surtout l'application Android.
 
+> **APK suspendu depuis le 22/11/2026.** Les releases ne contiennent que l'installateur Windows. L'APK se construit encore à la demande (`gh workflow run app.yml -f plateformes="les deux"`), une fois la clé de signature (`ANDROID_CLE_B64`) reposée dans les secrets du dépôt.
+
 L'application affiche les données que GitHub calcule chaque nuit (screener, fiches, rangs), sans PC allumé. Votre portefeuille et votre watchlist restent sur l'appareil. Elle se met à jour depuis les Releases du dépôt, comme CloudStream.
 
 ```
@@ -20,7 +22,7 @@ Le QR code de [assets/qr-telechargement.png](assets/qr-telechargement.png) ouvre
 
 | Appareil | Fichier |
 |---|---|
-| Android | `GARP-b<n>.apk` |
+| Android | `GARP-b<n>.apk` (suspendu pour l'instant) |
 | Windows 11 | `GARP-Setup-b<n>.exe` (l'outil du PC complet, environ 150 Mo) |
 
 ## Installer
