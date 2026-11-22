@@ -1450,3 +1450,18 @@ def test_export_application_sans_donnee_personnelle(tmp_path):
     texte = gzip.open(chemin, "rt", encoding="utf-8").read()
     for interdit in ("poids_cible", "transactions", "quantite", "contact_sec", "Exemple fictif"):
         assert interdit not in texte, interdit
+
+
+def test_13f_sans_contact_sec_l_echec_se_voit(monkeypatch, capsys):
+    """Sans adresse de contact SEC, la commande échoue (étape en orange dans le flux de la nuit) au lieu d'annoncer
+    « 0 trimestres lus » : c'est ainsi que les 13F sont restés figés dans l'ancien dépôt."""
+    import argparse
+
+    from pf import __main__ as cli
+    from pf import congres, sec
+
+    monkeypatch.setattr(sec, "contact", lambda: "")
+    monkeypatch.setattr(congres, "mettre_a_jour", lambda **k: {"nouveaux": 0, "scannes": 0, "erreurs": {}})
+    with pytest.raises(SystemExit, match="SEC_CONTACT"):
+        cli.cmd_investisseurs(argparse.Namespace(force=False))
+    assert "Non lus" in capsys.readouterr().out

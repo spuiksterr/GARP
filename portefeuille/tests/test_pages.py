@@ -134,6 +134,16 @@ def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
     assert "Ouvrir la fiche" in libelles and "Ajouter à la watchlist (0)" in libelles
 
 
+
+def test_grands_investisseurs_dans_la_version_installee(monkeypatch):
+    """Version installée : pas de bouton de mise à jour des 13F (ils arrivent avec les données de la nuit)."""
+    monkeypatch.setenv("PF_AUTONOME", "1")
+    at = _app("investisseurs")
+    at.run()
+    assert not at.exception, [str(e.value)[:300] for e in at.exception]
+    assert not any(b.label == "Mettre à jour" for b in at.button)
+    assert any("chaque nuit par GitHub" in c.value for c in at.caption)
+
 def test_mon_style_questionnaire_et_comparaison():
     """Le questionnaire propose un style et l'explique ; la comparaison compte les actions retenues par style."""
     from pf import styles as sty
