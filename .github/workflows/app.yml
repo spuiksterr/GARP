@@ -59,11 +59,16 @@ jobs:
           & $iscc.FullName /Q "/DNumero=${{ env.NUMERO }}" "/DSource=$PWD\build\garp-pc" installateur\garp.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Move-Item installateur\sortie\GARP-Setup-b${{ env.NUMERO }}.exe .
-          Write-Host ("Installateur : {0:N0} Mo" -f ((Get-Item GARP-Setup-b${{ env.NUMERO }}.exe).Length / 1MB))
+          $exe = "GARP-Setup-b${{ env.NUMERO }}.exe"
+          $hash = (Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $exe" | Set-Content SHA256SUMS.txt -Encoding ascii
+          Write-Host ("Installateur : {0:N0} Mo (SHA-256 : {1})" -f ((Get-Item $exe).Length / 1MB), $hash)
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: GARP-Setup-b${{ env.NUMERO }}.exe
+          path: |
+            GARP-Setup-b${{ env.NUMERO }}.exe
+            SHA256SUMS.txt
           compression-level: 0
 
   publier:

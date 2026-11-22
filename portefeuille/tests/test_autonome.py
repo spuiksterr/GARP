@@ -160,7 +160,7 @@ def test_installation_de_l_archive_epargne_les_fichiers_personnels(tmp_path):
 
 
 @pytest.mark.parametrize("intrus", ["profil/portefeuille_modele.csv", "data/transactions.csv",
-                                    "data/cache/../../evasion.txt"])
+                                    "data/cache/../../evasion.txt", r"config\..\evasion.txt"])
 def test_archive_refusee_hors_des_donnees_publiques(tmp_path, intrus):
     zip_path = _archive(tmp_path / "a.zip", {"data/cache/indicateurs.parquet": b"x", intrus: b"!"})
     with pytest.raises(ValueError):
@@ -275,3 +275,36 @@ def test_depot_public_lu_sans_jeton(monkeypatch, jeton_, attendu):
     assert req.full_url == f"https://api.github.com/repos/{autonome.DEPOT}/releases"
     assert req.get_header("Authorization") == attendu
     assert "Authorization" not in req.headers  # en-tête « non redirigée » quand il y en a une
+
+
+def test_installer_version_verifie_nom_et_sha256(tmp_path, monkeypatch):
+    import hashlib
+    import io
+
+    contenu = b"MZ-faux-installateur"
+    bon_hash = hashlib.sha256(contenu).hexdigest()
+    lances = []
+    monkeypatch.setattr(autonome.tempfile, "gettempdir", lambda: str(tmp_path))
+    monkeypatch.setattr(autonome.subprocess, "Popen", lambda cmd, **kw: lances.append(cmd))
+
+    def faux_dl(chemin, jeton_, vers, taille, progression=None):
+        vers.write_bytes(contenu)
+
+    monkeypatch.setattr(autonome, "_telecharger", faux_dl)
+
+    # Nom invalide (traversée ou mauvaise extension) : refusé avant tout téléchargement.
+    for mauvais_nom in ("../GARP-Setup-b9.exe", "GARP-Setup-b9.bat", "autre.exe"):
+        with pytest.raises(autonome.ErreurGitHub):
+            autonome.installer_version(None, {"id": 1, "nom": mauvais_nom, "taille": 10})
+    assert not lances
+
+    # Mauvaise empreinte SHA-256 : rejetée, aucun lancement, fichier temporaire nettoyé.
+    with pytest.raises(autonome.ErreurGitHub, match="SHA-256"):
+        autonome.installer_version(None, {"id": 1, "nom": "GARP-Setup-b9.exe", "taille": len(contenu),
+                                          "sha256": "0" * 64})
+    assert not lances and not (tmp_path / "GARP-Setup-b9.exe").exists()
+
+    # Bonne empreinte lue depuis SHA256SUMS.txt : téléchargée, vérifiée, lancée.
+    monkeypatch.setattr(autonome, "_ouvrir", lambda *a, **kw: io.BytesIO(f"{bon_hash}  GARP-Setup-b9.exe\n".encode()))
+    autonome.installer_version(None, {"id": 1, "nom": "GARP-Setup-b9.exe", "taille": len(contenu), "sha256_id": 2})
+    assert lances == [[str(tmp_path / "GARP-Setup-b9.exe")]]

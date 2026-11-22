@@ -125,9 +125,31 @@ def alerts(row: pd.Series) -> list[str]:
 # Banques, assureurs et holdings ne se comparent pas aux industriels sur la qualité (ROE contre ROIC)
 # ni sur la valorisation (PER contre VE/EBIT) : pour ces deux piliers, ils sont classés entre eux.
 PILIERS_PAR_GROUPE = {"qualite", "valorisation"}
+ORDRE_STATUT = {"Éligible": 0, "Fonds": 1, "Exclu": 2}
 
 
-def pillar_scores(df: pd.DataFrame) -> pd.DataFrame:
+def _rang_centile(s: pd.Series, reference: pd.Series | None = None) -> pd.Series:
+    """Rang centile (0 à 100) ; si `reference` est fourni, les centiles sont calculés sur ce sous-ensemble
+    (typiquement les valeurs éligibles), et les autres lignes sont situées par rapport à cette distribution."""
+    if reference is None:
+        return s.rank(pct=True) * 100
+    ref_mask = reference.reindex(s.index, fill_value=False).astype(bool)
+    ref_s = s.loc[ref_mask]
+    ref_vals = np.sort(ref_s.dropna().to_numpy(dtype=float))
+    if len(ref_vals) == 0:
+        return s.rank(pct=True) * 100
+    out = pd.Series(np.nan, index=s.index, dtype=float)
+    out.loc[ref_mask] = ref_s.rank(pct=True) * 100
+    ext = s.loc[~ref_mask].dropna()
+    if not ext.empty:
+        vals = ext.to_numpy(dtype=float)
+        left = np.searchsorted(ref_vals, vals, side="left")
+        right = np.searchsorted(ref_vals, vals, side="right")
+        out.loc[ext.index] = (left + right) / (2 * len(ref_vals)) * 100
+    return out
+
+
+def pillar_scores(df: pd.DataFrame, reference: pd.Series | None = None) -> pd.DataFrame:
     out = pd.DataFrame(index=df.index)
     groups = df["financiere"].fillna(False).astype(bool) if "financiere" in df.columns else None
     for pilier, metrics in PILIERS.items():
@@ -137,9 +159,15 @@ def pillar_scores(df: pd.DataFrame) -> pd.DataFrame:
                 continue
             s = pd.to_numeric(df[col], errors="coerce").replace([np.inf, -np.inf], np.nan) * sign
             if pilier in PILIERS_PAR_GROUPE and groups is not None:
-                ranks.append(s.groupby(groups).rank(pct=True) * 100)
+                part = pd.Series(np.nan, index=df.index, dtype=float)
+                for g in (False, True):
+                    idx = groups[groups == g].index
+                    if len(idx):
+                        ref_g = reference.loc[idx] if reference is not None else None
+                        part.loc[idx] = _rang_centile(s.loc[idx], ref_g)
+                ranks.append(part)
             else:
-                ranks.append(s.rank(pct=True) * 100)
+                ranks.append(_rang_centile(s, reference))
         out[pilier] = pd.concat(ranks, axis=1).mean(axis=1, skipna=True).fillna(50.0) if ranks else 50.0
     return out
 
@@ -187,7 +215,12 @@ def classer(df: pd.DataFrame, poids: dict[str, float] | None = None) -> pd.DataF
     """Note GARP avec les poids en vigueur, puis tri et rang des valeurs éligibles (fonds sans note)."""
     df = df.copy()
     df["score"] = note_garp(df, poids)
-    df = df.sort_values(["statut", "score"], ascending=[False, False])
+    ordre = df["statut"].map(ORDRE_STATUT).fillna(len(ORDRE_STATUT))
+    df = (
+        df.assign(_ordre_statut=ordre)
+        .sort_values(["_ordre_statut", "score"], ascending=[True, False])
+        .drop(columns=["_ordre_statut"])
+    )
     df["rang"] = np.nan
     elig = df["statut"] == "Éligible"
     df.loc[elig, "rang"] = np.arange(1, elig.sum() + 1)
@@ -246,12 +279,13 @@ def build_screener(metrics: pd.DataFrame | None = None, strategy: dict | None = 
     # Les fonds (ETF, ETC) restent visibles avec leurs indicateurs de cours, hors classement.
     fonds = df["fonds"].fillna(False).astype(bool) if "fonds" in df.columns else pd.Series(False, index=df.index)
     funds, df = df[fonds].copy(), df[~fonds].copy()
-    df = df.join(pillar_scores(df))
-    df["score"] = note_garp(df)
     filtres = strategy["filtres"]
     df["motifs_exclusion"] = [" ; ".join(exclusion_reasons(t, r, filtres)) for t, r in df.iterrows()]
     df["alertes"] = [" ; ".join(alerts(r)) for _, r in df.iterrows()]
     df["statut"] = np.where(df["motifs_exclusion"].str.len() > 0, "Exclu", "Éligible")
+    # Centiles calculés sur les seules valeurs éligibles : les sociétés exclues ne déforment pas le classement.
+    df = df.join(pillar_scores(df, reference=df["statut"] == "Éligible"))
+    df["score"] = note_garp(df)
     df = df.join(notes_frame(df))  # quatre regards : repères, hors note
     df = df.join(health_points(df))  # signaux de santé ramenés sur 100 : repères, hors note
     if not funds.empty:
