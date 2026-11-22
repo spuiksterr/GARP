@@ -155,10 +155,10 @@ with onglets[0]:
             m[0].metric("Valeur déclarée", montant(p.attrs["total"]))
             m[1].metric("Lignes", len(detenues))
             m[2].metric("Trimestre", trimestre(p.attrs["periode"]), f"déposé le {pd.Timestamp(p.attrs['depose_le']):%d/%m/%Y}",
-                        delta_color="off")
+                        delta_color="off", delta_arrow="off")
             m[3].metric("Entrées / sorties", f"{mv.get('Nouvelle', 0)} / {mv.get('Soldée', 0)}",
                         f"{mv.get('Renforcée', 0)} renforcées · {mv.get('Allégée', 0)} allégées" if p.attrs["precedente"]
-                        else "premier trimestre lu", delta_color="off")
+                        else "premier trimestre lu", delta_color="off", delta_arrow="off")
 
             g, d = st.columns([3, 2])
             with g.container(border=True):
@@ -290,7 +290,7 @@ with onglets[2]:
         m[1].metric("Achats", int((t["operation"] == "P").sum()))
         m[2].metric("Ventes", int(t["operation"].str.startswith("S").sum()))
         m[3].metric("Délai de déclaration", f"{ui.num(t['retard_jours'].median(), 0)} jours" if len(t) else "—",
-                    "médiane (limite légale : 45)", delta_color="off")
+                    "médiane (limite légale : 45)", delta_color="off", delta_arrow="off")
 
         g, d = st.columns([1, 1])
         with g.container(border=True):

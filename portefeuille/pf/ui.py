@@ -166,7 +166,7 @@ def drawdown_chart(dd: pd.DataFrame, height: int = 260) -> go.Figure:
 def hbar(s: pd.Series, fmt: str = ".1%", height: int | None = None, color: str | None = None,
          highlight: dict | None = None) -> go.Figure:
     """Barres horizontales triées, une seule couleur (catégories nominales), valeur en bout de barre."""
-    color = color or couleurs()["series"][0]
+    color = color or accent()
     s = s.dropna().sort_values()
     colors = [(highlight or {}).get(k, color) for k in s.index]
     fig = go.Figure(go.Bar(x=s.values, y=[str(i) for i in s.index], orientation="h", marker_color=colors,
@@ -175,7 +175,11 @@ def hbar(s: pd.Series, fmt: str = ".1%", height: int | None = None, color: str |
                            hovertemplate="%{y} : %{x:" + fmt + "}<extra></extra>"))
     style(fig, height or max(200, 26 * len(s) + 50), legend=False)
     fig.update_layout(bargap=0.35)
-    fig.update_xaxes(showgrid=False, showticklabels=False)
+    # Place pour la valeur écrite au bout de la plus longue barre : sans elle, « 35,5 % » était coupé au bord.
+    bas, haut = min(0.0, float(s.min())) if len(s) else 0.0, max(0.0, float(s.max())) if len(s) else 1.0
+    marge = 0.22 * ((haut - bas) or 1.0)
+    fig.update_xaxes(showgrid=False, showticklabels=False,
+                     range=[bas - (marge if bas < 0 else 0.0), haut + (marge if haut > 0 else 0.0)])
     fig.update_yaxes(showgrid=False, tickfont=dict(color=GRIS))
     return fig
 
@@ -372,7 +376,8 @@ PCT = lambda label, help=None, d=1: st.column_config.NumberColumn(label, format=
 SCORE = lambda label, help=None: st.column_config.ProgressColumn(label, min_value=0, max_value=100, format="%.0f", help=help)  # noqa: E731
 
 
-def _a_la_francaise(df: pd.DataFrame, column_config: dict | None) -> tuple[pd.DataFrame, dict]:
+def _a_la_francaise(df: pd.DataFrame, column_config: dict | None,
+                    formats: dict | None = None) -> tuple[pd.DataFrame, dict]:
     """Remplace les formats printf (« 12.3 », « 1234.5 ») par les formats du navigateur (« 12,3 », « 1 234,5 »).
 
     Les pages gardent leurs formats printf, qui servent de consigne : nombre de décimales, et « %% » pour
@@ -392,17 +397,22 @@ def _a_la_francaise(df: pd.DataFrame, column_config: dict | None) -> tuple[pd.Da
         if fmt.endswith("%%"):
             out[col] = (valeurs / 100).round(decimales + 2) + 0.0  # + 0.0 : pas de « -0 % » après l'arrondi
             nouveau = "percent"
+            if formats is not None:
+                formats[col] = lambda v, d=decimales: pct(v, d)
         elif fmt.endswith("g"):
             out[col], nouveau = valeurs, "localized"
         else:
             out[col], nouveau = valeurs.round(decimales) + 0.0, "localized"
+            if formats is not None:
+                formats[col] = lambda v, d=decimales: nombre(v, d)
         cfg[col] = {**c, "type_config": {**tc, "format": nouveau}}
     return out, cfg
 
 
 def tableau(data: pd.DataFrame, column_config: dict | None = None, **kwargs):
     """st.dataframe avec des nombres à la française (virgule décimale, espace des milliers, « 12,3 % »)."""
-    data, column_config = _a_la_francaise(data, column_config)
+    formats: dict = {}
+    data, column_config = _a_la_francaise(data, column_config, formats)
     if isinstance(data, pd.DataFrame):
         data = data.copy()
         if data.index.name == "ticker":
@@ -410,6 +420,17 @@ def tableau(data: pd.DataFrame, column_config: dict | None = None, **kwargs):
         # Texte absent (fonds sans moat ni critères) : un tiret plutôt que « None ».
         texte = [c for c in data.columns if data[c].dtype == object or pd.api.types.is_string_dtype(data[c])]
         data[texte] = data[texte].astype(object).where(data[texte].notna(), "—")
+        # Nombre absent : Streamlit écrit « None » dans toute cellule vide, quel que soit le format. La cellule reçoit
+        # donc moins l'infini, qu'un Styler affiche « — » (les autres nombres à la française) : la colonne reste
+        # numérique et triable, les valeurs absentes en bout de tri. Le Styler ne vaut que sans format de colonne.
+        a_trous = {c: f for c, f in formats.items() if c in data.columns and data[c].isna().any()}
+        if a_trous and data.index.is_unique and data.columns.is_unique:
+            for c in a_trous:
+                cfg = column_config[c]
+                column_config[c] = {**cfg, "type_config": {**cfg["type_config"], "format": None}}
+            for c in a_trous:
+                data[c] = pd.to_numeric(data[c], errors="coerce").fillna(-np.inf)
+            data = data.style.format({c: (lambda v, f=f: f(v) if np.isfinite(v) else "—") for c, f in a_trous.items()})
     return st.dataframe(data, column_config=column_config, **kwargs)
 
 

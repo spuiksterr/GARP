@@ -79,7 +79,7 @@ composer_icones.py planche <dossier des rendus> planche.png [palette]
 | Ivoire | `#EDE6D8` | La pousse ; aplats clairs |
 | Blanc | `#F6F8FA` | Texte sur les fonds sombres |
 
-Dans l'outil (`.streamlit/config.toml`), l'accent est l'ocre de la marque, choisi pour son contraste. Il colore les boutons, curseurs, onglets actifs et liens : `#A86C1A` en thème sombre (liens `#C98B2E`), l'ocre foncé `#8A5A12` en thème clair. La courbe et les répartitions du portefeuille sont en ocre ; l'indice de comparaison est en gris ; les graphiques à plusieurs séries gardent la palette validée de `pf/ui.py`. Les grands chiffres du tableau de bord sont en `#B9781F`, lisible sur les deux fonds.
+Dans l'outil (`.streamlit/config.toml`), l'accent est l'ocre de la marque, choisi pour son contraste. Il colore les boutons, curseurs, onglets actifs et liens : `#A86C1A` en thème sombre (liens `#C98B2E`), l'ocre foncé `#8A5A12` en thème clair. En thème sombre, le texte d'un bouton sélectionné passe en `#F0C27A` et celui de l'onglet actif en `#E3A852` : l'ocre `#A86C1A` sur sa propre teinte se lisait mal (`app.py`). La courbe, les répartitions et toutes les barres horizontales (`ui.hbar`, valeur écrite au bout, jamais coupée) sont en ocre ; l'indice de comparaison est en gris ; les graphiques à plusieurs séries gardent la palette validée de `pf/ui.py`. Les grands chiffres du tableau de bord sont en `#B9781F`, lisible sur les deux fonds.
 
 Verdicts de prix : « Au bon prix » en vert, « Prix correct » en ambre, « À attendre » et « Non évalué » en gris. Le mot est toujours écrit : la couleur ne porte jamais seule l'information.
 

@@ -109,16 +109,16 @@ communes = w.index.intersection(model_w.index)
 # --------------------------------------------------------------------------- chiffres clés
 k = st.columns(5)
 k[0].metric("Lignes", len(w), f"{len(communes)} déjà détenue(s)" if len(communes) else "aucune déjà détenue",
-            delta_color="off")
+            delta_color="off", delta_arrow="off")
 garp = pd.to_numeric(sc.reindex(w.index)["score"], errors="coerce")
 k[1].metric("Note GARP", ui.num(float((garp * w).sum() / w[garp.notna()].sum()), 0) if garp.notna().any() else "—",
-            "moyenne pondérée, sur 100", delta_color="off")
+            "sur 100", delta_color="off", delta_arrow="off")
 tri = pd.to_numeric(sc.reindex(w.index)["tri_implicite"], errors="coerce")
 k[2].metric("TRI implicite", ui.pct(float((tri * w).sum() / w[tri.notna()].sum())) if tri.notna().any() else "—",
-            "par an, au prix actuel", delta_color="off")
-k[3].metric("Volatilité attendue", ui.pct(risque.get("volatilite")), "sur 3 ans de cours", delta_color="off")
+            "par an, au prix actuel", delta_color="off", delta_arrow="off")
+k[3].metric("Volatilité attendue", ui.pct(risque.get("volatilite")), "sur 3 ans de cours", delta_color="off", delta_arrow="off")
 k[4].metric("Secteurs cycliques", ui.pct(float(w[secteurs.isin(pfo.CYCLIQUES)].sum()), 0),
-            f"{secteurs.nunique()} secteurs", delta_color="off")
+            f"{secteurs.nunique()} secteurs", delta_color="off", delta_arrow="off")
 
 onglet_sel, onglet_comp = st.tabs(["Sélection", "Face à mon portefeuille"])
 

@@ -29,6 +29,17 @@ st.html("""<style>
 .garp-verdict-orange { color: #c98500; background: rgba(201, 133, 0, 0.14); }
 .garp-verdict-gray { color: #898781; background: rgba(137, 135, 129, 0.16); }
 </style>""")
+# En sombre (la fenêtre G.A.R.P l'est toujours, et Streamlit y suit le mode sombre), le texte ocre foncé (#a86c1a)
+# des boutons sélectionnés et de l'onglet actif se lisait mal : ocre clair à la place.
+st.html("""<style>
+@media (prefers-color-scheme: dark) {
+  button[data-variant="segmented_control"][data-selected="true"],
+  button[data-variant="segmented_control"][data-selected="true"] *,
+  button[data-variant="pills"][data-selected="true"],
+  button[data-variant="pills"][data-selected="true"] * { color: #f0c27a !important; }
+  [role="tab"][aria-selected="true"], [role="tab"][aria-selected="true"] * { color: #e3a852 !important; }
+}
+</style>""")
 
 # L'outil sert d'abord à trouver la bonne action au bon prix ; votre portefeuille, importé du courtier, est analysé
 # avec les mêmes outils (l'équilibre n'y est qu'un onglet de propositions), avec ses risques. Tout est classé par

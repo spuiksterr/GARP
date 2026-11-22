@@ -186,9 +186,7 @@ with b[2].container(border=True, height="stretch"):
 st.divider()
 if rows:
     st.markdown("#### Points de vigilance")
-    al = pd.DataFrame(rows, columns=["Type", "ticker", "Détail"])
-    al.insert(1, "Valeur", al["ticker"].map(lambda t: names.get(t, t)))
-    ui.tableau(al.drop(columns="ticker"), hide_index=True, width="stretch")
+    st.markdown("\n".join(f"- **{names.get(t, t)}** · {genre} : {detail}" for genre, t, detail in rows))
 if pos.empty:
     st.caption("Sans quantités importées, ce tableau de bord suit les poids de votre portefeuille. Importez-le avec ses "
                "quantités (page « Importer mon portefeuille ») pour voir sa valeur et ses poids réels.")
@@ -231,7 +229,7 @@ t["poids"] = w
 t = t.join(sc[["score", "perf_1m", "perf_12m", "tri_implicite", "per_prospectif"]])
 t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_values("poids", ascending=False)
 ui.tableau(t, width="stretch", column_config={
-    "nom": "Valeur", "enveloppe": "Compte", "poche": "Poche",
+    "nom": st.column_config.TextColumn("Valeur", width="medium"), "enveloppe": "Compte", "poche": "Poche",
     "poids": ui.PCT("Poids"),
     "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
                                    "sur 100"),

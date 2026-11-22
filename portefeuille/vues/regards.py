@@ -21,7 +21,7 @@ st.caption(f"Notes issues de règles fixes sur les indicateurs. Seules {len(load
            "récentes. Sans correction, un pic de cycle ou un risque réglementaire n'est pas pris en compte. Les fonds ne sont pas notés. "
            "Ce crible désigne quoi analyser, pas quoi acheter : utilisez /analyse-valeur avant toute décision.")
 
-c = st.columns([2, 2.4, 2.2, 1])
+c = st.columns([1.8, 2, 3, 1])
 statut = c[0].segmented_control("Statut", ["Éligible", "Exclu"], selection_mode="multi", default=["Éligible", "Exclu"])
 q = c[1].text_input("Recherche", placeholder="Nom ou ticker").strip().lower()
 tri = c[2].segmented_control("Trier selon", ["Buffett", "Munger", "Fisher", "Smith"], key="regards_tri",

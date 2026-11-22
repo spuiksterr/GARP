@@ -190,8 +190,9 @@ ui.tableau(
 st.download_button("Exporter la sélection (CSV)", view.drop(columns=["profil"], errors="ignore").to_csv(sep=";", decimal=",").encode("utf-8-sig"),
                    file_name=f"screener-{ui.stamp()}.csv", mime="text/csv", icon=":material/download:")
 
-st.subheader("Qualité et valorisation")
-st.caption("En haut à droite : entreprises de qualité à prix raisonnable. Taille : capitalisation. Survolez un point pour le détail.")
+st.subheader("Croissance et valorisation")
+st.caption("En haut à droite : la croissance à prix raisonnable, le cœur de la note GARP. Taille : capitalisation. "
+           "Survolez un point pour le détail (qualité et note GARP).")
 fig = go.Figure()
 for i, e in enumerate(["PEA", "CTO"]):
     d = view[view["enveloppe"] == e]

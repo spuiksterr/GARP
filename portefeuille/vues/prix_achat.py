@@ -97,7 +97,7 @@ selection = ui.tableau(
     selection_mode="multi-row", key=f"bon_prix_tableau_{ou}",
     column_config={
         "symbole": st.column_config.TextColumn("Ticker", pinned=True),
-        "nom": st.column_config.TextColumn("Valeur", pinned=True),
+        "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"),
         "verdict": ui.colonne_verdict(),
         "ecart_achat": ui.PCT("Cours / prix d'achat", "Négatif : le cours est sous votre prix d'achat.", 0),
         "cours": st.column_config.NumberColumn("Cours", format="%.2f"),

@@ -89,7 +89,7 @@ def test_vigilance_homme_cle(monkeypatch):
     at = _app("accueil")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert any("Homme-clé" in df.value.to_string() for df in at.dataframe)
+    assert any("Homme-clé" in m.value for m in at.markdown)  # liste des points de vigilance
 
 
 def test_import_avec_quantites_propose_la_photo():

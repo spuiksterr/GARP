@@ -29,7 +29,7 @@ st.title("Importer mon portefeuille")
 st.markdown(
     "Reprenez vos lignes depuis l'export de votre courtier (CSV ou classeur Excel), un tableau copié depuis la page "
     "« positions » de son site, ou une simple liste tapée à la main. Vous vérifiez chaque ligne avant d'enregistrer : "
-    "les poids obtenus deviennent les **poids cibles** de la page « Composition »."
+    "les poids obtenus deviennent les **poids cibles** de la page « Analyse de mon portefeuille »."
 )
 
 univers = load_universe()
@@ -90,7 +90,7 @@ if c[1].button("Lire mes lignes", type="primary", icon=":material/upload_file:",
             st.session_state.pop("import_table", None)
 
 if n := st.session_state.pop("import_fait", None):
-    st.success(f"Portefeuille enregistré : {n} lignes. Retrouvez-les dans « Composition ».", icon=":material/check:")
+    st.success(f"Portefeuille enregistré : {n} lignes. Retrouvez-les dans « Analyse de mon portefeuille ».", icon=":material/check:")
 base: imp.ResultatImport | None = st.session_state.get("import_resultat")
 if base is None:
     st.stop()

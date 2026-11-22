@@ -461,11 +461,11 @@ if section == "Activité":
                                  "n'achète que pour une.")
                 c[1].metric("Achats en bourse", _montant(syn["montant_achats"], dev),
                             f"{syn['achats']} achat(s), {syn['acheteurs']} acheteur(s)" if syn["achats"] else None,
-                            delta_color="off")
+                            delta_color="off", delta_arrow="off")
                 c[2].metric("Ventes en bourse", _montant(syn["montant_ventes"], dev),
                             (f"{syn['vendeurs']} vendeur(s), {ui.pct(programmees, 0)} programmées"
                              if math.isfinite(programmees) else f"{syn['vendeurs']} vendeur(s)") if syn["ventes"] else None,
-                            delta_color="off")
+                            delta_color="off", delta_arrow="off")
                 if tx is not None and len(tx):
                     t = tx.assign(type=tx["code"].map(dirigeants.CODES),
                                   programme=tx["plan_10b5_1"].map({True: "Oui", False: ""}),
