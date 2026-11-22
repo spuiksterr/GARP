@@ -4,16 +4,11 @@
 
 | Appareil | Fichier |
 |---|---|
-| **Android** (téléphone, tablette) | `GARP-bNUMERO.apk` |
 | **Windows 11** (installation) | `GARP-Setup-bNUMERO.exe` : l'outil complet du PC, avec tout ce qu'il lui faut |
 
 Les fichiers sont tout en bas de cette page, sous « Assets ».
 
 ## Installer
-
-**Android**
-1. Touchez le fichier `.apk`.
-2. Android demande une fois d'autoriser l'installation depuis le navigateur. Sur Xiaomi (HyperOS), confirmez l'avertissement.
 
 **Windows 11**
 1. Lancez `GARP-Setup-bNUMERO.exe`. Il n'a pas besoin de droits d'administrateur.
@@ -22,7 +17,6 @@ Les fichiers sont tout en bas de cette page, sous « Assets ».
 
 ## Ensuite
 
-- **Android** : au premier lancement, G.A.R.P vous guide (accès aux données, puis import du portefeuille). Les versions suivantes se proposent d'elles-mêmes : Réglages > « Rechercher une mise à jour ».
 - **Windows** : les données de la nuit se téléchargent d'elles-mêmes, au premier lancement puis à chaque ouverture, sans jeton. « Importer mon portefeuille » reprend vos lignes depuis l'export de votre courtier. Une nouvelle version se propose dans la barre latérale.
 
 G.A.R.P affiche des mesures et des classements. Ce n'est pas un conseil d'investissement.

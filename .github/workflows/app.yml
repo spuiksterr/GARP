@@ -1,7 +1,9 @@
 name: Application
 
-# Vérifie, construit et publie G.A.R.P : APK Android (application Flutter, signée) et installateur Windows, qui
-# installe l'outil du PC lui-même (Streamlit, avec son Python : app/windows/installateur/preparer_outil.ps1).
+# Vérifie, construit et publie G.A.R.P : installateur Windows, qui installe l'outil du PC lui-même (Streamlit, avec
+# son Python : app/windows/installateur/preparer_outil.ps1), et APK Android (application Flutter, signée).
+# APK suspendu depuis le 22/11/2026 : construit seulement à la demande (plateformes android ou les deux) ; sur main,
+# la release ne contient que l'installateur Windows.
 # Sur main, chaque construction devient une release « app-b<numéro> », que G.A.R.P propose d'installer.
 # Sobriété (le dépôt d'origine, privé, avait des minutes comptées) : construit sur main seulement, ou à la
 # demande pour essayer une branche avant fusion (gh workflow run app.yml --ref <branche> -f plateformes=windows).
@@ -41,9 +43,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Analyse et tests de l'application Flutter : seulement quand l'APK est construit.
+  # Analyse et tests de l'application Flutter : seulement quand l'APK est demandé (suspendu sur main).
   verifier:
-    if: github.event_name == 'push' || inputs.plateformes != 'windows'
+    if: inputs.plateformes == 'android' || inputs.plateformes == 'les deux'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -128,8 +130,11 @@ jobs:
           path: GARP-Setup-b${{ env.NUMERO }}.exe
           compression-level: 0
 
+  # Publie dès que l'installateur Windows est prêt ; l'APK s'y ajoute seulement s'il a été demandé et construit.
   publier:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      always() && github.ref == 'refs/heads/main' && needs.windows.result == 'success'
+      && needs.android.result != 'failure' && needs.android.result != 'cancelled'
     needs: [android, windows]
     runs-on: ubuntu-latest
     env:
