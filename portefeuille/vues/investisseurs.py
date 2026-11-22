@@ -1,5 +1,6 @@
 """Grands investisseurs : portefeuilles 13F de gérants reconnus et transactions déclarées par des élus américains."""
 import difflib
+import html
 import math
 import re
 import unicodedata
@@ -185,7 +186,7 @@ with onglets[0]:
 
                     noms = ", ".join(etiquette(n, tk, v) for n, tk, v
                                      in zip(lignes["nom"].str.title(), lignes["ticker"], lignes["variation"]))
-                    st.markdown(f'<span style="color:{couleur};font-weight:600">{libelle}s</span> : {noms}',
+                    st.markdown(f'<span style="color:{couleur};font-weight:600">{libelle}s</span> : {html.escape(noms)}',
                                 unsafe_allow_html=True)
 
             t = p.copy()

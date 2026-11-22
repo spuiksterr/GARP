@@ -14,6 +14,7 @@ Les fichiers personnels (profil, journal des transactions, sauvegardes) ne sont 
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -213,12 +214,15 @@ def _telecharger(chemin: str, jeton_: str | None, vers: Path, taille: int,
 def installer_archive(zip_path: Path, dossier: Path) -> int:
     """Copie le contenu admis de l'archive dans `dossier` (fichier par fichier, remplacement atomique).
     Renvoie le nombre de fichiers écrits. Lève ValueError si l'archive n'a pas la forme attendue."""
+    base = dossier.resolve()
     with zipfile.ZipFile(zip_path) as z:
         noms = [n for n in z.namelist() if not n.endswith("/")]
         if "data/cache/indicateurs.parquet" not in noms:
             raise ValueError("archive incomplète : indicateurs absents")
         for n in noms:
-            if ".." in Path(n).parts or n.startswith("/") or not n.startswith(PREFIXES):
+            if ".." in Path(n).parts or n.startswith(("/", "\\")) or "\\" in n or not n.startswith(PREFIXES):
+                raise ValueError(f"archive refusée : {n}")
+            if not (base / n).resolve().is_relative_to(base):
                 raise ValueError(f"archive refusée : {n}")
         temp = Path(tempfile.mkdtemp(prefix=".maj-", dir=dossier))
         try:
@@ -352,23 +356,82 @@ def installer_en_attente(tache: TacheNuit) -> dict:
 
 # ---------------------------------------------------------------------------------------------- nouvelles versions
 
+def _nom_installateur_valide(nom: str) -> bool:
+    return bool(nom) and Path(nom).name == nom and nom.startswith("GARP-Setup") and nom.endswith(".exe")
+
+
+def _sha256_fichier(chemin: Path) -> str:
+    h = hashlib.sha256()
+    with open(chemin, "rb") as f:
+        while morceau := f.read(1 << 20):
+            h.update(morceau)
+    return h.hexdigest().lower()
+
+
+def _lire_sha256sums(contenu: str, nom: str) -> str | None:
+    for ligne in contenu.splitlines():
+        parts = ligne.strip().split()
+        if len(parts) >= 2 and parts[1].lstrip("*") == nom and len(parts[0]) == 64:
+            try:
+                int(parts[0], 16)
+                return parts[0].lower()
+            except ValueError:
+                continue
+    return None
+
+
+def _sha256_attendu(jeton_: str | None, version: dict, nom: str) -> str | None:
+    direct = str(version.get("sha256") or "").strip().lower()
+    if direct.startswith("sha256:"):
+        direct = direct[7:]
+    if len(direct) == 64:
+        return direct
+    if version.get("sha256_id") is not None:
+        with _ouvrir(f"/releases/assets/{version['sha256_id']}", jeton_,
+                     accept="application/octet-stream", timeout=30) as r:
+            texte = r.read().decode("utf-8", errors="replace")
+        attendu = _lire_sha256sums(texte, nom)
+        if not attendu:
+            raise ErreurGitHub(f"Empreinte SHA-256 absente de SHA256SUMS.txt pour {nom}.")
+        return attendu
+    return None
+
+
 def derniere_version(jeton_: str | None) -> dict | None:
-    """Release app-b<n> la plus récente qui contient un installateur Windows : {numero, id, nom, taille}."""
+    """Release app-b<n> la plus récente qui contient un installateur Windows : {numero, id, nom, taille, …}."""
     meilleure = None
     for rel in _json("/releases?per_page=30", jeton_):
         tag = str(rel.get("tag_name", ""))
         if not tag.startswith("app-b") or not tag[5:].isdigit():
             continue
         numero = int(tag[5:])
-        setup = next((a for a in rel.get("assets", []) if str(a.get("name", "")).startswith("GARP-Setup")), None)
+        assets = rel.get("assets", [])
+        setup = next((a for a in assets if _nom_installateur_valide(str(a.get("name", "")))), None)
         if setup and (meilleure is None or numero > meilleure["numero"]):
-            meilleure = {"numero": numero, "id": setup["id"], "nom": setup["name"], "taille": setup.get("size", 0)}
+            sums = next((a for a in assets if a.get("name") == "SHA256SUMS.txt"), None)
+            digest = str(setup.get("digest") or "")
+            meilleure = {
+                "numero": numero, "id": setup["id"], "nom": setup["name"], "taille": setup.get("size", 0),
+                "sha256": digest[7:].lower() if digest.lower().startswith("sha256:") else None,
+                "sha256_id": sums["id"] if sums else None,
+            }
     return meilleure
 
 
 def installer_version(jeton_: str | None, version: dict, progression: Callable[[float], None] | None = None) -> None:
-    """Télécharge l'installateur et le lance ; il ferme G.A.R.P, remplace les fichiers et le rouvre."""
-    vers = Path(tempfile.gettempdir()) / version["nom"]
-    _telecharger(f"/releases/assets/{version['id']}", jeton_, vers, version["taille"], progression)
+    """Télécharge l'installateur, vérifie son empreinte SHA-256 si publiée, puis le lance."""
+    nom = str(version.get("nom", ""))
+    if not _nom_installateur_valide(nom):
+        raise ErreurGitHub(f"Nom d'installateur refusé : {nom!r}.")
+    attendu = _sha256_attendu(jeton_, version, nom)
+    vers = Path(tempfile.gettempdir()) / nom
+    partiel = vers.with_suffix(".exe.part")
+    try:
+        _telecharger(f"/releases/assets/{version['id']}", jeton_, partiel, version["taille"], progression)
+        if attendu is not None and _sha256_fichier(partiel) != attendu:
+            raise ErreurGitHub("Empreinte SHA-256 invalide : l'installateur téléchargé a été rejeté.")
+        os.replace(partiel, vers)
+    finally:
+        partiel.unlink(missing_ok=True)
     options = {"creationflags": subprocess.DETACHED_PROCESS} if sys.platform == "win32" else {}
     subprocess.Popen([str(vers)], close_fds=True, **options)
