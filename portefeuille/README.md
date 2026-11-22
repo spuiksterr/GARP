@@ -1,0 +1,117 @@
+# Portefeuille long terme — outils de stock-picking
+
+Outils pour constituer, suivre et faire vivre un portefeuille d'actions de long terme, pensé pour un investisseur français (PEA + compte-titres) :
+
+- un **screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars et une sélection internationale), avec filtres d'exclusion et score Qualité / Croissance / Valorisation / Momentum ;
+- **votre portefeuille réel** (repris le 29/10/2026 depuis votre courtier : 8 lignes sur le compte-titres) avec ses poids cibles, une fiche de thèse par ligne et le suivi de performance contre l'ETF MSCI World ;
+- la **sélection de 25 valeurs proposée par Claude** le 29/10/2026, archivée dans `profil/selection_claude_2026-10.csv` et comparable dans le backtest ;
+- trois **signaux de santé** (Piotroski, Altman, Beneish) et une note selon **quatre regards**, intégrés au score avec la valorisation, qui y compte aussi comme un bloc à part ;
+- un **moat estimé** et une comparaison du PER à son historique, hors score ;
+- **six critères de qualité** remplis ou non (croissance du CA et du free cash flow, ROCE, dette nette / FCF, nombre d'actions, marge de FCF), en cartes sur la fiche valeur et en filtre dans le screener, hors score par défaut ;
+- une **interface** locale (Streamlit) : tableau de bord, fiche valeur avec DCF inversé, construction, backtest, suivi réel, apport du mois ;
+- une **ligne de commande** et des **commandes Claude Code** en français pour l'analyse et les revues.
+
+La méthode complète est dans [docs/METHODE.md](docs/METHODE.md) (aussi visible dans l'interface, page « Méthode et routine »).
+
+## Démarrer
+
+1. Double-cliquez sur `installer.bat` (une seule fois : environnement Python et premier téléchargement des données, environ 5 minutes). Déjà fait sur ce poste.
+2. Double-cliquez sur `lancer.bat` : l'interface s'ouvre dans le navigateur sur http://localhost:8501.
+3. Dans l'interface (barre latérale), bouton « Mise à jour rapide » avant chaque session : cours, changes et scores en quelques minutes. Une fois par semaine, « Mise à jour complète » : fondamentaux par roulement et comptes déposés (SEC, rapports européens), environ 10 minutes. La barre latérale signale une mise à jour complète vieille de plus d'une semaine.
+
+## Routine conseillée
+
+| Quand | Quoi |
+|---|---|
+| Chaque mois | Mise à jour, alertes du tableau de bord, page « Apport du mois », saisie des ordres exécutés |
+| Chaque trimestre | `/revue-portefeuille` dans Claude Code après les publications de résultats |
+| Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleurs scores hors portefeuille |
+| Chaque année | Bilan contre l'ETF MSCI World, rééquilibrage par les apports |
+
+## Ligne de commande
+
+Depuis ce dossier : `.venv\Scripts\python.exe -m pf <commande>`, ou `.venv\Scripts\pf <commande>` après `.venv\Scripts\python.exe -m pip install -e .` (installation décrite par `pyproject.toml`, dépendances figées dans `requirements.txt`).
+
+| Commande | Rôle |
+|---|---|
+| `maj` | Mise à jour complète : cours et scores, un quart des fiches de fondamentaux par roulement (vos lignes d'abord ; tout l'univers relu en quatre semaines), comptes SEC et rapports européens à renouveler ; `--rapide` pour les cours, changes et scores seulement (chaque jour) ; `--complet` pour tout re-télécharger (environ une heure). Le compte rendu donne la durée de chaque étape |
+| `maj --auto` | Mode planifié : complète si la dernière a 6 jours ou plus, rapide sinon ; journal dans `data/journaux`. Pour le lancer chaque jour à 6 h 30 (réveil de la veille, rattrapage au démarrage) : clic droit sur `planifier_mise_a_jour.ps1` > « Exécuter avec PowerShell » (`-Retirer` pour l'enlever) |
+| `contexte ADBE` | Tout le contexte d'une valeur : historique et sa source, multiples et médianes, dirigeants, grands investisseurs, élus, actualités, scénarios, conditions de vente, prix visé (`--hors-ligne` sans réseau) |
+| `risques` | Risques du portefeuille : concentration, devises, corrélations, pertes passées, scénarios de choc |
+| `idees` | Valeurs retenues par plusieurs méthodes de notation, et titres détenus par plusieurs grands investisseurs |
+| `regards --top 50` | Note sur 5 selon quatre regards (Buffett, Munger, Fisher, Smith) ; `--tous` pour toutes les actions, exclues comprises |
+| `esef` | Allonge l'historique des valeurs européennes avec leurs rapports annuels (ESEF). Premier passage : deux à trois heures, au rythme imposé par la base ; ensuite `maj` s'en charge |
+| `investisseurs` | Portefeuilles 13F des grands investisseurs suivis et transactions des élus américains (aussi fait par `maj` et par le bouton de la page « Grands investisseurs ») ; `--force` pour tout relire |
+| `indices` | Ajoute à l'univers les nouveaux entrants du S&P 500, du STOXX 600 et du Nasdaq Global Select (au moins 1 milliard de dollars, vérifié auprès de Yahoo ; `--sans-nasdaq` pour aller vite). À lancer chaque trimestre, puis `maj` |
+| `screener --top 30 --enveloppe PEA` | Classement ; `--tous` inclut les exclues |
+| `fiche ASML.AS` | Tous les indicateurs d'une valeur et sa thèse |
+| `modele` | Composition du portefeuille (poids cibles), caractéristiques, répartitions |
+| `construire --n 22` | Construction de portefeuille : portefeuille construit par des règles (plancher de qualité, cycliques plafonnés), réglages de config/strategie.json ; `--notation regards` choisit la méthode de notation (composite, regards, buffett, munger, fisher, smith, qualite, croissance, valeur, momentum), `--pea 0.5` impose une part PEA |
+| `backtest --depuis 2016-01-01 --reequilibrage annuel` | Profil de risque historique (attention au biais rétrospectif) |
+| `suivi` | Positions, performance, écart à l'ETF, écarts aux poids cibles |
+| `apport 1000 --compte PEA` | Ordres à passer pour investir un apport sans vendre |
+| `export` | Classeur Excel dans `rapports/` |
+| `sauvegarde --vers DOSSIER` | Archive zip datée de vos données personnelles (profil, thèses, journal d'opérations, historique des scores), hors de Git. Choisir un dossier hors de ce disque ou synchronisé (OneDrive…) : il est mémorisé, puis chaque mise à jour refait l'archive du jour ; les 30 dernières sont gardées. Restaurer : décompresser l'archive dans `portefeuille/` |
+| `verifier` | Contrôle du projet : doublons de l'univers (même société cotée deux fois), secteurs ou enveloppes inconnus, cours absents ou figés, fiches incomplètes, lignes de CSV mal formées (un « ; » dans un texte). Rien n'est modifié ; à lancer après avoir édité un fichier de `config/` ou de `profil/` |
+
+## Commandes Claude Code
+
+Ouvrez Claude Code dans le dossier `Claude investissement` :
+
+| Commande | Rôle |
+|---|---|
+| `/analyse-valeur ASML.AS` | Analyse approfondie (4 regards : Buffett, Munger, Fisher, Terry Smith), verdict et fiche de thèse |
+| `/revue-portefeuille` | Revue trimestrielle : chaque thèse est confrontée aux faits récents |
+| `/apport-mensuel 1500 PEA` | Prépare et explique les ordres du mois |
+| `/nouvelles-idees` | Cherche des candidats dans le screener et au-delà |
+
+## Fichiers à connaître
+
+Vos fichiers personnels sont dans `profil/`. Ce dossier n'est pas envoyé sur GitHub et n'a pas d'autre copie : réglez une sauvegarde avec `pf sauvegarde --vers DOSSIER`. Sur une installation neuve, il est créé à partir de `profil.exemple/` (données fictives). La variable d'environnement `PF_PROFIL` désigne un autre dossier.
+
+| Fichier | Contenu | Modifiable |
+|---|---|---|
+| `config/univers.csv` | Les valeurs suivies (ticker Yahoo, enveloppe, secteur). Les lignes à `profil` vide viennent des indices | Oui, sous Excel (séparateur `;`) |
+| `profil/portefeuille_modele.csv` | Vos lignes et leurs poids cibles (visés par l'apport du mois), thèses, conditions de vente | Oui |
+| `profil/selection_claude_2026-10.csv` | Sélection de 25 valeurs proposée par Claude (archive) | Oui |
+| `profil/surveillance.csv` | Valeurs écartées pour l'instant et condition d'entrée | Oui |
+| `profil/regles_vente.csv` | Conditions de vente chiffrées (indicateur, comparaison, seuil), vérifiées à chaque mise à jour | Oui (ou depuis la fiche, section Thèse) |
+| `profil/scenarios.csv` | Scénarios de valorisation à 5 ans enregistrés, datés | Oui (ou depuis la fiche, section Valorisation) |
+| `profil/actualites.csv` | Recherches de presse propres à une valeur (`"Ferrari" -F1`, `en:` pour la presse anglaise) | Oui |
+| `config/investisseurs.csv`, `config/elus.csv` | Grands investisseurs et élus américains suivis | Oui (ou depuis la page « Grands investisseurs ») |
+| `config/regards_ajustements.csv` | Corrections manuelles des notes « quatre regards », avec leur motif | Oui |
+| `config/strategie.json` | Poids des piliers, seuils des filtres, paramètres ; garde-fous de concentration (`suivi.garde_fous` : poids d'une ligne, des trois premières, d'un secteur, corrélation moyenne), signalés au tableau de bord, sur la page Risques et dans le simulateur | Oui (ou via l'interface) |
+| `data/historique/scores.parquet` | Photo datée du screener à chaque mise à jour normale ou complète : évolution du rang (fiche valeur), changements de statut (tableau de bord). À sauvegarder : il ne se reconstitue pas | Non |
+| `data/transactions.csv` | Votre journal d'opérations, en commençant par la reprise de vos lignes | Oui |
+| `theses/*.md` | Une fiche de thèse par ligne, avec journal de suivi | Oui |
+| `data/cache/` | Données téléchargées | Non (régénéré) |
+
+## Reprendre un portefeuille existant
+
+Une ligne déjà détenue s'enregistre comme une opération `REPRISE` : quantité, PRU et coût total en euros indiqués par le courtier (colonne `montant_eur`). Le prix de revient et les plus-values latentes sont ainsi ceux du courtier. La performance, elle, part de la valeur de marché du jour de la reprise : les gains acquis avant le suivi ne la gonflent pas, et la comparaison avec l'ETF reste équitable.
+
+Watchlist : page « Watchlist » (menu Analyser). On y ajoute une valeur depuis la page elle-même, depuis le bouton « Ajouter à la watchlist » de sa fiche, ou en cochant une ligne du screener ; un clic sur une ligne ouvre la fiche. Elle est enregistrée dans `profil/watchlist.csv`, avec la date et le cours d'ajout. La liste de surveillance (`profil/surveillance.csv`, conditions d'entrée décidées lors des analyses) s'y consulte dans un second onglet.
+
+Grands investisseurs : page du menu Analyser. On y voit les portefeuilles déclarés (formulaires 13F) de 16 investisseurs reconnus (Buffett, Ackman, Li Lu, Klarman, Terry Smith, Nick Train…) et leurs mouvements trimestriels, ainsi que les transactions déclarées par 9 élus de la Chambre des représentants (Nancy Pelosi…). Les listes se modifient dans l'onglet « Gérer les listes » (fichiers `config/investisseurs.csv` et `config/elus.csv`). Méthode et limites : `docs/METHODE.md`, section « Grands investisseurs ».
+
+Prix visé : dans la fiche, la section « Prix juste » calcule le cours auquel l'action se paierait au multiple choisi (P/FCF, P/FCF hors SBC, PER ou prix / chiffre d'affaires), avec les médianes historiques comme repères. Le bouton « Ajouter à la watchlist » de cette section enregistre ce prix. Quand le cours passe dessous, la watchlist et le tableau de bord le signalent. Méthode et limites : `docs/METHODE.md`, section « Prix juste et prix visé ».
+
+Affichage : l'interface suit le thème clair ou sombre de Windows ; le menu « ⋮ > Settings » de l'application permet de choisir l'un ou l'autre. Les graphiques reprennent les couleurs du thème actif après un clic ou un changement de page.
+
+Sécurité : l'interface n'est accessible que depuis cet ordinateur (`.streamlit/config.toml`). Le journal `data/transactions.csv` est copié dans `data/sauvegardes` avant chaque modification. `profil/prive.json` (adresse de contact SEC) et le dossier `data/` sont personnels : ne les partagez pas avec le code (voir `.gitignore`).
+
+Une valeur hors univers doit être ajoutée à `config/univers.csv`. Pour un ETF ou un ETC, choisissez le secteur « Fonds & matières premières » : il sera suivi sur son cours, sans filtres ni score.
+
+## Pages ajoutées en novembre 2026
+
+- **Actualités** (menu Investir) : presse française, déclarations officielles à la SEC, dates de résultats et signaux de l'outil pour vos lignes et votre watchlist. Les 5 dernières figurent au tableau de bord.
+- **Risques** (menu Investir) : concentration, devises, secteurs, part du risque, corrélations, pertes passées et scénarios de choc (marché -30 %, dollar -10 %, or -20 %).
+- **Fiche valeur** en sections (Résumé, Prix juste, Activité, Historique, Valorisation, Thèse) : seule la section choisie se calcule. Valorisation : scénarios à 5 ans. Thèse : conditions de vente chiffrées.
+- **Backtest**, second mode « Méthodes de notation : test à date » : les méthodes testées sans regarder l'avenir.
+- **Recherche** dans la barre latérale : tapez un nom ou un ticker pour ouvrir sa fiche depuis n'importe quelle page.
+
+Le projet est versionné avec Git (dépôt à la racine du dossier « Claude investissement ») : chaque changement peut être annulé. Tests : `.venv\Scripts\python.exe -m pytest tests -q` (calculs) et `-m pages` (affichage de toutes les pages, une minute). Ils utilisent le jeu d'essai `tests/jeu_essai/` (16 valeurs aux données figées, sans réseau ni données personnelles) ; `PF_TESTS_REELS=1` pour les lancer sur vos données. La variable `PF_DOSSIER` désigne un autre dossier de données que celui du code.
+
+## Avertissement
+
+Outil d'aide à la décision, pas un conseil en investissement personnalisé. Les données gratuites (Yahoo Finance, recoupées avec la SEC pour les sociétés américaines et avec la BCE pour les changes, prolongées par les rapports ESEF en Europe) peuvent être erronées : vérifiez les chiffres clés dans les publications des entreprises avant d'acheter. Les performances passées, et a fortiori les backtests, ne préjugent pas des performances futures.

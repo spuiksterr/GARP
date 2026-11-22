@@ -1,0 +1,29 @@
+﻿ticker;categorie;motif
+INVE-B.ST;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+EXO.AS;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+III.L;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+BRK-B;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+PRX.AS;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+INDU-C.ST;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+GBLB.BR;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+SOF.BR;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+ACKB.BR;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+LUND-B.ST;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+LATO-B.ST;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+BOL.PA;holding;Résultat dominé par les réévaluations de participations : ROE, pas de valorisation par le résultat
+AXP;financiere;Émetteur-prêteur de cartes que l'industrie Yahoo ne classe pas en finance
+COF;financiere;Émetteur-prêteur de cartes que l'industrie Yahoo ne classe pas en finance
+SYF;financiere;Émetteur-prêteur de cartes que l'industrie Yahoo ne classe pas en finance
+ADYEN.AS;tresorerie_clients;Fonds des commerçants en transit (paiement)
+DB1.DE;tresorerie_clients;Fonds de compensation (bourse)
+ENX.PA;tresorerie_clients;Fonds de compensation (bourse)
+LSEG.L;tresorerie_clients;Fonds de compensation (bourse)
+CME;tresorerie_clients;Fonds de compensation (bourse)
+ICE;tresorerie_clients;Fonds de compensation (bourse)
+EVD.DE;tresorerie_clients;Billetterie : encaissements reversés aux organisateurs
+AM.PA;tresorerie_clients;Avances des clients sur commandes d'avions
+NDAQ;tresorerie_clients;Fonds de compensation (bourse)
+CBOE;tresorerie_clients;Fonds de compensation (bourse)
+COIN;tresorerie_clients;Avoirs des clients (cryptomonnaies)
+EDEN.PA;tresorerie_clients;Fonds des titres-restaurant en attente de remboursement
+WISE.L;tresorerie_clients;Fonds des clients (transferts)

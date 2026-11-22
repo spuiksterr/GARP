@@ -1,0 +1,5 @@
+ticker;nom;enveloppe;poche;conviction;poids_cible;these;risque_principal;condition_vente;alternative
+ASML.AS;ASML;PEA;Cœur;1;30;Exemple fictif : seul fournisseur de lithographie EUV.;Exemple : cycle des investissements des fondeurs.;Exemple : alternative crédible à l'EUV.;
+AI.PA;Air Liquide;PEA;Cœur;2;25;Exemple fictif : gaz industriels sous contrats longs.;Exemple : ralentissement industriel européen.;Exemple : marge opérationnelle en baisse trois ans de suite.;
+MSFT;Microsoft;CTO;Cœur;1;30;Exemple fictif : logiciels et cloud à revenus récurrents.;Exemple : coût des investissements dans l'IA.;Exemple : croissance d'Azure sous 10 %.;
+COST;Costco;CTO;Opportunités;3;15;Exemple fictif : abonnements et volumes élevés.;Exemple : valorisation exigeante.;Exemple : baisse du taux de renouvellement des cartes.;

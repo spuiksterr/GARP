@@ -1,0 +1,11 @@
+{
+ "valorisation": {
+  "taux_actualisation": 0.09,
+  "croissance_terminale": 0.03,
+  "annees_croissance": 5,
+  "annees_convergence": 5,
+  "roic_incremental_min": 0.12,
+  "roic_incremental_max": 0.4,
+  "croissance_max": 0.25
+ }
+}

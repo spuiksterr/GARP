@@ -1,0 +1,17 @@
+ticker;nom;pays;enveloppe;secteur;profil
+MC.PA;LVMH;France;PEA;Luxe & Consommation;N°1 mondial du luxe, portefeuille de marques iconiques et distribution contrôlée
+AI.PA;Air Liquide;France;PEA;Matériaux & Chimie;Gaz industriels, contrats long terme indexés, oligopole mondial
+CS.PA;AXA;France;PEA;Assurance;Assureur mondial, discipline de capital, rachats d'actions
+SAP.DE;SAP;Allemagne;PEA;Logiciels & IT;ERP mondial, migration cloud, coûts de changement élevés
+ASML.AS;ASML;Pays-Bas;PEA;Semi-conducteurs;Monopole mondial de la lithographie EUV
+RACE.MI;Ferrari;Italie;PEA;Luxe & Consommation;Luxe automobile, rareté organisée, pouvoir de prix
+NOVO-B.CO;Novo Nordisk;Danemark;PEA;Santé;Diabète et obésité (GLP-1)
+MSFT;Microsoft;États-Unis;CTO;Logiciels & IT;Cloud Azure, logiciels de productivité, IA
+GOOGL;Alphabet;États-Unis;CTO;Internet & Médias;Recherche, YouTube, Google Cloud, IA (Gemini)
+ADBE;Adobe;États-Unis;CTO;Logiciels & IT;Logiciels créatifs et marketing
+BRK-B;Berkshire Hathaway;États-Unis;CTO;Assurance;Conglomérat d'assurance et d'entreprises
+COST;Costco;États-Unis;CTO;Distribution;Clubs-entrepôts, modèle d'abonnement
+NUKL.DE;VanEck Uranium and Nuclear Technologies;Fonds (mondial);CTO;Fonds & matières premières;ETF d'actions de l'uranium et du nucléaire civil
+TTE.PA;TotalEnergies;France;PEA;Infrastructures & Énergie;
+JPM;JPMorgan Chase & Co;États-Unis;CTO;Banques;
+ONON;On Holding;Suisse;CTO;Luxe & Consommation;Chaussures de course premium (semelle CloudTec), marque en forte croissance, cofondateurs aux commandes

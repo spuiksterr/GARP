@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "climax-pf"
+version = "0.1.0"
+description = "Analyse d'actions et construction de portefeuille de long terme (screener, fiches, suivi)"
+readme = "README.md"
+requires-python = ">=3.11"
+# Versions figées dans requirements.txt (source unique, aussi lue par installer.bat).
+dynamic = ["dependencies"]
+
+[project.scripts]
+pf = "pf.__main__:main"
+
+[tool.setuptools]
+packages = ["pf"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+# Installer en mode modifiable (`pip install -e .`) : les données (config/, data/, profil/…) sont cherchées à côté
+# du code, ou dans le dossier que désigne PF_DOSSIER.
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["tests/jeu_essai"]
+
+[tool.ruff.lint]
+# Erreurs (E, F, W), bogues probables (B), ordre des imports (I), syntaxe moderne (UP).
+select = ["E", "F", "W", "B", "I", "UP"]
+# zip(strict=True) changerait le comportement si deux listes diffèrent : à décider au cas par cas.
+ignore = ["B905"]
+
+[tool.ruff.lint.pycodestyle]
+# 120 caractères pour le nouveau code ; le code existant monte parfois à 150 (lignes de tableaux et de textes).
+max-line-length = 150

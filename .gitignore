@@ -1,0 +1,7 @@
+# Framework de référence, en lecture seule (copie d'un projet open source).
+ai-berkshire-main/
+# Dossier déposé par le propriétaire, hors du projet : reste sur le poste.
+security-audit-skill-main/
+# Réglages locaux de Claude Code (autorisations propres à cette machine).
+.claude/settings.local.json
+# Le reste des exclusions est dans portefeuille/.gitignore (données personnelles, environnement, caches).

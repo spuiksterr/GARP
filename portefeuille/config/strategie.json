@@ -1,0 +1,80 @@
+{
+  "poids_piliers": {
+    "qualite": 0.35,
+    "croissance": 0.2,
+    "valorisation": 0.25,
+    "momentum": 0.2
+  },
+  "poids_score": {
+    "piliers": 1,
+    "valorisation": 1,
+    "regards": 1,
+    "piotroski": 1,
+    "altman": 1,
+    "beneish": 1,
+    "criteres": 0
+  },
+  "filtres": {
+    "rentabilite_min": 0.08,
+    "couverture_interets_min": 3.0,
+    "dette_nette_ebitda_max": 3.5,
+    "dilution_max_par_an": 0.03,
+    "marge_brute_min": 0.15,
+    "exemption_marge_brute_roic": 0.2,
+    "exiger_fcf_cumule_positif": true,
+    "exiger_benefice_positif": true,
+    "exemptions_dilution": {
+      "NSIS-B.CO": "Fusion Novozymes / Chr. Hansen (2024) payée en actions",
+      "AJG": "Augmentation de capital pour l'acquisition d'AssuredPartners",
+      "EQT.ST": "Acquisition de Baring Private Equity Asia payée en partie en actions",
+      "BEIJ-B.ST": "Augmentations de capital pour financer des acquisitions",
+      "HAG.DE": "Augmentation de capital pour l'acquisition d'ESG (2024)",
+      "AVGO": "Acquisition de VMware payée en partie en actions (2023)"
+    }
+  },
+  "valorisation": {
+    "taux_actualisation": 0.09,
+    "croissance_terminale": 0.03,
+    "annees_croissance": 5,
+    "annees_convergence": 5,
+    "roic_incremental_min": 0.12,
+    "roic_incremental_max": 0.4,
+    "croissance_max": 0.25
+  },
+  "construction": {
+    "nb_lignes": 22,
+    "poids_max": 0.08,
+    "poids_min": 0.02,
+    "secteur_max": 0.25,
+    "max_par_secteur": 5,
+    "methode": "score_vol",
+    "part_pea": null,
+    "criteres_min": 4,
+    "exclure_moat_faible": true,
+    "cycliques_max": 0.25,
+    "notation": {
+      "score": 1
+    }
+  },
+  "suivi": {
+    "benchmark": "IWDA.AS",
+    "seuil_reequilibrage": 0.03,
+    "ordre_min_eur": 300,
+    "date_creation_modele": "2026-10-29",
+    "date_ouverture_pea": "",
+    "garde_fous": {
+      "ligne_max": 0.25,
+      "trois_premieres_max": 0.6,
+      "secteur_max": 0.4,
+      "correlation_moyenne_max": 0.5
+    }
+  },
+  "criteres": {
+    "croissance_ca_min": 0.1,
+    "croissance_fcf_min": 0.1,
+    "roce_min": 0.15,
+    "dette_nette_fcf_max": 3.0,
+    "evolution_actions_max": 0.0,
+    "marge_fcf_min": 0.1
+  }
+}

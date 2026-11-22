@@ -1,0 +1,1757 @@
+﻿ticker;nom;pays;enveloppe;secteur;profil
+MC.PA;LVMH;France;PEA;Luxe & Consommation;N°1 mondial du luxe, portefeuille de marques iconiques et distribution contrôlée
+RMS.PA;Hermès;France;PEA;Luxe & Consommation;Luxe ultra-haut de gamme, rareté organisée, pouvoir de prix inégalé
+OR.PA;L'Oréal;France;PEA;Consommation de base;N°1 mondial de la beauté, R&D et puissance marketing
+AI.PA;Air Liquide;France;PEA;Matériaux & Chimie;Gaz industriels, contrats long terme indexés, oligopole mondial
+SU.PA;Schneider Electric;France;PEA;Industrie & Électrification;Gestion de l'énergie et automatismes, datacenters, électrification
+SAF.PA;Safran;France;PEA;Aéronautique & Défense;Moteurs CFM/LEAP, rente de l'après-vente sur 30 ans
+AIR.PA;Airbus;France;PEA;Aéronautique & Défense;Duopole des avions commerciaux, carnet de commandes de 8 ans
+HO.PA;Thales;France;PEA;Aéronautique & Défense;Électronique de défense, cybersécurité, spatial
+AM.PA;Dassault Aviation;France;PEA;Aéronautique & Défense;Rafale et Falcon, trésorerie nette massive
+EL.PA;EssilorLuxottica;France;PEA;Santé;Leader mondial de l'optique intégré (verres, montures, distribution)
+DSY.PA;Dassault Systèmes;France;PEA;Logiciels & IT;Logiciels de conception 3D et PLM, clients captifs
+CAP.PA;Capgemini;France;PEA;Logiciels & IT;Services informatiques et conseil, exposé à l'IA générative
+LR.PA;Legrand;France;PEA;Industrie & Électrification;Matériel électrique basse tension, datacenters, acquisitions ciblées
+DG.PA;Vinci;France;PEA;Infrastructures & Énergie;Concessions autoroutières et aéroportuaires + construction
+FGR.PA;Eiffage;France;PEA;Infrastructures & Énergie;Concessions (APRR) et construction, gestion prudente
+BVI.PA;Bureau Veritas;France;PEA;Services aux entreprises & Données;Tests, inspection, certification : revenus récurrents et réglementaires
+ELIS.PA;Elis;France;PEA;Services aux entreprises & Données;Location-entretien de linge et d'hygiène, densité de réseau
+SAN.PA;Sanofi;France;PEA;Santé;Pharma, immunologie (Dupixent), vaccins
+BN.PA;Danone;France;PEA;Consommation de base;Produits laitiers, nutrition spécialisée et médicale
+RI.PA;Pernod Ricard;France;PEA;Consommation de base;Spiritueux premium, en bas de cycle
+KER.PA;Kering;France;PEA;Luxe & Consommation;Gucci, Saint Laurent : redressement en cours
+CS.PA;AXA;France;PEA;Assurance;Assureur mondial, discipline de capital, rachats d'actions
+ENX.PA;Euronext;France;PEA;Services financiers;Opérateur boursier pan-européen, intégration de la post-négociation
+AMUN.PA;Amundi;France;PEA;Services financiers;N°1 européen de la gestion d'actifs, ETF
+GTT.PA;GTT;France;PEA;Infrastructures & Énergie;Quasi-monopole des membranes de transport de GNL, ROIC très élevé
+VIRP.PA;Virbac;France;PEA;Santé;Santé animale, croissance régulière, entreprise familiale
+ITP.PA;Interparfums;France;PEA;Consommation de base;Licences de parfums de luxe, modèle peu capitalistique
+SGO.PA;Saint-Gobain;France;PEA;Industrie & Électrification;Matériaux de construction légers, rénovation énergétique
+PUB.PA;Publicis;France;PEA;Internet & Médias;Publicité pilotée par la donnée (Epsilon, Sapient)
+BIM.PA;bioMérieux;France;PEA;Santé;Diagnostic in vitro, microbiologie, BioFire
+DIM.PA;Sartorius Stedim Biotech;France;PEA;Santé;Consommables de bioproduction à usage unique
+ERF.PA;Eurofins Scientific;France;PEA;Santé;Laboratoires d'analyses, consolidateur du secteur
+PLNW.PA;Planisware;France;PEA;Logiciels & IT;Logiciel SaaS de gestion de portefeuilles de projets
+VU.PA;Vusion;France;PEA;Logiciels & IT;Étiquettes électroniques et digitalisation des magasins
+SPIE.PA;SPIE;France;PEA;Industrie & Électrification;Services multi-techniques de la transition énergétique
+NEX.PA;Nexans;France;PEA;Industrie & Électrification;Câbles pour réseaux électriques et interconnexions
+STMPA.PA;STMicroelectronics;France;PEA;Semi-conducteurs;Semi-conducteurs analogiques et de puissance (cyclique)
+SAP.DE;SAP;Allemagne;PEA;Logiciels & IT;ERP mondial, migration cloud, coûts de changement élevés
+SIE.DE;Siemens;Allemagne;PEA;Industrie & Électrification;Automatisation, logiciels industriels, infrastructures intelligentes
+ENR.DE;Siemens Energy;Allemagne;PEA;Industrie & Électrification;Turbines à gaz et réseaux électriques, redressement
+ALV.DE;Allianz;Allemagne;PEA;Assurance;Assureur et gestionnaire d'actifs mondial (PIMCO)
+MUV2.DE;Munich Re;Allemagne;PEA;Assurance;Réassurance, discipline de souscription
+HNR1.DE;Hannover Rück;Allemagne;PEA;Assurance;Réassureur le plus efficient du secteur
+DB1.DE;Deutsche Börse;Allemagne;PEA;Services financiers;Bourse, compensation et données (Eurex, Clearstream)
+RHM.DE;Rheinmetall;Allemagne;PEA;Aéronautique & Défense;Munitions et véhicules, réarmement européen
+MTX.DE;MTU Aero Engines;Allemagne;PEA;Aéronautique & Défense;Moteurs d'avions et maintenance
+HAG.DE;Hensoldt;Allemagne;PEA;Aéronautique & Défense;Capteurs et radars de défense
+SY1.DE;Symrise;Allemagne;PEA;Matériaux & Chimie;Arômes, parfums et ingrédients
+BEI.DE;Beiersdorf;Allemagne;PEA;Consommation de base;Nivea, Eucerin, La Prairie
+ADS.DE;adidas;Allemagne;PEA;Luxe & Consommation;Articles de sport, n°2 mondial
+IFX.DE;Infineon;Allemagne;PEA;Semi-conducteurs;Semi-conducteurs de puissance (auto, énergie, IA)
+NEM.DE;Nemetschek;Allemagne;PEA;Logiciels & IT;Logiciels de conception pour l'architecture et la construction
+G24.DE;Scout24;Allemagne;PEA;Internet & Médias;Portail immobilier n°1 en Allemagne, effets de réseau
+EVD.DE;CTS Eventim;Allemagne;PEA;Internet & Médias;Billetterie et promotion de concerts
+RAA.DE;Rational;Allemagne;PEA;Industrie & Électrification;Fours professionnels, leader mondial incontesté
+ASML.AS;ASML;Pays-Bas;PEA;Semi-conducteurs;Monopole mondial de la lithographie EUV
+ASM.AS;ASM International;Pays-Bas;PEA;Semi-conducteurs;Leader du dépôt de couches atomiques (ALD)
+BESI.AS;BE Semiconductor;Pays-Bas;PEA;Semi-conducteurs;Hybrid bonding pour le packaging avancé (IA)
+ADYEN.AS;Adyen;Pays-Bas;PEA;Services financiers;Plateforme de paiement unifiée, technologie propriétaire
+WKL.AS;Wolters Kluwer;Pays-Bas;PEA;Services aux entreprises & Données;Logiciels experts (santé, fiscal, juridique), 80 % de revenus récurrents
+PRX.AS;Prosus;Pays-Bas;PEA;Internet & Médias;Holding détenant ~23 % de Tencent, décote et rachats
+UMG.AS;Universal Music Group;Pays-Bas;PEA;Internet & Médias;N°1 de la musique enregistrée, catalogue irremplaçable
+EXO.AS;Exor;Pays-Bas;PEA;Services financiers;Holding Agnelli (Ferrari, Philips), décote sur actif net
+HEIA.AS;Heineken;Pays-Bas;PEA;Consommation de base;Brasseur mondial, marchés émergents
+IMCD.AS;IMCD;Pays-Bas;PEA;Matériaux & Chimie;Distribution de spécialités chimiques, consolidateur
+RACE.MI;Ferrari;Italie;PEA;Luxe & Consommation;Luxe automobile, rareté organisée, pouvoir de prix
+MONC.MI;Moncler;Italie;PEA;Luxe & Consommation;Doudounes de luxe, marque à forte désirabilité
+BC.MI;Brunello Cucinelli;Italie;PEA;Luxe & Consommation;Cachemire ultra-luxe, croissance régulière
+PRY.MI;Prysmian;Italie;PEA;Industrie & Électrification;N°1 mondial des câbles, réseaux électriques
+REC.MI;Recordati;Italie;PEA;Santé;Pharma de spécialité et maladies rares
+FBK.MI;FinecoBank;Italie;PEA;Services financiers;Banque-courtier en ligne à très forte rentabilité
+REY.MI;Reply;Italie;PEA;Logiciels & IT;Réseau de sociétés de conseil IT, croissance régulière
+IP.MI;Interpump;Italie;PEA;Industrie & Électrification;Pompes haute pression et hydraulique, acquisitions
+LDO.MI;Leonardo;Italie;PEA;Aéronautique & Défense;Hélicoptères, électronique de défense
+ITX.MC;Inditex;Espagne;PEA;Distribution;Zara, chaîne logistique ultra-réactive, trésorerie nette
+AMS.MC;Amadeus;Espagne;PEA;Logiciels & IT;Infrastructure mondiale de réservation de voyages
+AENA.MC;Aena;Espagne;PEA;Infrastructures & Énergie;Premier opérateur aéroportuaire mondial (Espagne)
+FER.MC;Ferrovial;Espagne;PEA;Infrastructures & Énergie;Autoroutes à péage (407 ETR) et aéroports
+UCB.BR;UCB;Belgique;PEA;Santé;Biopharma en immunologie (Bimzelx)
+ARGX.BR;argenx;Belgique;PEA;Santé;Biotech en immunologie (Vyvgart)
+LOTB.BR;Lotus Bakeries;Belgique;PEA;Consommation de base;Biscoff, expansion internationale
+KRX.IR;Kingspan;Irlande;PEA;Industrie & Électrification;Panneaux isolants, efficacité énergétique des bâtiments
+KRZ.IR;Kerry Group;Irlande;PEA;Consommation de base;Ingrédients et solutions de goût
+NOVO-B.CO;Novo Nordisk;Danemark;PEA;Santé;Diabète et obésité (GLP-1)
+DSV.CO;DSV;Danemark;PEA;Industrie & Électrification;Commission de transport, consolidateur (DB Schenker)
+NSIS-B.CO;Novonesis;Danemark;PEA;Matériaux & Chimie;Enzymes et solutions microbiennes, leader mondial
+COLO-B.CO;Coloplast;Danemark;PEA;Santé;Stomie et continence, clientèle fidèle
+PNDORA.CO;Pandora;Danemark;PEA;Luxe & Consommation;Bijoux accessibles, intégration verticale
+ATCO-A.ST;Atlas Copco;Suède;PEA;Industrie & Électrification;Compresseurs et vide, forte part de services
+ASSA-B.ST;Assa Abloy;Suède;PEA;Industrie & Électrification;Serrures et contrôle d'accès, acquisitions en série
+INVE-B.ST;Investor AB;Suède;PEA;Services financiers;Holding Wallenberg (Atlas Copco, ABB, EQT…)
+EPI-A.ST;Epiroc;Suède;PEA;Industrie & Électrification;Équipements miniers et services
+ADDT-B.ST;Addtech;Suède;PEA;Industrie & Électrification;Acquéreur en série de PME techniques
+LAGR-B.ST;Lagercrantz;Suède;PEA;Industrie & Électrification;Acquéreur de niches technologiques
+INDT.ST;Indutrade;Suède;PEA;Industrie & Électrification;Acquéreur en série de PME industrielles
+LIFCO-B.ST;Lifco;Suède;PEA;Industrie & Électrification;Conglomérat décentralisé à forte rentabilité
+BEIJ-B.ST;Beijer Ref;Suède;PEA;Industrie & Électrification;Distribution réfrigération et climatisation
+SAAB-B.ST;Saab;Suède;PEA;Aéronautique & Défense;Défense (Gripen, missiles, radars)
+EVO.ST;Evolution;Suède;PEA;Luxe & Consommation;Casino en direct B2B, marges très élevées
+EQT.ST;EQT;Suède;PEA;Services financiers;Capital-investissement, frais de gestion récurrents
+KNEBV.HE;Kone;Finlande;PEA;Industrie & Électrification;Ascenseurs, maintenance récurrente
+SAMPO.HE;Sampo;Finlande;PEA;Assurance;Assurance dommages nordique (If), très rentable
+KOG.OL;Kongsberg Gruppen;Norvège;PEA;Aéronautique & Défense;Missiles (NSM), défense aérienne, maritime
+RO.SW;Roche;Suisse;CTO;Santé;Pharma et n°1 mondial du diagnostic
+NOVN.SW;Novartis;Suisse;CTO;Santé;Pharma innovante recentrée
+LONN.SW;Lonza;Suisse;CTO;Santé;Sous-traitance de bioproduction (CDMO)
+STMN.SW;Straumann;Suisse;CTO;Santé;Implants dentaires, leader mondial
+SIKA.SW;Sika;Suisse;CTO;Matériaux & Chimie;Chimie de la construction, acquisitions
+GIVN.SW;Givaudan;Suisse;CTO;Matériaux & Chimie;N°1 mondial des arômes et parfums
+NESN.SW;Nestlé;Suisse;CTO;Consommation de base;N°1 mondial de l'agroalimentaire
+CFR.SW;Richemont;Suisse;CTO;Luxe & Consommation;Joaillerie (Cartier, Van Cleef & Arpels)
+PGHN.SW;Partners Group;Suisse;CTO;Services financiers;Marchés privés, frais récurrents
+ZURN.SW;Zurich Insurance;Suisse;CTO;Assurance;Assureur dommages mondial, dividende élevé
+ABBN.SW;ABB;Suisse;CTO;Industrie & Électrification;Électrification et robotique
+VACN.SW;VAT Group;Suisse;CTO;Semi-conducteurs;Vannes à vide pour la fabrication de puces
+BEAN.SW;Belimo;Suisse;CTO;Industrie & Électrification;Actionneurs et vannes CVC, refroidissement des datacenters
+GEBN.SW;Geberit;Suisse;CTO;Industrie & Électrification;Sanitaires invisibles, pouvoir de prix
+REL.L;RELX;Royaume-Uni;CTO;Services aux entreprises & Données;Données et analytique (juridique, scientifique, risque)
+LSEG.L;London Stock Exchange Group;Royaume-Uni;CTO;Services financiers;Données financières (Refinitiv) et infrastructures de marché
+EXPN.L;Experian;Royaume-Uni;CTO;Services aux entreprises & Données;Bureau de crédit mondial, données propriétaires
+AZN.L;AstraZeneca;Royaume-Uni;CTO;Santé;Pharma (oncologie), pipeline profond
+ULVR.L;Unilever;Royaume-Uni;CTO;Consommation de base;Hygiène-beauté, recentrage en cours
+CPG.L;Compass Group;Royaume-Uni;CTO;Luxe & Consommation;N°1 mondial de la restauration collective
+HLMA.L;Halma;Royaume-Uni;CTO;Industrie & Électrification;Niches sécurité, santé et environnement, acquisitions
+DPLM.L;Diploma;Royaume-Uni;CTO;Industrie & Électrification;Distribution spécialisée, acquisitions disciplinées
+GAW.L;Games Workshop;Royaume-Uni;CTO;Luxe & Consommation;Warhammer : propriété intellectuelle et communauté
+AUTO.L;Auto Trader;Royaume-Uni;CTO;Internet & Médias;Place de marché automobile n°1 au Royaume-Uni
+BA.L;BAE Systems;Royaume-Uni;CTO;Aéronautique & Défense;Défense (sous-marins, avions, électronique)
+RR.L;Rolls-Royce;Royaume-Uni;CTO;Aéronautique & Défense;Moteurs gros-porteurs, redressement des marges
+III.L;3i Group;Royaume-Uni;CTO;Services financiers;Capital-investissement, détient la majorité d'Action
+CSU.TO;Constellation Software;Canada;CTO;Logiciels & IT;Acquéreur en série de logiciels de niche
+TOI.V;Topicus.com;Canada;CTO;Logiciels & IT;Logiciels verticaux européens (modèle Constellation)
+DOL.TO;Dollarama;Canada;CTO;Distribution;Magasins discount, croissance régulière
+ATD.TO;Alimentation Couche-Tard;Canada;CTO;Distribution;Dépanneurs et stations-service, acquisitions
+TRI.TO;Thomson Reuters;Canada;CTO;Services aux entreprises & Données;Contenu juridique et fiscal, outils IA (CoCounsel)
+SHOP;Shopify;Canada;CTO;Internet & Médias;Plateforme de commerce électronique pour marchands
+MSFT;Microsoft;États-Unis;CTO;Logiciels & IT;Cloud Azure, logiciels de productivité, IA
+GOOGL;Alphabet;États-Unis;CTO;Internet & Médias;Recherche, YouTube, Google Cloud, IA (Gemini)
+AMZN;Amazon;États-Unis;CTO;Distribution;Commerce en ligne et cloud AWS
+META;Meta Platforms;États-Unis;CTO;Internet & Médias;Réseaux sociaux (3,5 Md d'utilisateurs), publicité, IA
+AAPL;Apple;États-Unis;CTO;Logiciels & IT;Écosystème iPhone et services
+NVDA;NVIDIA;États-Unis;CTO;Semi-conducteurs;Accélérateurs IA et écosystème CUDA
+AVGO;Broadcom;États-Unis;CTO;Semi-conducteurs;Puces réseau et ASIC IA, logiciels d'infrastructure
+TSM;TSMC;Taïwan;CTO;Semi-conducteurs;Fonderie de pointe, quasi-monopole sur les puces avancées
+KLAC;KLA;États-Unis;CTO;Semi-conducteurs;Contrôle de procédés en fabrication de puces
+LRCX;Lam Research;États-Unis;CTO;Semi-conducteurs;Gravure et dépôt pour la fabrication de puces
+AMAT;Applied Materials;États-Unis;CTO;Semi-conducteurs;Équipements de fabrication de puces
+TXN;Texas Instruments;États-Unis;CTO;Semi-conducteurs;Semi-conducteurs analogiques, fabrication interne
+ANET;Arista Networks;États-Unis;CTO;Logiciels & IT;Commutateurs réseau pour datacenters IA
+APH;Amphenol;États-Unis;CTO;Logiciels & IT;Connecteurs et capteurs, culture décentralisée
+ADBE;Adobe;États-Unis;CTO;Logiciels & IT;Logiciels créatifs et marketing
+INTU;Intuit;États-Unis;CTO;Logiciels & IT;Logiciels fiscaux et comptables (TurboTax, QuickBooks)
+NOW;ServiceNow;États-Unis;CTO;Logiciels & IT;Plateforme de flux de travail d'entreprise
+CDNS;Cadence Design Systems;États-Unis;CTO;Logiciels & IT;Logiciels de conception de puces (duopole EDA)
+SNPS;Synopsys;États-Unis;CTO;Logiciels & IT;Logiciels de conception de puces (duopole EDA)
+CRWD;CrowdStrike;États-Unis;CTO;Logiciels & IT;Cybersécurité des terminaux, plateforme cloud
+PANW;Palo Alto Networks;États-Unis;CTO;Logiciels & IT;Cybersécurité réseau et cloud
+FTNT;Fortinet;États-Unis;CTO;Logiciels & IT;Pare-feu et cybersécurité, puces propriétaires
+FICO;Fair Isaac;États-Unis;CTO;Services aux entreprises & Données;Score de crédit FICO, quasi-monopole
+ROP;Roper Technologies;États-Unis;CTO;Logiciels & IT;Conglomérat de logiciels verticaux
+NFLX;Netflix;États-Unis;CTO;Internet & Médias;N°1 mondial du streaming vidéo
+SPOT;Spotify;Suède;CTO;Internet & Médias;N°1 mondial du streaming audio
+BKNG;Booking Holdings;États-Unis;CTO;Internet & Médias;Agence de voyage en ligne n°1, effets de réseau
+MELI;MercadoLibre;Argentine;CTO;Internet & Médias;Commerce en ligne et fintech en Amérique latine
+UBER;Uber;États-Unis;CTO;Internet & Médias;Mobilité et livraison, réseau mondial
+V;Visa;États-Unis;CTO;Services financiers;Réseau de paiement mondial, duopole
+MA;Mastercard;États-Unis;CTO;Services financiers;Réseau de paiement mondial, duopole
+AXP;American Express;États-Unis;CTO;Services financiers;Réseau fermé premium
+SPGI;S&P Global;États-Unis;CTO;Services financiers;Notation, indices et données financières
+MCO;Moody's;États-Unis;CTO;Services financiers;Notation de crédit (duopole) et analytique
+MSCI;MSCI;États-Unis;CTO;Services financiers;Indices et outils d'analyse du risque
+ICE;Intercontinental Exchange;États-Unis;CTO;Services financiers;Bourses, données et technologie hypothécaire
+CME;CME Group;États-Unis;CTO;Services financiers;N°1 mondial des marchés à terme
+BRK-B;Berkshire Hathaway;États-Unis;CTO;Assurance;Conglomérat d'assurance et d'entreprises
+PGR;Progressive;États-Unis;CTO;Assurance;Assurance automobile, tarification par la donnée
+MRSH;Marsh McLennan;États-Unis;CTO;Assurance;N°1 mondial du courtage en assurance
+AJG;Arthur J. Gallagher;États-Unis;CTO;Assurance;Courtage en assurance, acquisitions en série
+KNSL;Kinsale Capital;États-Unis;CTO;Assurance;Assurance de risques spécialisés (E&S), coûts très bas
+BX;Blackstone;États-Unis;CTO;Services financiers;N°1 mondial des actifs alternatifs
+KKR;KKR;États-Unis;CTO;Services financiers;Capital-investissement et assurance (Global Atlantic)
+LLY;Eli Lilly;États-Unis;CTO;Santé;Obésité et diabète (tirzépatide), pipeline
+ISRG;Intuitive Surgical;États-Unis;CTO;Santé;Robots chirurgicaux da Vinci, revenus récurrents
+SYK;Stryker;États-Unis;CTO;Santé;Dispositifs médicaux orthopédiques et chirurgicaux
+BSX;Boston Scientific;États-Unis;CTO;Santé;Cardiologie interventionnelle (ablation)
+TMO;Thermo Fisher Scientific;États-Unis;CTO;Santé;Outils et services pour sciences de la vie
+ZTS;Zoetis;États-Unis;CTO;Santé;N°1 mondial de la santé animale
+IDXX;IDEXX Laboratories;États-Unis;CTO;Santé;Diagnostic vétérinaire, consommables récurrents
+VRTX;Vertex Pharmaceuticals;États-Unis;CTO;Santé;Monopole sur la mucoviscidose, pipeline douleur et rein
+UNH;UnitedHealth Group;États-Unis;CTO;Santé;Assurance santé et services (Optum)
+COST;Costco;États-Unis;CTO;Distribution;Clubs-entrepôts, modèle d'abonnement
+WMT;Walmart;États-Unis;CTO;Distribution;N°1 mondial de la distribution, omnicanal
+ORLY;O'Reilly Automotive;États-Unis;CTO;Distribution;Pièces automobiles, rachats d'actions massifs
+AZO;AutoZone;États-Unis;CTO;Distribution;Pièces automobiles, rachats d'actions massifs
+TJX;TJX Companies;États-Unis;CTO;Distribution;Distribution de déstockage (TJ Maxx)
+HD;Home Depot;États-Unis;CTO;Distribution;Bricolage n°1 aux États-Unis
+CMG;Chipotle;États-Unis;CTO;Luxe & Consommation;Restauration rapide, croissance des restaurants
+CPRT;Copart;États-Unis;CTO;Services aux entreprises & Données;Enchères de véhicules accidentés, foncier stratégique
+VRSK;Verisk Analytics;États-Unis;CTO;Services aux entreprises & Données;Données pour l'assurance
+CTAS;Cintas;États-Unis;CTO;Services aux entreprises & Données;Uniformes et services aux entreprises, densité de routes
+WM;Waste Management;États-Unis;CTO;Services aux entreprises & Données;Déchets : décharges irremplaçables
+WCN;Waste Connections;États-Unis;CTO;Services aux entreprises & Données;Déchets sur marchés à franchise exclusive
+ODFL;Old Dominion Freight Line;États-Unis;CTO;Industrie & Électrification;Messagerie routière, qualité de service record
+FAST;Fastenal;États-Unis;CTO;Industrie & Électrification;Distribution industrielle, distributeurs automatiques sur site
+GWW;W.W. Grainger;États-Unis;CTO;Industrie & Électrification;Distribution industrielle MRO
+GE;GE Aerospace;États-Unis;CTO;Aéronautique & Défense;Moteurs d'avions (CFM avec Safran), après-vente
+GEV;GE Vernova;États-Unis;CTO;Industrie & Électrification;Turbines à gaz, réseaux, nucléaire (SMR)
+ETN;Eaton;États-Unis;CTO;Industrie & Électrification;Gestion électrique, datacenters
+PWR;Quanta Services;États-Unis;CTO;Industrie & Électrification;Construction de réseaux électriques
+VRT;Vertiv;États-Unis;CTO;Industrie & Électrification;Alimentation et refroidissement des datacenters
+TT;Trane Technologies;États-Unis;CTO;Industrie & Électrification;Climatisation et refroidissement (datacenters)
+PH;Parker-Hannifin;États-Unis;CTO;Industrie & Électrification;Contrôle de mouvement, aéronautique
+TDG;TransDigm;États-Unis;CTO;Aéronautique & Défense;Pièces aéronautiques propriétaires, pouvoir de prix
+HEI;HEICO;États-Unis;CTO;Aéronautique & Défense;Pièces de rechange aéronautiques, acquisitions
+HWM;Howmet Aerospace;États-Unis;CTO;Aéronautique & Défense;Pièces de moteurs critiques
+AXON;Axon Enterprise;États-Unis;CTO;Aéronautique & Défense;Tasers, caméras et logiciels pour forces de l'ordre
+SHW;Sherwin-Williams;États-Unis;CTO;Matériaux & Chimie;Peintures, réseau de magasins intégré
+LIN;Linde;États-Unis;CTO;Matériaux & Chimie;N°1 mondial des gaz industriels
+AVXL;Anavex Life Sciences;États-Unis;CTO;Santé;Biotech : blarcamesine contre Alzheimer, pas encore de chiffre d'affaires
+LNTH;Lantheus;États-Unis;CTO;Santé;Imagerie médicale et radiopharmacie (Pylarify, Definity)
+FISV;Fiserv;États-Unis;CTO;Services financiers;Traitement des paiements et logiciels bancaires, terminaux Clover
+PPFB.DE;iShares Physical Gold ETC;Fonds (mondial);CTO;Fonds & matières premières;Or physique en coffre, sans dividende
+NUKL.DE;VanEck Uranium and Nuclear Technologies;Fonds (mondial);CTO;Fonds & matières premières;ETF d'actions de l'uranium et du nucléaire civil
+SHELL.AS;Shell;Royaume-Uni;CTO;Infrastructures & Énergie;
+HSBA.L;HSBC Holdings;Royaume-Uni;CTO;Banques;
+TSLA;Tesla;États-Unis;CTO;Luxe & Consommation;
+MU;Micron Technology;États-Unis;CTO;Semi-conducteurs;
+TTE.PA;TotalEnergies;France;PEA;Infrastructures & Énergie;
+JPM;JPMorgan Chase & Co;États-Unis;CTO;Banques;
+AMD;Advanced Micro Devices;États-Unis;CTO;Semi-conducteurs;
+XOM;ExxonMobil Holdings;États-Unis;CTO;Infrastructures & Énergie;
+SAN.MC;Banco Santander;Espagne;PEA;Banques;
+IBE.MC;Iberdrola;Espagne;PEA;Infrastructures & Énergie;
+JNJ;Johnson & Johnson;États-Unis;CTO;Santé;
+UBSG.SW;UBS Group;Suisse;CTO;Banques;
+BP.L;BP p.l.c;Royaume-Uni;CTO;Infrastructures & Énergie;
+BATS.L;British American Tobacco p.l.c;Royaume-Uni;CTO;Consommation de base;
+BBVA.MC;Banco Bilbao Vizcaya Argentaria;Espagne;PEA;Banques;
+UCG.MI;UniCredit;Italie;PEA;Banques;
+ABBV;AbbVie;États-Unis;CTO;Santé;
+CVX;Chevron;États-Unis;CTO;Infrastructures & Énergie;
+ISP.MI;Intesa Sanpaolo;Italie;PEA;Banques;
+GSK.L;GSK;Royaume-Uni;CTO;Santé;
+DTE.DE;Deutsche Telekom;Allemagne;PEA;Télécoms;
+BNP.PA;BNP Paribas;France;PEA;Banques;
+PLTR;Palantir Technologies;États-Unis;CTO;Logiciels & IT;
+CSCO;Cisco Systems;États-Unis;CTO;Logiciels & IT;
+INGA.AS;ING Groep;Pays-Bas;PEA;Banques;
+NG.L;National Grid;Royaume-Uni;CTO;Infrastructures & Énergie;
+RIO.L;Rio Tinto Group;Royaume-Uni;CTO;Matériaux & Chimie;
+PG;The Procter & Gamble Company;États-Unis;CTO;Consommation de base;
+KO;The Coca-Cola Company;États-Unis;CTO;Consommation de base;
+MRK;Merck & Co;États-Unis;CTO;Santé;
+ABI.BR;Anheuser-Busch InBev SA/NV;Belgique;PEA;Consommation de base;
+ENEL.MI;Enel;Italie;PEA;Infrastructures & Énergie;
+BAC;Bank of America;États-Unis;CTO;Banques;
+BARC.L;Barclays;Royaume-Uni;CTO;Banques;
+PM;Philip Morris International;États-Unis;CTO;Consommation de base;
+INTC;Intel;États-Unis;CTO;Semi-conducteurs;
+LLOY.L;Lloyds Banking Group;Royaume-Uni;CTO;Banques;
+CAT;Caterpillar;États-Unis;CTO;Industrie & Électrification;
+GLEN.L;Glencore;Royaume-Uni;CTO;Matériaux & Chimie;
+DBK.DE;Deutsche Bank;Allemagne;PEA;Banques;
+NWG.L;NatWest Group;Royaume-Uni;CTO;Banques;
+RTX;RTX;États-Unis;CTO;Aéronautique & Défense;
+DHL.DE;DHL;Allemagne;PEA;Industrie & Électrification;
+ENI.MI;Eni;Italie;PEA;Infrastructures & Énergie;
+NDA-FI.HE;Nordea Bank Abp;Finlande;PEA;Banques;
+GS;The Goldman Sachs Group;États-Unis;CTO;Services financiers;
+AMGN;Amgen;États-Unis;CTO;Santé;
+WFC;Wells Fargo & Company;États-Unis;CTO;Banques;
+IBM;International Business Machines;États-Unis;CTO;Services aux entreprises & Données;
+BAYN.DE;Bayer;Allemagne;PEA;Santé;
+AAL.L;Anglo American;Royaume-Uni;CTO;Matériaux & Chimie;
+BAS.DE;BASF;Allemagne;PEA;Matériaux & Chimie;
+SREN.SW;Swiss Re;Suisse;CTO;Assurance;
+ORCL;Oracle;États-Unis;CTO;Logiciels & IT;
+DGE.L;Diageo;Royaume-Uni;CTO;Consommation de base;
+G.MI;Assicurazioni Generali;Italie;PEA;Assurance;
+MS;Morgan Stanley;États-Unis;CTO;Services financiers;
+ENGI.PA;Engie;France;PEA;Infrastructures & Énergie;
+GLE.PA;Société Générale;France;PEA;Banques;
+VOLV-B.ST;AB Volvo (publ);Suède;PEA;Industrie & Électrification;
+GILD;Gilead Sciences;États-Unis;CTO;Santé;
+STAN.L;Standard Chartered;Royaume-Uni;CTO;Banques;
+NOKIA.HE;Nokia;Finlande;PEA;Logiciels & IT;
+EOAN.DE;E.ON;Allemagne;PEA;Infrastructures & Énergie;
+ADI;Analog Devices;États-Unis;CTO;Semi-conducteurs;
+C;Citigroup;États-Unis;CTO;Banques;
+RWE.DE;RWE;Allemagne;PEA;Infrastructures & Énergie;
+HOLN.SW;Holcim;Suisse;CTO;Matériaux & Chimie;
+RKT.L;Reckitt Benckiser Group;Royaume-Uni;CTO;Consommation de base;
+TSCO.L;Tesco;Royaume-Uni;CTO;Distribution;
+CABK.MC;CaixaBank;Espagne;PEA;Banques;
+GALD.SW;Galderma Group;Suisse;CTO;Santé;
+SDZ.SW;Sandoz Group;Suisse;CTO;Santé;
+PEP;PepsiCo;États-Unis;CTO;Consommation de base;
+DIS;The Walt Disney Company;États-Unis;CTO;Internet & Médias;
+CRM;Salesforce;États-Unis;CTO;Logiciels & IT;
+SSE.L;SSE;Royaume-Uni;CTO;Infrastructures & Énergie;
+COP;ConocoPhillips;États-Unis;CTO;Infrastructures & Énergie;
+UNP;Union Pacific;États-Unis;CTO;Industrie & Électrification;
+MCD;McDonald's;États-Unis;CTO;Luxe & Consommation;
+ABT;Abbott Laboratories;États-Unis;CTO;Santé;
+VZ;Verizon Communications;États-Unis;CTO;Télécoms;
+PFE;Pfizer;États-Unis;CTO;Santé;
+NEE;NextEra Energy;États-Unis;CTO;Infrastructures & Énergie;
+QCOM;QUALCOMM Incorporated;États-Unis;CTO;Semi-conducteurs;
+SAND.ST;Sandvik;Suède;PEA;Industrie & Électrification;
+DE;Deere & Company;États-Unis;CTO;Industrie & Électrification;
+MRVL;Marvell Technology;États-Unis;CTO;Semi-conducteurs;
+WELL;Welltower;États-Unis;CTO;Immobilier;
+SNDK;Sandisk;États-Unis;CTO;Logiciels & IT;
+BLK;BlackRock;États-Unis;CTO;Services financiers;
+HLN.L;Haleon;Royaume-Uni;CTO;Santé;
+REP.MC;Repsol;Espagne;PEA;Infrastructures & Énergie;
+VOD.L;Vodafone Group Public Limited Company;Royaume-Uni;CTO;Télécoms;
+EBS.VI;Erste Group Bank;Autriche;PEA;Banques;
+SWED-A.ST;Swedbank;Suède;PEA;Banques;
+ALC.SW;Alcon;Suisse;CTO;Santé;
+GMAB.CO;Genmab;Danemark;PEA;Santé;
+ACN;Accenture;États-Unis;CTO;Services aux entreprises & Données;
+MBG.DE;Mercedes-Benz Group;Allemagne;PEA;Luxe & Consommation;
+ORA.PA;Orange;France;PEA;Télécoms;
+STX;Seagate Technology Holdings;États-Unis;CTO;Logiciels & IT;
+T;AT&T;États-Unis;CTO;Télécoms;
+DHR;Danaher;États-Unis;CTO;Santé;
+DANSKE.CO;Danske Bank;Danemark;PEA;Banques;
+EQNR.OL;Equinor;Norvège;PEA;Infrastructures & Énergie;
+SCHW;The Charles Schwab;États-Unis;CTO;Services financiers;
+SLHN.SW;Swiss Life Holding;Suisse;CTO;Assurance;
+AD.AS;Koninklijke Ahold Delhaize;Pays-Bas;PEA;Distribution;
+BA;The Boeing Company;États-Unis;CTO;Aéronautique & Défense;
+ERIC-B.ST;Telefonaktiebolaget LM Ericsson (publ);Suède;PEA;Logiciels & IT;
+SEB-A.ST;Skandinaviska Enskilda Banken;Suède;PEA;Banques;
+IMB.L;Imperial Brands;Royaume-Uni;CTO;Consommation de base;
+PRU.L;Prudential;Royaume-Uni;CTO;Assurance;
+AV.L;Aviva;Royaume-Uni;CTO;Assurance;
+MO;Altria Group;États-Unis;CTO;Consommation de base;
+LMT;Lockheed Martin;États-Unis;CTO;Aéronautique & Défense;
+WDC;Western Digital;États-Unis;CTO;Logiciels & IT;
+BMY;Bristol-Myers Squibb Company;États-Unis;CTO;Santé;
+DELL;Dell Technologies;États-Unis;CTO;Logiciels & IT;
+CB;Chubb;États-Unis;CTO;Assurance;
+COF;Capital One Financial;États-Unis;CTO;Services financiers;
+PLD;Prologis;États-Unis;CTO;Immobilier;
+DNB.OL;DNB Bank;Norvège;PEA;Banques;
+ABN.AS;ABN AMRO Bank;Pays-Bas;PEA;Banques;
+VWS.CO;Vestas Wind Systems;Danemark;PEA;Industrie & Électrification;
+MPC;Marathon Petroleum;États-Unis;CTO;Infrastructures & Énergie;
+KBC.BR;KBC Group;Belgique;PEA;Banques;
+BMPS.MI;Banca Monte dei Paschi di Siena;Italie;PEA;Banques;
+MDT;Medtronic;États-Unis;CTO;Santé;
+LOW;Lowe's Companies;États-Unis;CTO;Distribution;
+SBUX;Starbucks;États-Unis;CTO;Luxe & Consommation;
+VLO;Valero Energy;États-Unis;CTO;Infrastructures & Énergie;
+ADP;Automatic Data Processing;États-Unis;CTO;Industrie & Électrification;
+MCK;McKesson;États-Unis;CTO;Santé;
+CVS;CVS Health;États-Unis;CTO;Santé;
+NEM;Newmont;États-Unis;CTO;Matériaux & Chimie;
+A5G.IR;AIB Group;Irlande;PEA;Banques;
+PSX;Phillips 66;États-Unis;CTO;Infrastructures & Énergie;
+PKO.WA;Powszechna Kasa Oszczednosci Bank Polski Spólka Akcyjna;Pologne;PEA;Banques;
+MT.AS;ArcelorMittal;France;PEA;Matériaux & Chimie;
+IHG.L;InterContinental Hotels Group;Royaume-Uni;CTO;Luxe & Consommation;
+VIE.PA;Veolia Environnement;France;PEA;Infrastructures & Énergie;
+SO;The Southern Company;États-Unis;CTO;Infrastructures & Énergie;
+NXT.L;NEXT;Royaume-Uni;CTO;Distribution;
+HEXA-B.ST;Hexagon;Suède;PEA;Logiciels & IT;
+SHB-A.ST;Svenska Handelsbanken;Suède;PEA;Banques;
+ML.PA;Compagnie Générale des Établissements Michelin Société en commandite par actions;France;PEA;Luxe & Consommation;
+DTG.DE;Daimler Truck Holding;Allemagne;PEA;Industrie & Électrification;
+NN.AS;NN Group;Pays-Bas;PEA;Assurance;
+BPE.MI;BPER Banca;Italie;PEA;Banques;
+MRK.DE;Merck KGaA;Allemagne;PEA;Santé;
+SCMN.SW;Swisscom;Suisse;CTO;Télécoms;
+EQIX;Equinix;États-Unis;CTO;Immobilier;
+BNY;The Bank of New York Mellon;États-Unis;CTO;Banques;
+DUK;Duke Energy;États-Unis;CTO;Infrastructures & Énergie;
+GLW;Corning Incorporated;États-Unis;CTO;Logiciels & IT;
+CSX;CSX;États-Unis;CTO;Industrie & Électrification;
+GD;General Dynamics;États-Unis;CTO;Aéronautique & Défense;
+MMM;3M Company;États-Unis;CTO;Industrie & Électrification;
+FCX;Freeport-McMoRan;États-Unis;CTO;Matériaux & Chimie;
+LGEN.L;Legal & General Group Plc;Royaume-Uni;CTO;Services financiers;
+PKN.WA;Orlen;Pologne;PEA;Infrastructures & Énergie;
+PHIA.AS;Koninklijke Philips;Pays-Bas;PEA;Santé;
+PST.MI;Poste Italiane;Italie;PEA;Services financiers;
+DSFIR.AS;DSM-Firmenich;Pays-Bas;PEA;Matériaux & Chimie;
+BMW.DE;Bayerische Motoren Werke;Allemagne;PEA;Luxe & Consommation;
+FRE.DE;Fresenius SE;Allemagne;PEA;Santé;
+SGSN.SW;SGS;Suisse;CTO;Services aux entreprises & Données;
+RYA.IR;Ryanair Holdings;Irlande;PEA;Industrie & Électrification;
+HEI.DE;Heidelberg Materials;Allemagne;PEA;Matériaux & Chimie;
+ACS.MC;ACS, Actividades de Construcción y Servicios;Espagne;PEA;Industrie & Électrification;
+HBAN.SW;Helvetia Baloise Holding;Suisse;CTO;Assurance;
+JCI;Johnson Controls International;États-Unis;CTO;Industrie & Électrification;
+USB;U.S. Bancorp;États-Unis;CTO;Banques;
+EMR;Emerson Electric Co;États-Unis;CTO;Industrie & Électrification;
+ELV;Elevance Health;États-Unis;CTO;Santé;
+REGN;Regeneron Pharmaceuticals;États-Unis;CTO;Santé;
+PNC;The PNC Financial Services Group;États-Unis;CTO;Banques;
+WMB;The Williams Companies;États-Unis;CTO;Infrastructures & Énergie;
+CMCSA;Comcast;États-Unis;CTO;Télécoms;
+MRNA;Moderna;États-Unis;CTO;Santé;
+EOG;EOG Resources;États-Unis;CTO;Infrastructures & Énergie;
+MDLZ;Mondelez International;États-Unis;CTO;Consommation de base;
+BIRG.IR;Bank of Ireland Group;Irlande;PEA;Banques;
+BT-A.L;BT Group;Royaume-Uni;CTO;Télécoms;
+CEG;Constellation Energy;États-Unis;CTO;Infrastructures & Énergie;
+MAR;Marriott International;États-Unis;CTO;Luxe & Consommation;
+AMT;American Tower;États-Unis;CTO;Immobilier;
+TRV;The Travelers Companies;États-Unis;CTO;Assurance;
+SAB.MC;Banco de Sabadell;Espagne;PEA;Banques;
+NSC;Norfolk Southern;États-Unis;CTO;Industrie & Électrification;
+HLT;Hilton Worldwide Holdings;États-Unis;CTO;Luxe & Consommation;
+MSI;Motorola Solutions;États-Unis;CTO;Logiciels & IT;
+DDOG;Datadog;États-Unis;CTO;Logiciels & IT;
+CI;The Cigna Group;États-Unis;CTO;Santé;
+UPS;United Parcel Service;États-Unis;CTO;Industrie & Électrification;
+GM;General Motors Company;États-Unis;CTO;Luxe & Consommation;
+ECL;Ecolab;États-Unis;CTO;Matériaux & Chimie;
+RCL;Royal Caribbean Cruises;États-Unis;CTO;Luxe & Consommation;
+CL;Colgate-Palmolive Company;États-Unis;CTO;Consommation de base;
+TMUS;T-Mobile US;États-Unis;CTO;Télécoms;
+SLB;SLB;États-Unis;CTO;Infrastructures & Énergie;
+ACA.PA;Crédit Agricole;France;PEA;Banques;
+SHL.DE;Siemens Healthineers;Allemagne;PEA;Santé;
+KPN.AS;Koninklijke KPN;Pays-Bas;PEA;Télécoms;
+SOON.SW;Sonova Holding;Suisse;CTO;Santé;
+CMI;Cummins;États-Unis;CTO;Industrie & Électrification;
+ROST;Ross Stores;États-Unis;CTO;Distribution;
+SPG;Simon Property Group;États-Unis;CTO;Immobilier;
+APD;Air Products and Chemicals;États-Unis;CTO;Matériaux & Chimie;
+HPE;Hewlett Packard Enterprise Company;États-Unis;CTO;Logiciels & IT;
+URI;United Rentals;États-Unis;CTO;Industrie & Électrification;
+ITW;Illinois Tool Works;États-Unis;CTO;Industrie & Électrification;
+AEP;American Electric Power Company;États-Unis;CTO;Infrastructures & Énergie;
+LITE;Lumentum Holdings;États-Unis;CTO;Logiciels & IT;
+FDX;FedEx;États-Unis;CTO;Industrie & Électrification;
+EDP.LS;EDP;Portugal;PEA;Infrastructures & Énergie;
+BAER.SW;Julius Bär Gruppe;Suisse;CTO;Services financiers;
+ALFA.ST;Alfa Laval;Suède;PEA;Industrie & Électrification;
+ANTO.L;Antofagasta;Royaume-Uni;CTO;Matériaux & Chimie;
+ESSITY-B.ST;Essity;Suède;PEA;Consommation de base;
+NTGY.MC;Naturgy Energy Group;Espagne;PEA;Infrastructures & Énergie;
+CBK.DE;Commerzbank;Allemagne;PEA;Banques;
+TGT;Target;États-Unis;CTO;Distribution;
+HCA;HCA Healthcare;États-Unis;CTO;Santé;
+HON;Honeywell International;États-Unis;CTO;Industrie & Électrification;
+ABNB;Airbnb;États-Unis;CTO;Luxe & Consommation;
+NOC;Northrop Grumman;États-Unis;CTO;Aéronautique & Défense;
+VOW3.DE;Volkswagen;Allemagne;PEA;Luxe & Consommation;
+INF.L;Informa;Royaume-Uni;CTO;Internet & Médias;
+BOL.ST;Boliden;Suède;PEA;Matériaux & Chimie;
+ALE.WA;Allegro.eu;Pologne;PEA;Distribution;
+SGRO.L;SEGRO Plc;Royaume-Uni;CTO;Immobilier;
+UU.L;United Utilities Group;Royaume-Uni;CTO;Infrastructures & Énergie;
+ETE.AT;National Bank of Greece;Grèce;PEA;Banques;
+ELE.MC;Endesa;Espagne;PEA;Infrastructures & Énergie;
+SCHP.SW;Schindler Holding;Suisse;CTO;Industrie & Électrification;
+BAMI.MI;Banco BPM;Italie;PEA;Banques;
+TEF.MC;Telefónica;Espagne;PEA;Télécoms;
+TRN.MI;Terna;Italie;PEA;Infrastructures & Énergie;
+KNIN.SW;Kuehne + Nagel International;Suisse;CTO;Industrie & Électrification;
+HOOD;Robinhood Markets;États-Unis;CTO;Services financiers;
+MNST;Monster Beverage;États-Unis;CTO;Consommation de base;
+COR;Cencora;États-Unis;CTO;Santé;
+DLR;Digital Realty Trust;États-Unis;CTO;Immobilier;
+KMI;Kinder Morgan;États-Unis;CTO;Infrastructures & Énergie;
+DASH;DoorDash;États-Unis;CTO;Distribution;
+TRGP;Targa Resources;États-Unis;CTO;Infrastructures & Énergie;
+NXPI;NXP Semiconductors;États-Unis;CTO;Semi-conducteurs;
+AON;Aon;États-Unis;CTO;Assurance;
+ALL;The Allstate;États-Unis;CTO;Assurance;
+SRE;Sempra;États-Unis;CTO;Infrastructures & Énergie;
+DVN;Devon Energy;États-Unis;CTO;Infrastructures & Énergie;
+CRH;CRH;États-Unis;CTO;Matériaux & Chimie;
+CARL-B.CO;Carlsberg;Danemark;PEA;Consommation de base;
+AGS.BR;ageas SA/NV;Belgique;PEA;Assurance;
+EN.PA;Bouygues;France;PEA;Industrie & Électrification;
+HEN3.DE;Henkel AG;Allemagne;PEA;Consommation de base;
+ADM.L;Admiral Group;Royaume-Uni;CTO;Assurance;
+CCH.L;Coca-Cola HBC;Royaume-Uni;CTO;Consommation de base;
+AKRBP.OL;Aker BP;Norvège;PEA;Infrastructures & Énergie;
+UNI.MI;Unipol Assicurazioni;Italie;PEA;Assurance;
+SN.L;Smith & Nephew;Royaume-Uni;CTO;Santé;
+VNA.DE;Vonovia;Allemagne;PEA;Immobilier;
+NESTE.HE;Neste;Finlande;PEA;Infrastructures & Énergie;
+CLNX.MC;Cellnex Telecom;Espagne;PEA;Immobilier;
+SRG.MI;Snam;Italie;PEA;Infrastructures & Énergie;
+WRT1V.HE;Wärtsilä Oyj Abp;Finlande;PEA;Industrie & Électrification;
+SGE.L;The Sage Group;Royaume-Uni;CTO;Logiciels & IT;
+TEL;TE Connectivity;États-Unis;CTO;Logiciels & IT;
+NUE;Nucor;États-Unis;CTO;Matériaux & Chimie;
+OKE;ONEOK;États-Unis;CTO;Infrastructures & Énergie;
+BE;Bloom Energy;États-Unis;CTO;Industrie & Électrification;
+MPWR;Monolithic Power Systems;États-Unis;CTO;Semi-conducteurs;
+TFC;Truist Financial;États-Unis;CTO;Banques;
+CAH;Cardinal Health;États-Unis;CTO;Santé;
+BG.VI;BAWAG Group;Autriche;PEA;Banques;
+LOGN.SW;Logitech International;Suisse;CTO;Logiciels & IT;
+D;Dominion Energy;États-Unis;CTO;Infrastructures & Énergie;
+APP;AppLovin;États-Unis;CTO;Internet & Médias;
+A;Agilent Technologies;États-Unis;CTO;Santé;
+XEL;Xcel Energy;États-Unis;CTO;Infrastructures & Énergie;
+HUM;Humana;États-Unis;CTO;Santé;
+ETR;Entergy;États-Unis;CTO;Infrastructures & Énergie;
+APO;Apollo Global Management;États-Unis;CTO;Services financiers;
+PCAR;PACCAR;États-Unis;CTO;Industrie & Électrification;
+KEYS;Keysight Technologies;États-Unis;CTO;Logiciels & IT;
+EW;Edwards Lifesciences;États-Unis;CTO;Santé;
+MET;MetLife;États-Unis;CTO;Assurance;
+BDX;Becton, Dickinson and Company;États-Unis;CTO;Santé;
+AME;AMETEK;États-Unis;CTO;Industrie & Électrification;
+BKR;Baker Hughes Company;États-Unis;CTO;Infrastructures & Énergie;
+AFL;Aflac Incorporated;États-Unis;CTO;Assurance;
+PSA;Public Storage;États-Unis;CTO;Immobilier;
+O;Realty Income;États-Unis;CTO;Immobilier;
+ADSK;Autodesk;États-Unis;CTO;Logiciels & IT;
+CVNA;Carvana Co;États-Unis;CTO;Luxe & Consommation;
+LHX;L3Harris Technologies;États-Unis;CTO;Aéronautique & Défense;
+PEO.WA;Bank Polska Kasa Opieki;Pologne;PEA;Banques;
+TELIA.ST;Telia Company;Suède;PEA;Télécoms;
+MKS.L;Marks and Spencer Group;Royaume-Uni;CTO;Distribution;
+EUROB.AT;Eurobank;Grèce;PEA;Banques;
+SPSN.SW;Swiss Prime Site;Suisse;CTO;Immobilier;
+FORTUM.HE;Fortum;Finlande;PEA;Infrastructures & Énergie;
+TPEIR.AT;Piraeus Bank;Grèce;PEA;Banques;
+RTO.L;Rentokil Initial;Royaume-Uni;CTO;Services aux entreprises & Données;
+ITRK.L;Intertek Group;Royaume-Uni;CTO;Services aux entreprises & Données;
+URW.PA;Unibail-Rodamco-Westfield;France;PEA;Immobilier;
+BNZL.L;Bunzl;Royaume-Uni;CTO;Services aux entreprises & Données;
+IAG.L;International Consolidated Airlines Group;Espagne;PEA;Industrie & Électrification;
+MAERSK-B.CO;A.P. Møller - Mærsk;Danemark;PEA;Industrie & Électrification;
+OMV.VI;OMV;Autriche;PEA;Infrastructures & Énergie;
+ORNBV.HE;Orion;Finlande;PEA;Santé;
+SVT.L;Severn Trent;Royaume-Uni;CTO;Infrastructures & Énergie;
+ASRNL.AS;ASR Nederland;Pays-Bas;PEA;Assurance;
+SOBI.ST;Swedish Orphan Biovitrum;Suède;PEA;Santé;
+METSO.HE;Metso;Finlande;PEA;Industrie & Électrification;
+DAL;Delta Air Lines;États-Unis;CTO;Industrie & Électrification;
+WAB;Westinghouse Air Brake Technologies;États-Unis;CTO;Industrie & Électrification;
+NDAQ;Nasdaq;États-Unis;CTO;Services financiers;
+VEEV;Veeva Systems;États-Unis;CTO;Santé;
+OXY;Occidental Petroleum;États-Unis;CTO;Infrastructures & Énergie;
+STT;State Street;États-Unis;CTO;Services financiers;
+NKE;NIKE;États-Unis;CTO;Luxe & Consommation;
+AIG;American International Group;États-Unis;CTO;Assurance;
+WAT;Waters;États-Unis;CTO;Santé;
+CIEN;Ciena;États-Unis;CTO;Logiciels & IT;
+GRMN;Garmin;États-Unis;CTO;Luxe & Consommation;
+VMRK;Vivmark Residential;États-Unis;CTO;Immobilier;
+CARR;Carrier Global;États-Unis;CTO;Industrie & Électrification;
+IQV;Iqvia Holdings Inc;États-Unis;CTO;Santé;
+VST;Vistra;États-Unis;CTO;Infrastructures & Énergie;
+VTR;Ventas Reit;États-Unis;CTO;Immobilier;
+FANG;Diamondback Energy;États-Unis;CTO;Infrastructures & Énergie;
+AMP;Ameriprise Financial;États-Unis;CTO;Services financiers;
+FIX;Comfort Systems USA;États-Unis;CTO;Industrie & Électrification;
+TER;Teradyne;États-Unis;CTO;Semi-conducteurs;
+ED;Consolidated Edison;États-Unis;CTO;Infrastructures & Énergie;
+FITB;Fifth Third Bancorp;États-Unis;CTO;Banques;
+HONA;Honeywell Aerospace;États-Unis;CTO;Aéronautique & Défense;
+KDP;Keurig Dr Pepper;États-Unis;CTO;Consommation de base;
+PYPL;PayPal Holdings;États-Unis;CTO;Services financiers;
+EBAY;eBay;États-Unis;CTO;Distribution;
+ROK;Rockwell Automation;États-Unis;CTO;Industrie & Électrification;
+VYLR;Vylor;États-Unis;CTO;Consommation de base;
+F;Ford Motor Company;États-Unis;CTO;Luxe & Consommation;
+RSG;Republic Services;États-Unis;CTO;Industrie & Électrification;
+EXC;Exelon;États-Unis;CTO;Infrastructures & Énergie;
+PSON.L;Pearson;Royaume-Uni;CTO;Luxe & Consommation;
+BKT.MC;Bankinter;Espagne;PEA;Banques;
+BCP.LS;Banco Comercial Português;Portugal;PEA;Banques;
+SMIN.L;Smiths Group;Royaume-Uni;CTO;Industrie & Électrification;
+AC.PA;Accor;France;PEA;Luxe & Consommation;
+SKA-B.ST;Skanska;Suède;PEA;Industrie & Électrification;
+PZU.WA;Powszechny Zaklad Ubezpieczen;Pologne;PEA;Assurance;
+MOWI.OL;Mowi;Norvège;PEA;Consommation de base;
+AGN.AS;Aegon;Pays-Bas;PEA;Assurance;
+QIA.DE;Qiagen;Allemagne;PEA;Santé;
+FERG;Ferguson Enterprises;États-Unis;CTO;Industrie & Électrification;
+AKZA.AS;Akzo Nobel;Pays-Bas;PEA;Matériaux & Chimie;
+EDV.L;Endeavour Mining;Royaume-Uni;CTO;Matériaux & Chimie;
+G1A.DE;GEA Group;Allemagne;PEA;Industrie & Électrification;
+LISP.SW;Chocoladefabriken Lindt & Sprüngli;Suisse;CTO;Consommation de base;
+IMI.L;IMI;Royaume-Uni;CTO;Industrie & Électrification;
+MICC.AS;The Magnum Ice Cream Company;Pays-Bas;PEA;Consommation de base;
+PRU;Prudential Financial;États-Unis;CTO;Assurance;
+XYZ;Block;États-Unis;CTO;Services financiers;
+COHR;Coherent;États-Unis;CTO;Logiciels & IT;
+MCHP;Microchip Technology Incorporated;États-Unis;CTO;Semi-conducteurs;
+YUM;Yum! Brands;États-Unis;CTO;Luxe & Consommation;
+P;Everpure;États-Unis;CTO;Logiciels & IT;
+UPM.HE;UPM-Kymmene;Finlande;PEA;Matériaux & Chimie;
+GALP.LS;Galp Energia, SGPS;Portugal;PEA;Infrastructures & Énergie;
+WEIR.L;Weir;Royaume-Uni;CTO;Industrie & Électrification;
+RXL.PA;Rexel;France;PEA;Industrie & Électrification;
+SDLF.L;Standard Life;Royaume-Uni;CTO;Assurance;
+CA.PA;Carrefour;France;PEA;Distribution;
+TEN.MI;Tenaris;Italie;PEA;Infrastructures & Énergie;
+ORSTED.CO;Ørsted;Danemark;PEA;Infrastructures & Énergie;
+ACGL;Arch Capital Group;États-Unis;CTO;Assurance;
+VMC;Vulcan Materials Company;États-Unis;CTO;Matériaux & Chimie;
+CCL;Carnival Corporation;États-Unis;CTO;Luxe & Consommation;
+CBRE;CBRE Group;États-Unis;CTO;Immobilier;
+PEG;Public Service Enterprise Group Incorporated;États-Unis;CTO;Infrastructures & Énergie;
+DHI;D.R. Horton;États-Unis;CTO;Luxe & Consommation;
+ADM;Archer-Daniels-Midland Company;États-Unis;CTO;Consommation de base;
+BIIB;Biogen;États-Unis;CTO;Santé;
+CCI;Crown Castle;États-Unis;CTO;Immobilier;
+WEC;WEC Energy Group;États-Unis;CTO;Infrastructures & Énergie;
+KR;The Kroger Co;États-Unis;CTO;Distribution;
+NTAP;NetApp;États-Unis;CTO;Logiciels & IT;
+SYY;Sysco;États-Unis;CTO;Consommation de base;
+WDAY;Workday;États-Unis;CTO;Logiciels & IT;
+STB.OL;Storebrand;Norvège;PEA;Services financiers;
+HSX.L;Hiscox;Royaume-Uni;CTO;Assurance;
+MNG.L;M&G;Royaume-Uni;CTO;Services financiers;
+FRO.OL;Frontline;Norvège;PEA;Infrastructures & Énergie;
+INDU-C.ST;AB Industrivärden (publ);Suède;PEA;Services financiers;
+SECU-B.ST;Securitas;Suède;PEA;Industrie & Électrification;
+TLX.DE;Talanx;Allemagne;PEA;Assurance;
+BNR.DE;Brenntag;Allemagne;PEA;Industrie & Électrification;
+LPP.WA;LPP;Pologne;PEA;Luxe & Consommation;
+RBI.VI;Raiffeisen Bank International;Autriche;PEA;Banques;
+CNA.L;Centrica;Royaume-Uni;CTO;Infrastructures & Énergie;
+KGH.WA;KGHM Polska Miedz;Pologne;PEA;Matériaux & Chimie;
+NHY.OL;Norsk Hydro;Norvège;PEA;Matériaux & Chimie;
+STLAM.MI;Stellantis;Italie;PEA;Luxe & Consommation;
+TEL.OL;Telenor;Norvège;PEA;Télécoms;
+SKF-B.ST;AB SKF (publ);Suède;PEA;Industrie & Électrification;
+KGF.L;Kingfisher;Royaume-Uni;CTO;Distribution;
+TREL-B.ST;Trelleborg;Suède;PEA;Industrie & Électrification;
+WISE.L;Wise Group;Royaume-Uni;CTO;Services aux entreprises & Données;
+TEL2-B.ST;Tele2;Suède;PEA;Télécoms;
+LI.PA;Klépierre;France;PEA;Immobilier;
+FME.DE;Fresenius Medical Care;Allemagne;PEA;Santé;
+CON.DE;Continental;Allemagne;PEA;Luxe & Consommation;
+EXPE;Expedia Group;États-Unis;CTO;Luxe & Consommation;
+MLM;Martin Marietta Materials;États-Unis;CTO;Matériaux & Chimie;
+COIN;Coinbase Global;États-Unis;CTO;Services financiers;
+FLEX;Flex;États-Unis;CTO;Logiciels & IT;
+EXR;Extra Space Storage;États-Unis;CTO;Immobilier;
+RMD;ResMed;États-Unis;CTO;Santé;
+WTW;Willis Towers Watson Public Limited Company;États-Unis;CTO;Assurance;
+HOT.DE;HOCHTIEF;Allemagne;PEA;Industrie & Électrification;
+TRYG.CO;Tryg;Danemark;PEA;Assurance;
+ALSYDB.CO;AL Sydbank;Danemark;PEA;Banques;
+SCA-B.ST;Svenska Cellulosa Aktiebolaget SCA (publ);Suède;PEA;Matériaux & Chimie;
+LTMC.MI;Lottomatica Group;Italie;PEA;Luxe & Consommation;
+STJ.L;St. James's Place;Royaume-Uni;CTO;Services financiers;
+EBP.WA;Erste Bank Polska;Pologne;PEA;Banques;
+PSPN.SW;PSP Swiss Property;Suisse;CTO;Immobilier;
+DHER.DE;Delivery Hero;Allemagne;PEA;Distribution;
+SBRY.L;J Sainsbury;Royaume-Uni;CTO;Distribution;
+PPC.AT;Public Power Corporation;Grèce;PEA;Infrastructures & Énergie;
+SRT3.DE;Sartorius;Allemagne;PEA;Santé;
+ORK.OL;Orkla;Norvège;PEA;Consommation de base;
+ALPHA.AT;Alpha Bank;Grèce;PEA;Banques;
+KESKOB.HE;Kesko;Finlande;PEA;Distribution;
+SUBC.OL;Subsea 7;Norvège;PEA;Infrastructures & Énergie;
+HBAN;Huntington Bancshares Incorporated;États-Unis;CTO;Banques;
+MTB;M&T Bank;États-Unis;CTO;Banques;
+TWLO;Twilio;États-Unis;CTO;Logiciels & IT;
+DXCM;DexCom;États-Unis;CTO;Santé;
+NTRS;Northern Trust;États-Unis;CTO;Services financiers;
+AEE;Ameren;États-Unis;CTO;Infrastructures & Énergie;
+TDY;Teledyne Technologies Incorporated;États-Unis;CTO;Logiciels & IT;
+HAL;Halliburton Company;États-Unis;CTO;Infrastructures & Énergie;
+WSM;Williams-Sonoma;États-Unis;CTO;Distribution;
+EME;EMCOR Group;États-Unis;CTO;Industrie & Électrification;
+TTWO;Take-Two Interactive Software;États-Unis;CTO;Internet & Médias;
+STLD;Steel Dynamics;États-Unis;CTO;Matériaux & Chimie;
+MTD;Mettler-Toledo International;États-Unis;CTO;Santé;
+CNC;Centene;États-Unis;CTO;Santé;
+UAL;United Airlines Holdings;États-Unis;CTO;Industrie & Électrification;
+GEHC;GE HealthCare Technologies;États-Unis;CTO;Santé;
+IRM;Iron Mountain Incorporated;États-Unis;CTO;Immobilier;
+EQT;EQT;États-Unis;CTO;Infrastructures & Énergie;
+CBOE;Cboe Global Markets;États-Unis;CTO;Services financiers;
+IBKR;Interactive Brokers Group;États-Unis;CTO;Services financiers;
+PAYX;Paychex;États-Unis;CTO;Industrie & Électrification;
+HIG;The Hartford Insurance Group;États-Unis;CTO;Assurance;
+ILMN;Illumina;États-Unis;CTO;Santé;
+KMB;Kimberly-Clark;États-Unis;CTO;Consommation de base;
+IDR.MC;Indra Sistemas;Espagne;PEA;Services aux entreprises & Données;
+ICG.L;ICG;Royaume-Uni;CTO;Services financiers;
+ELI.BR;Elia Group SA/NV;Belgique;PEA;Infrastructures & Énergie;
+DCC.L;DCC Energy;Royaume-Uni;CTO;Infrastructures & Énergie;
+MRO.L;Melrose Industries;Royaume-Uni;CTO;Industrie & Électrification;
+HM-B.ST;H & M Hennes & Mauritz;Suède;PEA;Luxe & Consommation;
+NKT.CO;NKT;Danemark;PEA;Industrie & Électrification;
+EMSN.SW;EMS-CHEMIE HOLDING;Suisse;CTO;Matériaux & Chimie;
+KCR.HE;Konecranes Plc;Finlande;PEA;Industrie & Électrification;
+ZAL.DE;Zalando;Allemagne;PEA;Distribution;
+YAR.OL;Yara International;Norvège;PEA;Matériaux & Chimie;
+ACLN.SW;Accelleron Industries;Suisse;CTO;Industrie & Électrification;
+ABF.L;Associated British Foods;Royaume-Uni;CTO;Consommation de base;
+SPX.L;Spirax Group;Royaume-Uni;CTO;Industrie & Électrification;
+BAB.L;Babcock International Group;Royaume-Uni;CTO;Industrie & Électrification;
+EXPD;Expeditors International of Washington;États-Unis;CTO;Industrie & Électrification;
+PPG;PPG Industries;États-Unis;CTO;Matériaux & Chimie;
+PPL;PPL;États-Unis;CTO;Infrastructures & Énergie;
+HPQ;HP;États-Unis;CTO;Logiciels & IT;
+CPAY;Corpay;États-Unis;CTO;Services financiers;
+VLTO;Veralto;États-Unis;CTO;Industrie & Électrification;
+VICI;VICI Properties;États-Unis;CTO;Immobilier;
+RJF;Raymond James Financial;États-Unis;CTO;Services financiers;
+ULTA;Ulta Beauty;États-Unis;CTO;Distribution;
+IR;Ingersoll Rand;États-Unis;CTO;Industrie & Électrification;
+DGX;Quest Diagnostics Incorporated;États-Unis;CTO;Santé;
+CFG;Citizens Financial Group;États-Unis;CTO;Banques;
+OTIS;Otis Worldwide;États-Unis;CTO;Industrie & Électrification;
+CINF;Cincinnati Financial;États-Unis;CTO;Assurance;
+CNP;CenterPoint Energy;États-Unis;CTO;Infrastructures & Énergie;
+DOV;Dover;États-Unis;CTO;Industrie & Électrification;
+JBL;Jabil;États-Unis;CTO;Logiciels & IT;
+AWK;American Water Works Company;États-Unis;CTO;Infrastructures & Énergie;
+DTE;DTE Energy Company;États-Unis;CTO;Infrastructures & Énergie;
+LYV;Live Nation Entertainment;États-Unis;CTO;Internet & Médias;
+LH;Labcorp Holdings;États-Unis;CTO;Santé;
+ARES;Ares Management;États-Unis;CTO;Services financiers;
+PCG;PG&E;États-Unis;CTO;Infrastructures & Énergie;
+ATO;Atmos Energy;États-Unis;CTO;Infrastructures & Énergie;
+CTSH;Cognizant Technology Solutions;États-Unis;CTO;Services aux entreprises & Données;
+WST;West Pharmaceutical Services;États-Unis;CTO;Santé;
+DG;Dollar General;États-Unis;CTO;Distribution;
+EL;The Estée Lauder Companies;États-Unis;CTO;Consommation de base;
+ON;ON Semiconductor;États-Unis;CTO;Semi-conducteurs;
+IFF;International Flavors & Fragrances;États-Unis;CTO;Matériaux & Chimie;
+PHM;PulteGroup;États-Unis;CTO;Luxe & Consommation;
+RF;Regions Financial;États-Unis;CTO;Banques;
+HSY;The Hershey Company;États-Unis;CTO;Consommation de base;
+SYF;Synchrony Financial;États-Unis;CTO;Services financiers;
+Q;Qnity Electronics;États-Unis;CTO;Semi-conducteurs;
+VRSN;VeriSign;États-Unis;CTO;Logiciels & IT;
+DRI;Darden Restaurants;États-Unis;CTO;Luxe & Consommation;
+DOW;Dow;États-Unis;CTO;Matériaux & Chimie;
+CASY;Casey's General Stores;États-Unis;CTO;Distribution;
+CHD;Church & Dwight Co;États-Unis;CTO;Consommation de base;
+DLTR;Dollar Tree;États-Unis;CTO;Distribution;
+FE;FirstEnergy;États-Unis;CTO;Infrastructures & Énergie;
+TPR;Tapestry;États-Unis;CTO;Luxe & Consommation;
+ES;Eversource Energy;États-Unis;CTO;Infrastructures & Énergie;
+JYSK.CO;Jyske Bank;Danemark;PEA;Banques;
+RILBA.CO;Ringkjøbing Landbobank;Danemark;PEA;Banques;
+SPM.MI;Saipem;Italie;PEA;Infrastructures & Énergie;
+ABVX.PA;ABIVAX Société Anonyme;France;PEA;Santé;
+GALE.SW;Galenica;Suisse;CTO;Santé;
+LMP.L;LondonMetric Property Plc;Royaume-Uni;CTO;Immobilier;
+IG.MI;Italgas;Italie;PEA;Infrastructures & Énergie;
+CTEC.L;Convatec Group;Royaume-Uni;CTO;Santé;
+TKA.DE;thyssenkrupp;Allemagne;PEA;Matériaux & Chimie;
+KBX.DE;Knorr-Bremse;Allemagne;PEA;Industrie & Électrification;
+GBLB.BR;Groupe Bruxelles Lambert;Belgique;PEA;Services financiers;
+IPN.PA;Ipsen;France;PEA;Santé;
+EVK.DE;Evonik Industries;Allemagne;PEA;Matériaux & Chimie;
+EDEN.PA;Edenred;France;PEA;Services financiers;
+NIBE-B.ST;NIBE Industrier;Suède;PEA;Industrie & Électrification;
+AED.BR;Aedifica NV/SA;Belgique;PEA;Immobilier;
+SAVE.ST;Nordnet;Suède;PEA;Services financiers;
+SB1NO.OL;SpareBank 1 Sør-Norge;Norvège;PEA;Banques;
+BBY.L;Balfour Beatty;Royaume-Uni;CTO;Industrie & Électrification;
+RMV.L;Rightmove;Royaume-Uni;CTO;Internet & Médias;
+BMED.MI;Banca Mediolanum;Italie;PEA;Banques;
+EMG.L;Man Group Plc;Royaume-Uni;CTO;Services financiers;
+MTLN.AT;Metlen Energy & Metals;Grèce;PEA;Industrie & Électrification;
+SW.PA;Sodexo;France;PEA;Services aux entreprises & Données;
+AVOL.SW;Avolta;Suisse;CTO;Distribution;
+STERV.HE;Stora Enso;Finlande;PEA;Matériaux & Chimie;
+ALO.PA;Alstom;France;PEA;Industrie & Électrification;
+RNO.PA;Renault;France;PEA;Luxe & Consommation;
+P911.DE;Dr. Ing. h.c. F. Porsche;Allemagne;PEA;Luxe & Consommation;
+GJF.OL;Gjensidige Forsikring;Norvège;PEA;Assurance;
+WPP.L;WPP;Royaume-Uni;CTO;Internet & Médias;
+GET.PA;Getlink;France;PEA;Industrie & Électrification;
+ANDR.VI;Andritz;Autriche;PEA;Industrie & Électrification;
+MBK.WA;mBank;Pologne;PEA;Banques;
+GF.SW;Georg Fischer;Suisse;CTO;Industrie & Électrification;
+HWDN.L;Howden Joinery Group Plc;Royaume-Uni;CTO;Industrie & Électrification;
+VAR.OL;Vår Energi;Norvège;PEA;Infrastructures & Énergie;
+BLND.L;British Land Company;Royaume-Uni;CTO;Immobilier;
+ELISA.HE;Elisa;Finlande;PEA;Télécoms;
+JMT.LS;Jerónimo Martins, SGPS;Portugal;PEA;Consommation de base;
+FRES.L;Fresnillo;Royaume-Uni;CTO;Matériaux & Chimie;
+LAND.L;Land Securities Group Plc;Royaume-Uni;CTO;Immobilier;
+ACKB.BR;Ackermans & Van Haaren;Belgique;PEA;Industrie & Électrification;
+UHR.SW;The Swatch Group;Suisse;CTO;Luxe & Consommation;
+SCR.PA;SCOR;France;PEA;Assurance;
+SSAB-B.ST;SSAB;Suède;PEA;Matériaux & Chimie;
+GETI-B.ST;Getinge;Suède;PEA;Santé;
+ISS.CO;ISS;Danemark;PEA;Services aux entreprises & Données;
+BTRW.L;Barratt Redrow;Royaume-Uni;CTO;Luxe & Consommation;
+SYENS.BR;Syensqo SA/NV;Belgique;PEA;Matériaux & Chimie;
+CRDA.L;Croda International Plc;Royaume-Uni;CTO;Matériaux & Chimie;
+ANA.MC;Acciona;Espagne;PEA;Infrastructures & Énergie;
+WTB.L;Whitbread;Royaume-Uni;CTO;Luxe & Consommation;
+BGEO.L;Lion Finance Group;Royaume-Uni;CTO;Banques;
+HAS;Hasbro;États-Unis;CTO;Luxe & Consommation;
+JBHT;J.B. Hunt Transport Services;États-Unis;CTO;Industrie & Électrification;
+KIM;Kimco Realty;États-Unis;CTO;Immobilier;
+WRB;W. R. Berkley;États-Unis;CTO;Assurance;
+LEN;Lennar;États-Unis;CTO;Luxe & Consommation;
+GPC;Genuine Parts Company;États-Unis;CTO;Luxe & Consommation;
+ESS;Essex Property Trust;États-Unis;CTO;Immobilier;
+CRL;Charles River Laboratories International;États-Unis;CTO;Santé;
+NDSN;Nordson;États-Unis;CTO;Industrie & Électrification;
+ZBRA;Zebra Technologies;États-Unis;CTO;Logiciels & IT;
+HST;Host Hotels & Resorts;États-Unis;CTO;Immobilier;
+IEX;IDEX;États-Unis;CTO;Industrie & Électrification;
+BALL;Ball;États-Unis;CTO;Matériaux & Chimie;
+TSCO;Tractor Supply Company;États-Unis;CTO;Distribution;
+LYB;LyondellBasell Industries;États-Unis;CTO;Matériaux & Chimie;
+RVTY;Revvity;États-Unis;CTO;Santé;
+LDOS;Leidos Holdings;États-Unis;CTO;Services aux entreprises & Données;
+ZBH;Zimmer Biomet Holdings;États-Unis;CTO;Santé;
+J;Jacobs Solutions;États-Unis;CTO;Industrie & Électrification;
+SIGN.SW;SIG Group;Suisse;CTO;Matériaux & Chimie;
+TEMN.SW;Temenos;Suisse;CTO;Logiciels & IT;
+BARN.SW;Barry Callebaut;Suisse;CTO;Consommation de base;
+TPRO.MI;Technoprobe;Italie;PEA;Semi-conducteurs;
+BRBY.L;Burberry Group;Royaume-Uni;CTO;Luxe & Consommation;
+NDX1.DE;Nordex;Allemagne;PEA;Industrie & Électrification;
+SBMO.AS;SBM Offshore;Pays-Bas;PEA;Infrastructures & Énergie;
+VER.VI;VERBUND;Autriche;PEA;Infrastructures & Énergie;
+VOE.VI;Voestalpine;Autriche;PEA;Matériaux & Chimie;
+TUB.BR;Financière de Tubize;Belgique;PEA;Santé;
+SQN.SW;Swissquote Group Holding;Suisse;CTO;Services financiers;
+PSN.L;Persimmon Plc;Royaume-Uni;CTO;Luxe & Consommation;
+SECT-B.ST;Sectra;Suède;PEA;Santé;
+MRL.MC;MERLIN Properties SOCIMI;Espagne;PEA;Immobilier;
+LUND-B.ST;L E Lundbergföretagen;Suède;PEA;Services financiers;
+OCTV-SDB.ST;Octave Intelligence;Suède;PEA;Logiciels & IT;
+RAND.AS;Randstad;Pays-Bas;PEA;Services aux entreprises & Données;
+WDP.BR;Warehouses De Pauw;Belgique;PEA;Immobilier;
+PAH3.DE;Porsche Automobil Holding;Allemagne;PEA;Luxe & Consommation;
+VK.PA;Vallourec;France;PEA;Infrastructures & Énergie;
+ALK-B.CO;ALK-Abelló;Danemark;PEA;Santé;
+VALMT.HE;Valmet;Finlande;PEA;Industrie & Électrification;
+TE.PA;Technip Energies;France;PEA;Infrastructures & Énergie;
+FHZN.SW;Flughafen Zürich;Suisse;CTO;Industrie & Électrification;
+BCVN.SW;Banque Cantonale Vaudoise;Suisse;CTO;Banques;
+MOH.AT;Motor Oil (Hellas) Corinth Refineries;Grèce;PEA;Infrastructures & Énergie;
+RED.MC;Redeia Corporación;Espagne;PEA;Infrastructures & Énergie;
+GL9.IR;Glanbia;Irlande;PEA;Consommation de base;
+DEMANT.CO;Demant;Danemark;PEA;Santé;
+INVP.L;Investec Group;Royaume-Uni;CTO;Services financiers;
+LEG.DE;LEG Immobilien;Allemagne;PEA;Immobilier;
+AKE.PA;Arkema;France;PEA;Matériaux & Chimie;
+ZEG.L;Zegona Communications;Royaume-Uni;CTO;Télécoms;
+MYCR.ST;Mycronic;Suède;PEA;Logiciels & IT;
+ZAB.WA;Zabka Group;Pologne;PEA;Distribution;
+ENG.MC;Enagás;Espagne;PEA;Infrastructures & Énergie;
+DNP.WA;Dino Polska;Pologne;PEA;Distribution;
+ADEN.SW;Adecco Group;Suisse;CTO;Services aux entreprises & Données;
+SALM.OL;SalMar;Norvège;PEA;Consommation de base;
+RS1.L;RS Group;Royaume-Uni;CTO;Industrie & Électrification;
+ROR.L;Rotork;Royaume-Uni;CTO;Industrie & Électrification;
+SOF.BR;Sofina Société Anonyme;Belgique;PEA;Services financiers;
+ABDN.L;Aberdeen Group Plc;Royaume-Uni;CTO;Services financiers;
+TEP.PA;Teleperformance;France;PEA;Services aux entreprises & Données;
+CPR.MI;Davide Campari-Milano;Italie;PEA;Consommation de base;
+UMI.BR;Umicore;Belgique;PEA;Matériaux & Chimie;
+UNI.MC;Unicaja Banco;Espagne;PEA;Banques;
+AIXA.DE;AIXTRON;Allemagne;PEA;Semi-conducteurs;
+AZM.MI;Azimut Holding;Italie;PEA;Services financiers;
+CCC.L;Computacenter;Royaume-Uni;CTO;Services aux entreprises & Données;
+ADP.PA;Aeroports de Paris;France;PEA;Industrie & Électrification;
+CDR.WA;CD Projekt Red;Pologne;PEA;Internet & Médias;
+BFT.WA;Benefit Systems;Pologne;PEA;Industrie & Électrification;
+SRP.L;Serco Group;Royaume-Uni;CTO;Services aux entreprises & Données;
+EDPR.LS;EDP Renewables;Portugal;PEA;Infrastructures & Énergie;
+BBOX.L;Tritax Big Box REIT;Royaume-Uni;CTO;Immobilier;
+LHA.DE;Deutsche Lufthansa;Allemagne;PEA;Industrie & Électrification;
+CAST.ST;Castellum;Suède;PEA;Immobilier;
+IGG.L;IG Group Holdings;Royaume-Uni;CTO;Services financiers;
+GEKTERNA.AT;Gek Terna;Grèce;PEA;Industrie & Électrification;
+VSURE.ST;Verisure;Suède;PEA;Industrie & Électrification;
+KBCA.BR;KBC Ancora;Belgique;PEA;Services financiers;
+CVC.AS;CVC Capital Partners;Pays-Bas;PEA;Services financiers;
+ALLN.SW;Allreal Holding;Suisse;CTO;Immobilier;
+TECN.SW;Tecan Group;Suisse;CTO;Santé;
+MTO.L;Mitie Group;Royaume-Uni;CTO;Services aux entreprises & Données;
+ROSE.L;Rosebank Industries;Royaume-Uni;CTO;Industrie & Électrification;
+LOOMIS.ST;Loomis;Suède;PEA;Industrie & Électrification;
+SOI.PA;Soitec;France;PEA;Semi-conducteurs;
+GFC.PA;Gecina;France;PEA;Immobilier;
+JMAT.L;Johnson Matthey Plc;Royaume-Uni;CTO;Matériaux & Chimie;
+AZA.ST;Avanza Bank Holding;Suède;PEA;Banques;
+DIE.BR;D'Ieteren Group;Belgique;PEA;Luxe & Consommation;
+BKG.L;The Berkeley Group Holdings;Royaume-Uni;CTO;Luxe & Consommation;
+MAP.MC;Mapfre;Espagne;PEA;Assurance;
+AALB.AS;Aalberts;Pays-Bas;PEA;Industrie & Électrification;
+A2A.MI;A2A;Italie;PEA;Infrastructures & Énergie;
+QQ.L;QinetiQ Group;Royaume-Uni;CTO;Aéronautique & Défense;
+GIS;General Mills;États-Unis;CTO;Consommation de base;
+L;Loews;États-Unis;CTO;Assurance;
+SNA;Snap-on Incorporated;États-Unis;CTO;Industrie & Électrification;
+SMCI;Super Micro Computer;États-Unis;CTO;Logiciels & IT;
+CF;CF Industries Holdings;États-Unis;CTO;Matériaux & Chimie;
+FSLR;First Solar;États-Unis;CTO;Logiciels & IT;
+LNT;Alliant Energy;États-Unis;CTO;Infrastructures & Énergie;
+APA;APA;États-Unis;CTO;Infrastructures & Énergie;
+BBY;Best Buy Co;États-Unis;CTO;Distribution;
+FFIV;F5;États-Unis;CTO;Logiciels & IT;
+KEY;KeyCorp;États-Unis;CTO;Banques;
+DD;DuPont de Nemours;États-Unis;CTO;Industrie & Électrification;
+CDW;CDW;États-Unis;CTO;Services aux entreprises & Données;
+IP;International Paper Company;États-Unis;CTO;Matériaux & Chimie;
+TPL;Texas Pacific Land;États-Unis;CTO;Infrastructures & Énergie;
+EVRG;Evergy;États-Unis;CTO;Infrastructures & Énergie;
+DRX.L;Drax Group;Royaume-Uni;CTO;Infrastructures & Énergie;
+NDA.DE;Aurubis;Allemagne;PEA;Matériaux & Chimie;
+VEND.OL;Vend Marketplaces;Norvège;PEA;Internet & Médias;
+FTV;Fortive;États-Unis;CTO;Industrie & Électrification;
+SBAC;SBA Communications;États-Unis;CTO;Immobilier;
+SWKS;Skyworks Solutions;États-Unis;CTO;Semi-conducteurs;
+FIS;Fidelity National Information Services;États-Unis;CTO;Services aux entreprises & Données;
+BRO;Brown & Brown;États-Unis;CTO;Assurance;
+NRG;NRG Energy;États-Unis;CTO;Infrastructures & Énergie;
+STZ;Constellation Brands;États-Unis;CTO;Consommation de base;
+INCY;Incyte;États-Unis;CTO;Santé;
+BR;Broadridge Financial Solutions;États-Unis;CTO;Services aux entreprises & Données;
+LUV;Southwest Airlines Co;États-Unis;CTO;Industrie & Électrification;
+EXE;Expand Energy;États-Unis;CTO;Infrastructures & Énergie;
+KHC;The Kraft Heinz Company;États-Unis;CTO;Consommation de base;
+PTC;PTC;États-Unis;CTO;Logiciels & IT;
+NI;NiSource;États-Unis;CTO;Infrastructures & Énergie;
+GPN;Global Payments;États-Unis;CTO;Services aux entreprises & Données;
+XYL;Xylem;États-Unis;CTO;Industrie & Électrification;
+MNDI.L;Mondi;Royaume-Uni;CTO;Matériaux & Chimie;
+PFG;Principal Financial Group;États-Unis;CTO;Services financiers;
+VTRS;Viatris;États-Unis;CTO;Santé;
+EFX;Equifax;États-Unis;CTO;Services aux entreprises & Données;
+CMS;CMS Energy;États-Unis;CTO;Infrastructures & Énergie;
+STE;STERIS;États-Unis;CTO;Santé;
+AMCR;Amcor;États-Unis;CTO;Matériaux & Chimie;
+OMC;Omnicom Group;États-Unis;CTO;Internet & Médias;
+TROW;T. Rowe Price Group;États-Unis;CTO;Services financiers;
+HUBB;Hubbell Incorporated;États-Unis;CTO;Industrie & Électrification;
+SW;Smurfit Westrock Plc;États-Unis;CTO;Matériaux & Chimie;
+EIX;Edison International;États-Unis;CTO;Infrastructures & Énergie;
+PKG;Packaging Corporation of America;États-Unis;CTO;Matériaux & Chimie;
+WY;Weyerhaeuser Company;États-Unis;CTO;Immobilier;
+EG;Everest Group;États-Unis;CTO;Assurance;
+TXT;Textron;États-Unis;CTO;Aéronautique & Défense;
+CHRW;C.H. Robinson Worldwide;États-Unis;CTO;Industrie & Électrification;
+AIZ;Assurant;États-Unis;CTO;Assurance;
+IT;Gartner;États-Unis;CTO;Services aux entreprises & Données;
+INVH;Invitation Homes;États-Unis;CTO;Immobilier;
+AVY;Avery Dennison;États-Unis;CTO;Matériaux & Chimie;
+VATN.SW;Valiant Holding;Suisse;CTO;Banques;
+TBCG.L;TBC Bank Group;Royaume-Uni;CTO;Banques;
+PUIG.MC;Puig Brands;Espagne;PEA;Consommation de base;
+AG1.DE;AUTO1 Group;Allemagne;PEA;Luxe & Consommation;
+ALLFG.AS;Allfunds Group;Pays-Bas;PEA;Services financiers;
+BWY.L;Bellway p.l.c;Royaume-Uni;CTO;Luxe & Consommation;
+NEXI.MI;Nexi;Italie;PEA;Services financiers;
+HUBN.SW;Huber+Suhner;Suisse;CTO;Industrie & Électrification;
+FOXA;Fox;États-Unis;CTO;Internet & Médias;
+PNW;Pinnacle West Capital;États-Unis;CTO;Infrastructures & Énergie;
+DOC;Healthpeak Properties;États-Unis;CTO;Immobilier;
+AKAM;Akamai Technologies;États-Unis;CTO;Logiciels & IT;
+RDDT;Reddit;États-Unis;CTO;Internet & Médias;
+ECHO;EchoStar;États-Unis;CTO;Télécoms;
+MAA;Mid-America Apartment Communities;États-Unis;CTO;Immobilier;
+SJM;The J. M. Smucker Company;États-Unis;CTO;Consommation de base;
+FDJU.PA;FDJ United;France;PEA;Luxe & Consommation;
+KGX.DE;KION GROUP;Allemagne;PEA;Industrie & Électrification;
+PHP.L;Primary Health Properties Plc;Royaume-Uni;CTO;Immobilier;
+ROCK-B.CO;Rockwool;Danemark;PEA;Industrie & Électrification;
+QLT.L;Quilter;Royaume-Uni;CTO;Services financiers;
+AXFO.ST;Axfood;Suède;PEA;Distribution;
+XTB.WA;XTB;Pologne;PEA;Services financiers;
+SCYR.MC;Sacyr;Espagne;PEA;Industrie & Électrification;
+FR.PA;Valeo;France;PEA;Luxe & Consommation;
+COV.PA;Covivio;France;PEA;Immobilier;
+TEG.DE;TAG Immobilien;Allemagne;PEA;Immobilier;
+HOLM-B.ST;Holmen;Suède;PEA;Matériaux & Chimie;
+UTG.L;Unite Group;Royaume-Uni;CTO;Immobilier;
+LATO-B.ST;Investment AB Latour (publ);Suède;PEA;Industrie & Électrification;
+BOL.PA;Bolloré;France;PEA;Infrastructures & Énergie;
+HTO.AT;Hellenic Telecommunications Organization;Grèce;PEA;Télécoms;
+BC8.DE;Bechtle;Allemagne;PEA;Services aux entreprises & Données;
+KTY.WA;Grupa Kety;Pologne;PEA;Matériaux & Chimie;
+DLG.MI;De'Longhi;Italie;PEA;Luxe & Consommation;
+FNTN.DE;freenet;Allemagne;PEA;Télécoms;
+SFSN.SW;SFS Group;Suisse;CTO;Industrie & Électrification;
+SHC.L;Shaftesbury Capital;Royaume-Uni;CTO;Immobilier;
+HUH1V.HE;Huhtamäki;Finlande;PEA;Matériaux & Chimie;
+TOM.OL;Tomra Systems;Norvège;PEA;Industrie & Électrification;
+SCT.L;Softcat;Royaume-Uni;CTO;Logiciels & IT;
+CMBN.SW;Cembra Money Bank;Suisse;CTO;Banques;
+MOBN.SW;Mobimo Holding;Suisse;CTO;Immobilier;
+SOP.PA;Sopra Steria Group;France;PEA;Services aux entreprises & Données;
+RBREW.CO;Royal Unibrew;Danemark;PEA;Consommation de base;
+DKSH.SW;DKSH Holding;Suisse;CTO;Services aux entreprises & Données;
+IVG.MI;Iveco Group;Italie;PEA;Industrie & Électrification;
+COTN.SW;Comet Holding;Suisse;CTO;Logiciels & IT;
+CPT;Camden Property Trust;États-Unis;CTO;Immobilier;
+ALGN;Align Technology;États-Unis;CTO;Santé;
+BXP;BXP;États-Unis;CTO;Immobilier;
+TSN;Tyson Foods;États-Unis;CTO;Consommation de base;
+MAS;Masco;États-Unis;CTO;Industrie & Électrification;
+ALLE;Allegion;États-Unis;CTO;Industrie & Électrification;
+SWK;Stanley Black & Decker;États-Unis;CTO;Industrie & Électrification;
+GEN;Gen Digital;États-Unis;CTO;Logiciels & IT;
+TRMB;Trimble;États-Unis;CTO;Logiciels & IT;
+BGN.MI;Banca Generali;Italie;PEA;Banques;
+TW.L;Taylor Wimpey;Royaume-Uni;CTO;Luxe & Consommation;
+GRF.MC;Grifols;Espagne;PEA;Santé;
+BME.L;B&M European Value Retail;Royaume-Uni;CTO;Distribution;
+ENT.L;Entain Plc;Royaume-Uni;CTO;Luxe & Consommation;
+MANTA.HE;Mandatum;Finlande;PEA;Services financiers;
+SBNOR.OL;Sparebanken Norge;Norvège;PEA;Banques;
+PLUS.L;Plus500;Royaume-Uni;CTO;Services financiers;
+HILS.L;Hill & Smith;Royaume-Uni;CTO;Matériaux & Chimie;
+SWEC-B.ST;Sweco;Suède;PEA;Industrie & Électrification;
+VZN.SW;VZ Holding;Suisse;CTO;Services financiers;
+VONN.SW;Vontobel Holding;Suisse;CTO;Services financiers;
+PAF.L;Pan African Resources;Royaume-Uni;CTO;Matériaux & Chimie;
+BKW.SW;BKW;Suisse;CTO;Infrastructures & Énergie;
+ACP.WA;Asseco Poland;Pologne;PEA;Logiciels & IT;
+BPT.L;Bridgepoint Group;Royaume-Uni;CTO;Services financiers;
+CWK.L;Cranswick;Royaume-Uni;CTO;Consommation de base;
+FLS.CO;FLSmidth & Co;Danemark;PEA;Industrie & Électrification;
+TUI1.DE;TUI;Royaume-Uni;CTO;Luxe & Consommation;
+SUNN.SW;Sunrise Communications;Suisse;CTO;Télécoms;
+TCAP.L;TP ICAP Group;Royaume-Uni;CTO;Services financiers;
+SFZN.SW;Siegfried Holding;Suisse;CTO;Santé;
+CSG.AS;CSG;Pays-Bas;PEA;Aéronautique & Défense;
+INCH.L;Inchcape;Royaume-Uni;CTO;Luxe & Consommation;
+IFCN.SW;INFICON Holding;Suisse;CTO;Logiciels & IT;
+VPK.AS;Koninklijke Vopak;Pays-Bas;PEA;Infrastructures & Énergie;
+AAK.ST;AAK AB (publ.);Suède;PEA;Consommation de base;
+NOD.OL;Nordic Semiconductor;Norvège;PEA;Semi-conducteurs;
+ITV.L;ITV;Royaume-Uni;CTO;Internet & Médias;
+BALD-B.ST;Fastighets AB Balder (publ);Suède;PEA;Immobilier;
+AKER.OL;Aker;Norvège;PEA;Industrie & Électrification;
+FPE3.DE;Fuchs;Allemagne;PEA;Matériaux & Chimie;
+PUM.DE;PUMA;Allemagne;PEA;Luxe & Consommation;
+TGS.OL;TGS;Norvège;PEA;Infrastructures & Énergie;
+BAMNB.AS;Koninklijke BAM Groep nv;Pays-Bas;PEA;Industrie & Électrification;
+ING.WA;ING Bank Slaski;Pologne;PEA;Banques;
+ARCAD.AS;Arcadis;Pays-Bas;PEA;Industrie & Électrification;
+AAF.L;Airtel Africa Plc;Royaume-Uni;CTO;Télécoms;
+DLN.L;Derwent London Plc;Royaume-Uni;CTO;Immobilier;
+SDF.DE;K+S;Allemagne;PEA;Matériaux & Chimie;
+PIRC.MI;Pirelli & C;Italie;PEA;Luxe & Consommation;
+MIL.WA;Bank Millennium;Pologne;PEA;Banques;
+SAGA-B.ST;AB Sagax (publ);Suède;PEA;Immobilier;
+BZU.MI;Buzzi;Italie;PEA;Matériaux & Chimie;
+BELA.AT;Jumbo;Grèce;PEA;Distribution;
+RUI.PA;Rubis;France;PEA;Infrastructures & Énergie;
+R3NK.DE;RENK Group;Allemagne;PEA;Aéronautique & Défense;
+HER.MI;Hera;Italie;PEA;Infrastructures & Énergie;
+EZJ.L;easyJet;Royaume-Uni;CTO;Industrie & Électrification;
+HIK.L;Hikma Pharmaceuticals;Royaume-Uni;CTO;Santé;
+PNN.L;Pennon Group Plc;Royaume-Uni;CTO;Infrastructures & Énergie;
+MKC;McCormick & Company, Incorporated;États-Unis;CTO;Consommation de base;
+CHTR;Charter Communications;États-Unis;CTO;Télécoms;
+GL;Globe Life;États-Unis;CTO;Assurance;
+HII;Huntington Ingalls Industries;États-Unis;CTO;Aéronautique & Défense;
+CSGP;CoStar Group;États-Unis;CTO;Immobilier;
+IVZ;Invesco;États-Unis;CTO;Services financiers;
+REG;Regency Centers;États-Unis;CTO;Immobilier;
+FDS;FactSet Research Systems;États-Unis;CTO;Services financiers;
+GNRC;Generac Holdings;États-Unis;CTO;Industrie & Électrification;
+BG;Bunge Global;États-Unis;CTO;Consommation de base;
+RL;Ralph Lauren;États-Unis;CTO;Luxe & Consommation;
+FDXF;FedEx Freight Holding Company;États-Unis;CTO;Industrie & Électrification;
+NVR;NVR;États-Unis;CTO;Luxe & Consommation;
+TYL;Tyler Technologies;États-Unis;CTO;Logiciels & IT;
+GDDY;GoDaddy;États-Unis;CTO;Logiciels & IT;
+ATS.VI;AT & S Austria Technologie & Systemtechnik;Autriche;PEA;Logiciels & IT;
+AYV.PA;Ayvens;France;PEA;Industrie & Électrification;
+ACX.MC;Acerinox;Espagne;PEA;Matériaux & Chimie;
+SUN.SW;Sulzer;Suisse;CTO;Industrie & Électrification;
+DECK;Deckers Outdoor;États-Unis;CTO;Luxe & Consommation;
+LII;Lennox International;États-Unis;CTO;Industrie & Électrification;
+TKO;TKO Group Holdings;États-Unis;CTO;Internet & Médias;
+NWSA;News;États-Unis;CTO;Internet & Médias;
+ALB;Albemarle;États-Unis;CTO;Matériaux & Chimie;
+CLX;The Clorox Company;États-Unis;CTO;Consommation de base;
+AES;The AES;États-Unis;CTO;Infrastructures & Énergie;
+ROL;Rollins;États-Unis;CTO;Industrie & Électrification;
+PODD;Insulet;États-Unis;CTO;Santé;
+PNR;Pentair;États-Unis;CTO;Industrie & Électrification;
+DPZ;Domino's Pizza;États-Unis;CTO;Luxe & Consommation;
+UDR;UDR;États-Unis;CTO;Immobilier;
+TECH;Bio-Techne;États-Unis;CTO;Santé;
+BAX;Baxter International;États-Unis;CTO;Santé;
+SOLV;Solventum;États-Unis;CTO;Santé;
+JKHY;Jack Henry & Associates;États-Unis;CTO;Services aux entreprises & Données;
+LULU;lululemon athletica inc;États-Unis;CTO;Distribution;
+COO;The Cooper Companies;États-Unis;CTO;Santé;
+LVS;Las Vegas Sands;États-Unis;CTO;Luxe & Consommation;
+BEN;Franklin Templeton;États-Unis;CTO;Services financiers;
+BF-B;Brown-Forman;États-Unis;CTO;Consommation de base;
+MGM;MGM Resorts International;États-Unis;CTO;Luxe & Consommation;
+WYNN;Wynn Resorts;États-Unis;CTO;Luxe & Consommation;
+MOS;The Mosaic Company;États-Unis;CTO;Matériaux & Chimie;
+HRL;Hormel Foods;États-Unis;CTO;Consommation de base;
+ARE;Alexandria Real Estate Equities;États-Unis;CTO;Immobilier;
+DVA;DaVita;États-Unis;CTO;Santé;
+AOS;A. O. Smith;États-Unis;CTO;Industrie & Électrification;
+ERIE;Erie Indemnity Company;États-Unis;CTO;Assurance;
+NCLH;Norwegian Cruise Line Holdings;États-Unis;CTO;Luxe & Consommation;
+HSIC;Henry Schein;États-Unis;CTO;Santé;
+FRT;Federal Realty Investment Trust;États-Unis;CTO;Immobilier;
+UHS;Universal Health Services;États-Unis;CTO;Santé;
+APTV;Aptiv;États-Unis;CTO;Luxe & Consommation;
+HOC.L;Hochschild Mining;Royaume-Uni;CTO;Matériaux & Chimie;
+FTK.DE;flatexDEGIRO;Allemagne;PEA;Services financiers;
+ZEAL.CO;Zealand Pharma;Danemark;PEA;Santé;
+GBF.DE;Bilfinger;Allemagne;PEA;Industrie & Électrification;
+HIAB.HE;Hiab;Finlande;PEA;Industrie & Électrification;
+SKYD;Skydance;États-Unis;CTO;Internet & Médias;
+TKCC.DE;tk accelis GmbH;Allemagne;PEA;Services financiers;
+ONON;On Holding;Suisse;CTO;Luxe & Consommation;Chaussures de course premium (semelle CloudTec), marque en forte croissance, cofondateurs aux commandes
+Z;Zillow Group;États-Unis;CTO;Internet & Médias;
+BL;BlackLine;États-Unis;CTO;Logiciels & IT;
+BZ;Kanzhun;Chine;CTO;Internet & Médias;
+CG;The Carlyle Group;États-Unis;CTO;Services financiers;
+FA;First Advantage;États-Unis;CTO;Services aux entreprises & Données;
+GH;Guardant Health;États-Unis;CTO;Santé;
+GO;Grocery Outlet Holding;États-Unis;CTO;Distribution;
+GT;The Goodyear Tire & Rubber Company;États-Unis;CTO;Luxe & Consommation;
+JD;JD.com;Chine;CTO;Distribution;
+KC;Kingsoft Cloud Holdings;Chine;CTO;Logiciels & IT;
+LI;Li Auto;Chine;CTO;Luxe & Consommation;
+MQ;Marqeta;États-Unis;CTO;Logiciels & IT;
+PI;Impinj;États-Unis;CTO;Semi-conducteurs;
+QS;QuantumScape;États-Unis;CTO;Luxe & Consommation;
+TW;Tradeweb Markets;États-Unis;CTO;Services financiers;
+VC;Visteon;États-Unis;CTO;Luxe & Consommation;
+WB;Weibo;Chine;CTO;Internet & Médias;
+XE;X-Energy;États-Unis;CTO;Industrie & Électrification;
+XP;XP;Îles Caïmans;CTO;Services financiers;
+ZD;Ziff Davis;États-Unis;CTO;Internet & Médias;
+ZM;Zoom Communications;États-Unis;CTO;Logiciels & IT;
+ZS;Zscaler;États-Unis;CTO;Logiciels & IT;
+AAL;American Airlines Group;États-Unis;CTO;Industrie & Électrification;
+ACT;Enact Holdings;États-Unis;CTO;Assurance;
+ARM;Arm Holdings;Royaume-Uni;CTO;Semi-conducteurs;
+ASO;Academy Sports and Outdoors;États-Unis;CTO;Distribution;
+AUR;Aurora Innovation;États-Unis;CTO;Luxe & Consommation;
+AVO;Mission Produce;États-Unis;CTO;Consommation de base;
+AVT;Avnet;États-Unis;CTO;Logiciels & IT;
+AYA;Aya Gold & Silver;Canada;CTO;Matériaux & Chimie;
+BGC;BGC Group;États-Unis;CTO;Services financiers;
+BHF;Brighthouse Financial;États-Unis;CTO;Assurance;
+BSP;Bending Spoons;Italie;CTO;Logiciels & IT;
+BSY;Bentley Systems, Incorporated;États-Unis;CTO;Logiciels & IT;
+CAE;CAE;Canada;CTO;Aéronautique & Défense;
+CAI;Caris Life Sciences;États-Unis;CTO;Santé;
+CAR;Avis Budget Group;États-Unis;CTO;Industrie & Électrification;
+CBC;Central Bancompany;États-Unis;CTO;Banques;
+CCC;CCC Intelligent Solutions Holdings;États-Unis;CTO;Logiciels & IT;
+CHA;Chagee Holdings;Chine;CTO;Luxe & Consommation;
+CNL;Collective Mining;États-Unis;CTO;Matériaux & Chimie;
+CPB;The Campbell's Company;États-Unis;CTO;Consommation de base;
+CSQ;Calamos Strategic Total Return Fund;États-Unis;CTO;Services financiers;
+CZR;Caesars Entertainment;États-Unis;CTO;Luxe & Consommation;
+DBX;Dropbox;États-Unis;CTO;Logiciels & IT;
+DHC;Diversified Healthcare Trust;États-Unis;CTO;Immobilier;
+DLO;DLocal;Uruguay;CTO;Logiciels & IT;
+DOX;Amdocs;États-Unis;CTO;Logiciels & IT;
+DRH;DiamondRock Hospitality Company;États-Unis;CTO;Immobilier;
+DRS;Leonardo DRS;États-Unis;CTO;Aéronautique & Défense;
+DYN;Dyne Therapeutics;États-Unis;CTO;Santé;
+EBC;Eastern Bankshares;États-Unis;CTO;Banques;
+EYE;National Vision Holdings;États-Unis;CTO;Distribution;
+FHB;First Hawaiian;États-Unis;CTO;Banques;
+FSV;FirstService;Canada;CTO;Immobilier;
+GFS;GLOBALFOUNDRIES;États-Unis;CTO;Semi-conducteurs;
+GTX;Garrett Motion;États-Unis;CTO;Luxe & Consommation;
+HBT;HBT Financial;États-Unis;CTO;Banques;
+HCM;HUTCHMED (China);Hong Kong;CTO;Santé;
+HQY;HealthEquity;États-Unis;CTO;Santé;
+HTO;H2O America;États-Unis;CTO;Infrastructures & Énergie;
+HUT;Hut 8;États-Unis;CTO;Services financiers;
+HWC;Hancock Whitney;États-Unis;CTO;Banques;
+LGN;Legence;États-Unis;CTO;Industrie & Électrification;
+LIF;Life360;États-Unis;CTO;Logiciels & IT;
+LKQ;LKQ;États-Unis;CTO;Luxe & Consommation;
+MAT;Mattel;États-Unis;CTO;Luxe & Consommation;
+MBX;MBX Biosciences;États-Unis;CTO;Santé;
+MFP;Midera Food Processing;États-Unis;CTO;Industrie & Électrification;
+MRX;Marex Group;Royaume-Uni;CTO;Services financiers;
+MWH;SOLV Energy;États-Unis;CTO;Infrastructures & Énergie;
+MXL;MaxLinear;États-Unis;CTO;Semi-conducteurs;
+NWE;NorthWestern Energy Group;États-Unis;CTO;Infrastructures & Énergie;
+NWL;Newell Brands;États-Unis;CTO;Consommation de base;
+NXT;Nextpower;États-Unis;CTO;Logiciels & IT;
+ONB;Old National Bancorp;États-Unis;CTO;Banques;
+ONC;BeOne Medicines;Suisse;CTO;Santé;
+OPK;OPKO Health;États-Unis;CTO;Santé;
+OZK;Bank OZK;États-Unis;CTO;Banques;
+PAX;Patria Investments;États-Unis;CTO;Services financiers;
+PDD;PDD Holdings;Irlande;CTO;Distribution;
+PPC;Pilgrim's Pride;États-Unis;CTO;Consommation de base;
+PWP;Perella Weinberg Partners;États-Unis;CTO;Services financiers;
+RNW;ReNew Energy Global Plc;Royaume-Uni;CTO;Infrastructures & Énergie;
+RRR;Red Rock Resorts;États-Unis;CTO;Luxe & Consommation;
+RUN;Sunrun;États-Unis;CTO;Logiciels & IT;
+SFD;Smithfield Foods;États-Unis;CTO;Consommation de base;
+SFM;Sprouts Farmers Market;États-Unis;CTO;Distribution;
+SGP;SpyGlass Pharma;États-Unis;CTO;Santé;
+SHC;Sotera Health Company;États-Unis;CTO;Santé;
+SLM;SLM;États-Unis;CTO;Services financiers;
+TEM;Tempus AI;États-Unis;CTO;Santé;
+TLN;Talen Energy;États-Unis;CTO;Infrastructures & Énergie;
+TLX;Telix Pharmaceuticals;Australie;CTO;Santé;
+TMC;TMC the metals company;Canada;CTO;Matériaux & Chimie;
+TPG;TPG;États-Unis;CTO;Services financiers;
+TRS;TriMas;États-Unis;CTO;Luxe & Consommation;
+TXG;10x Genomics;États-Unis;CTO;Santé;
+VFS;VinFast Auto;Vietnam;CTO;Luxe & Consommation;
+VIR;Vir Biotechnology;États-Unis;CTO;Santé;
+VLY;Valley National Bancorp;États-Unis;CTO;Banques;
+VOR;Vor Biopharma;États-Unis;CTO;Santé;
+WAY;Waystar Holding;États-Unis;CTO;Santé;
+WEN;The Wendy's Company;États-Unis;CTO;Luxe & Consommation;
+WGS;GeneDx Holdings;États-Unis;CTO;Santé;
+WIX;Wix.com;Israël;CTO;Logiciels & IT;
+WMG;Warner Music Group;États-Unis;CTO;Internet & Médias;
+WWD;Woodward;États-Unis;CTO;Aéronautique & Défense;
+AAON;AAON;États-Unis;CTO;Industrie & Électrification;
+ABCL;AbCellera Biologics;Canada;CTO;Santé;
+ABSI;Absci;États-Unis;CTO;Santé;
+ACAD;Acadia Pharmaceuticals;États-Unis;CTO;Santé;
+ACCV;Accelevation Holdings;États-Unis;CTO;Industrie & Électrification;
+ACHC;Acadia Healthcare Company;États-Unis;CTO;Santé;
+ACIW;ACI Worldwide;États-Unis;CTO;Logiciels & IT;
+ACLS;Axcelis Technologies;États-Unis;CTO;Semi-conducteurs;
+ADEA;Adeia;États-Unis;CTO;Logiciels & IT;
+ADPT;Adaptive Biotechnologies;États-Unis;CTO;Santé;
+ADRX;ADARx Pharmaceuticals;États-Unis;CTO;Santé;
+ADUS;Addus HomeCare;États-Unis;CTO;Santé;
+AEIS;Advanced Energy Industries;États-Unis;CTO;Industrie & Électrification;
+AFRM;Affirm Holdings;États-Unis;CTO;Services financiers;
+AGIO;Agios Pharmaceuticals;États-Unis;CTO;Santé;
+AGNC;AGNC Investment;États-Unis;CTO;Immobilier;
+AGYS;Agilysys;États-Unis;CTO;Logiciels & IT;
+ALAB;Astera Labs;États-Unis;CTO;Semi-conducteurs;
+ALGM;Allegro MicroSystems;États-Unis;CTO;Semi-conducteurs;
+ALGT;Allegiant Travel Company;États-Unis;CTO;Industrie & Électrification;
+ALHC;Alignment Healthcare;États-Unis;CTO;Santé;
+ALKS;Alkermes;Irlande;CTO;Santé;
+ALKT;Alkami Technology;États-Unis;CTO;Logiciels & IT;
+ALMR;Alamar Biosciences;États-Unis;CTO;Santé;
+ALNY;Alnylam Pharmaceuticals;États-Unis;CTO;Santé;
+ALRM;Alarm.com Holdings;États-Unis;CTO;Logiciels & IT;
+AMBA;Ambarella;États-Unis;CTO;Semi-conducteurs;
+AMKR;Amkor Technology;États-Unis;CTO;Semi-conducteurs;
+AMLX;Amylyx Pharmaceuticals;États-Unis;CTO;Santé;
+AMPH;Amphastar Pharmaceuticals;États-Unis;CTO;Santé;
+AMRX;Amneal Pharmaceuticals;États-Unis;CTO;Santé;
+AMSC;American Superconductor;États-Unis;CTO;Industrie & Électrification;
+ANAB;AnaptysBio;États-Unis;CTO;Santé;
+ANDE;The Andersons;États-Unis;CTO;Consommation de base;
+APLD;Applied Digital;États-Unis;CTO;Services aux entreprises & Données;
+ARCB;ArcBest;États-Unis;CTO;Industrie & Électrification;
+ARCC;Ares Capital;États-Unis;CTO;Services financiers;
+ARHS;Arhaus;États-Unis;CTO;Distribution;
+ARQT;Arcutis Biotherapeutics;États-Unis;CTO;Santé;
+ARWR;Arrowhead Pharmaceuticals;États-Unis;CTO;Santé;
+ARXS;Arxis;États-Unis;CTO;Aéronautique & Défense;
+ASND;Ascendis Pharma;Danemark;CTO;Santé;
+ASTS;AST SpaceMobile;États-Unis;CTO;Logiciels & IT;
+ATAT;Atour Lifestyle Holdings;Chine;CTO;Luxe & Consommation;
+ATEC;Alphatec Holdings;États-Unis;CTO;Santé;
+ATLC;Atlanticus Holdings;États-Unis;CTO;Services financiers;
+ATRO;Astronics;États-Unis;CTO;Aéronautique & Défense;
+AUGO;Aura Minerals;États-Unis;CTO;Matériaux & Chimie;
+AVAH;Aveanna Healthcare Holdings;États-Unis;CTO;Santé;
+AVAV;AeroVironment;États-Unis;CTO;Aéronautique & Défense;
+AVLN;Avalyn Pharma;États-Unis;CTO;Santé;
+AVPT;AvePoint;États-Unis;CTO;Logiciels & IT;
+AXTI;AXT;États-Unis;CTO;Semi-conducteurs;
+AZTA;Azenta;États-Unis;CTO;Santé;
+BAND;Bandwidth;États-Unis;CTO;Logiciels & IT;
+BANF;BancFirst;États-Unis;CTO;Banques;
+BANR;Banner;États-Unis;CTO;Banques;
+BBIO;BridgeBio Pharma;États-Unis;CTO;Santé;
+BCPC;Balchem;États-Unis;CTO;Matériaux & Chimie;
+BCRX;BioCryst Pharmaceuticals;États-Unis;CTO;Santé;
+BEAM;Beam Therapeutics;États-Unis;CTO;Santé;
+BFST;Business First Bancshares;États-Unis;CTO;Banques;
+BIDU;Baidu;Chine;CTO;Internet & Médias;
+BILI;Bilibili;Chine;CTO;Internet & Médias;
+BJRI;BJ's Restaurants;États-Unis;CTO;Luxe & Consommation;
+BLKB;Blackbaud;États-Unis;CTO;Logiciels & IT;
+BLLN;BillionToOne;États-Unis;CTO;Santé;
+BLTE;Belite Bio;États-Unis;CTO;Santé;
+BMRN;BioMarin Pharmaceutical;États-Unis;CTO;Santé;
+BNTX;BioNTech;Allemagne;CTO;Santé;
+BOKF;BOK Financial;États-Unis;CTO;Banques;
+BPOP;Popular;États-Unis;CTO;Banques;
+BRKR;Bruker;États-Unis;CTO;Santé;
+BRZE;Braze;États-Unis;CTO;Logiciels & IT;
+BTSG;BrightSpring Health Services;États-Unis;CTO;Santé;
+BUSE;First Busey;États-Unis;CTO;Banques;
+BWIN;The Baldwin Insurance Group;États-Unis;CTO;Assurance;
+CACC;Credit Acceptance;États-Unis;CTO;Services financiers;
+CAKE;The Cheesecake Factory Incorporated;États-Unis;CTO;Luxe & Consommation;
+CALM;Cal-Maine Foods;États-Unis;CTO;Consommation de base;
+CARG;CarGurus;États-Unis;CTO;Internet & Médias;
+CART;Maplebear;États-Unis;CTO;Distribution;
+CASH;Pathward Financial;États-Unis;CTO;Banques;
+CATY;Cathay General Bancorp;États-Unis;CTO;Banques;
+CBLL;CeriBell;États-Unis;CTO;Santé;
+CBRL;Cracker Barrel Old Country Store;États-Unis;CTO;Luxe & Consommation;
+CBRS;Cerebras Systems;États-Unis;CTO;Semi-conducteurs;
+CBSH;Commerce Bancshares;États-Unis;CTO;Banques;
+CCEC;Capital Clean Energy Carriers;Grèce;CTO;Industrie & Électrification;
+CCEP;Coca-Cola Europacific Partners;Royaume-Uni;CTO;Consommation de base;
+CCNE;CNB Financial;États-Unis;CTO;Banques;
+CENT;Central Garden & Pet Company;États-Unis;CTO;Consommation de base;
+CENX;Century Aluminum Company;États-Unis;CTO;Matériaux & Chimie;
+CERT;Certara;États-Unis;CTO;Santé;
+CFFN;Capitol Federal Financial;États-Unis;CTO;Banques;
+CGNX;Cognex;États-Unis;CTO;Logiciels & IT;
+CGON;CG Oncology;États-Unis;CTO;Santé;
+CHCO;City Holding Company;États-Unis;CTO;Banques;
+CHDN;Churchill Downs Incorporated;États-Unis;CTO;Luxe & Consommation;
+CHEF;The Chefs' Warehouse;États-Unis;CTO;Consommation de base;
+CHKP;Check Point Software Technologies;Israël;CTO;Logiciels & IT;
+CHRD;Chord Energy;États-Unis;CTO;Infrastructures & Énergie;
+CHYM;Chime Financial;États-Unis;CTO;Logiciels & IT;
+CIFR;Cipher Digital;États-Unis;CTO;Services aux entreprises & Données;
+CLBK;Columbia Financial;États-Unis;CTO;Banques;
+CLBT;Cellebrite DI;Israël;CTO;Logiciels & IT;
+CLMT;Calumet;États-Unis;CTO;Matériaux & Chimie;
+CLOV;Clover Health Investments;États-Unis;CTO;Santé;
+CMPR;Cimpress;Irlande;CTO;Services aux entreprises & Données;
+CMPS;COMPASS Pathways;Royaume-Uni;CTO;Santé;
+CNOB;ConnectOne Bancorp;États-Unis;CTO;Banques;
+CNXC;Concentrix;États-Unis;CTO;Services aux entreprises & Données;
+CNXN;PC Connection;États-Unis;CTO;Logiciels & IT;
+COAG;Hemab Therapeutics Holdings;États-Unis;CTO;Santé;
+COCO;The Vita Coco Company;États-Unis;CTO;Consommation de base;
+COGT;Cogent Biosciences;États-Unis;CTO;Santé;
+COHU;Cohu;États-Unis;CTO;Semi-conducteurs;
+COKE;Coca-Cola Consolidated;États-Unis;CTO;Consommation de base;
+COLB;Columbia Banking System;États-Unis;CTO;Banques;
+COLM;Columbia Sportswear Company;États-Unis;CTO;Luxe & Consommation;
+CORZ;Core Scientific;États-Unis;CTO;Logiciels & IT;
+CRAI;CRA International;États-Unis;CTO;Services aux entreprises & Données;
+CRCT;Cricut;États-Unis;CTO;Logiciels & IT;
+CRDO;Credo Technology Group Holding;Îles Caïmans;CTO;Semi-conducteurs;
+CROX;Crocs;États-Unis;CTO;Luxe & Consommation;
+CRSR;Corsair Gaming;États-Unis;CTO;Logiciels & IT;
+CRUS;Cirrus Logic;États-Unis;CTO;Semi-conducteurs;
+CRVL;CorVel;États-Unis;CTO;Assurance;
+CRWV;CoreWeave;États-Unis;CTO;Logiciels & IT;
+CSWC;Capital Southwest;États-Unis;CTO;Services financiers;
+CTBI;Community Trust Bancorp;États-Unis;CTO;Banques;
+CVBF;CVB Financial;États-Unis;CTO;Banques;
+CVCO;Cavco Industries;États-Unis;CTO;Luxe & Consommation;
+CVLT;Commvault Systems;États-Unis;CTO;Logiciels & IT;
+CWST;Casella Waste Systems;États-Unis;CTO;Industrie & Électrification;
+CYTK;Cytokinetics, Incorporated;États-Unis;CTO;Santé;
+DFTX;Definium Therapeutics;États-Unis;CTO;Santé;
+DGII;Digi International;États-Unis;CTO;Logiciels & IT;
+DIOD;Diodes Incorporated;États-Unis;CTO;Semi-conducteurs;
+DKNG;DraftKings;États-Unis;CTO;Luxe & Consommation;
+DNLI;Denali Therapeutics;États-Unis;CTO;Santé;
+DOCU;DocuSign;États-Unis;CTO;Logiciels & IT;
+DORM;Dorman Products;États-Unis;CTO;Luxe & Consommation;
+DRVN;Driven Brands Holdings;États-Unis;CTO;Luxe & Consommation;
+DSGR;Distribution Solutions Group;États-Unis;CTO;Industrie & Électrification;
+DSGX;The Descartes Systems Group;Canada;CTO;Logiciels & IT;
+DUOL;Duolingo;États-Unis;CTO;Logiciels & IT;
+DXPE;DXP Enterprises;États-Unis;CTO;Industrie & Électrification;
+ECPG;Encore Capital Group;États-Unis;CTO;Services financiers;
+EEFT;Euronet Worldwide;États-Unis;CTO;Logiciels & IT;
+EFSC;Enterprise Financial Services;États-Unis;CTO;Banques;
+ELVN;Enliven Therapeutics;États-Unis;CTO;Santé;
+ENLT;Enlight Renewable Energy;Israël;CTO;Infrastructures & Énergie;
+ENSG;The Ensign Group;États-Unis;CTO;Santé;
+ENTG;Entegris;États-Unis;CTO;Semi-conducteurs;
+EQPT;EquipmentShare.com;États-Unis;CTO;Industrie & Électrification;
+ERAS;Erasca;États-Unis;CTO;Santé;
+ESLT;Elbit Systems;Israël;CTO;Aéronautique & Défense;
+ETOR;eToro Group;Israël;CTO;Services financiers;
+EVCM;EverCommerce;États-Unis;CTO;Logiciels & IT;
+EWBC;East West Bancorp;États-Unis;CTO;Banques;
+EWTX;Edgewise Therapeutics;États-Unis;CTO;Santé;
+EXEL;Exelixis;États-Unis;CTO;Santé;
+EXLS;ExlService Holdings;États-Unis;CTO;Services aux entreprises & Données;
+EXPO;Exponent;États-Unis;CTO;Industrie & Électrification;
+EXTR;Extreme Networks;États-Unis;CTO;Logiciels & IT;
+EZPW;EZCORP;États-Unis;CTO;Services financiers;
+FBNC;First Bancorp;États-Unis;CTO;Banques;
+FCFS;FirstCash Holdings;États-Unis;CTO;Services financiers;
+FELE;Franklin Electric Co;États-Unis;CTO;Industrie & Électrification;
+FFBC;First Financial Bancorp;États-Unis;CTO;Banques;
+FFIN;First Financial Bankshares;États-Unis;CTO;Banques;
+FIBK;First Interstate BancSystem;États-Unis;CTO;Banques;
+FIGR;Figure Technology Solutions;États-Unis;CTO;Services financiers;
+FIVE;Five Below;États-Unis;CTO;Distribution;
+FIZZ;National Beverage;États-Unis;CTO;Consommation de base;
+FLYW;Flywire;États-Unis;CTO;Logiciels & IT;
+FORM;FormFactor;États-Unis;CTO;Semi-conducteurs;
+FRME;First Merchants;États-Unis;CTO;Banques;
+FROG;JFrog;États-Unis;CTO;Logiciels & IT;
+FRSH;Freshworks;États-Unis;CTO;Logiciels & IT;
+FRVO;Fervo Energy Company;États-Unis;CTO;Infrastructures & Énergie;
+FSBC;Five Star Bancorp;États-Unis;CTO;Banques;
+FSLY;Fastly;États-Unis;CTO;Logiciels & IT;
+FSUN;FirstSun Capital Bancorp;États-Unis;CTO;Banques;
+FTAI;FTAI Aviation;États-Unis;CTO;Aéronautique & Défense;
+FTDR;Frontdoor;États-Unis;CTO;Luxe & Consommation;
+FTRE;Fortrea Holdings;États-Unis;CTO;Santé;
+FULT;Fulton Financial;États-Unis;CTO;Banques;
+GABC;German American Bancorp;États-Unis;CTO;Banques;
+GBDC;Golub Capital BDC;États-Unis;CTO;Services financiers;
+GDRX;GoodRx Holdings;États-Unis;CTO;Santé;
+GENB;Generate Biomedicines;États-Unis;CTO;Santé;
+GIII;G-III Apparel Group;États-Unis;CTO;Luxe & Consommation;
+GLBE;Global-E Online;Israël;CTO;Distribution;
+GLNG;Golar LNG;Bermudes;CTO;Infrastructures & Énergie;
+GLPI;Gaming and Leisure Properties;États-Unis;CTO;Immobilier;
+GLXY;Galaxy Digital;États-Unis;CTO;Services financiers;
+GNTX;Gentex;États-Unis;CTO;Luxe & Consommation;
+GRAB;Grab Holdings;Singapour;CTO;Logiciels & IT;
+GRAL;GRAIL;États-Unis;CTO;Santé;
+GSAT;Globalstar;États-Unis;CTO;Télécoms;
+GSHD;Goosehead Insurance;États-Unis;CTO;Assurance;
+GTLB;GitLab;États-Unis;CTO;Logiciels & IT;
+HALO;Halozyme Therapeutics;États-Unis;CTO;Santé;
+HAPN;Happen;États-Unis;CTO;Banques;
+HBNC;Horizon Bancorp;États-Unis;CTO;Banques;
+HCSG;Healthcare Services Group;États-Unis;CTO;Santé;
+HEPS;D-Market Elektronik Hizmetler ve Ticaret A.S;Turkey;CTO;Distribution;
+HFWA;Heritage Financial;États-Unis;CTO;Banques;
+HIMX;Himax Technologies;Taïwan;CTO;Semi-conducteurs;
+HLIT;Harmonic;États-Unis;CTO;Logiciels & IT;
+HLNE;Hamilton Lane Incorporated;États-Unis;CTO;Services financiers;
+HOPE;Hope Bancorp;États-Unis;CTO;Banques;
+HSAI;Hesai Group;Chine;CTO;Luxe & Consommation;
+HTFL;Heartflow;États-Unis;CTO;Santé;
+HTHT;H World Group;Chine;CTO;Luxe & Consommation;
+HURN;Huron Consulting Group;États-Unis;CTO;Services aux entreprises & Données;
+HWKN;Hawkins;États-Unis;CTO;Matériaux & Chimie;
+IART;Integra LifeSciences Holdings;États-Unis;CTO;Santé;
+IBRX;ImmunityBio;États-Unis;CTO;Santé;
+ICFI;ICF International;États-Unis;CTO;Services aux entreprises & Données;
+ICHR;Ichor Holdings;États-Unis;CTO;Semi-conducteurs;
+ICLR;ICON Public Limited Company;Irlande;CTO;Santé;
+ICUI;ICU Medical;États-Unis;CTO;Santé;
+IDCC;InterDigital;États-Unis;CTO;Logiciels & IT;
+IDYA;IDEAYA Biosciences;États-Unis;CTO;Santé;
+IMCR;Immunocore Holdings;Royaume-Uni;CTO;Santé;
+IMOS;ChipMOS TECHNOLOGIES INC;Taïwan;CTO;Semi-conducteurs;
+IMVT;Immunovant;États-Unis;CTO;Santé;
+INBX;Inhibrx Biosciences;États-Unis;CTO;Santé;
+INDB;Independent Bank;États-Unis;CTO;Banques;
+INIO;Innio;Allemagne;CTO;Industrie & Électrification;
+INNV;InnovAge Holding;États-Unis;CTO;Santé;
+INSM;Insmed Incorporated;États-Unis;CTO;Santé;
+INTA;Intapp;États-Unis;CTO;Logiciels & IT;
+INTR;Inter & Co;Brésil;CTO;Banques;
+INVA;Innoviva;États-Unis;CTO;Santé;
+IOND;Ionic Digital;États-Unis;CTO;Services financiers;
+IONS;Ionis Pharmaceuticals;États-Unis;CTO;Santé;
+IOSP;Innospec;États-Unis;CTO;Matériaux & Chimie;
+IPGP;IPG Photonics;États-Unis;CTO;Semi-conducteurs;
+IQMX;IQM Quantum Computers;Finlande;CTO;Logiciels & IT;
+IRDM;Iridium Communications;États-Unis;CTO;Télécoms;
+IREN;IREN;Australie;CTO;Services financiers;
+IRTC;iRhythm Holdings;États-Unis;CTO;Santé;
+ITRI;Itron;États-Unis;CTO;Logiciels & IT;
+JAZZ;Jazz Pharmaceuticals;Irlande;CTO;Santé;
+JBLU;JetBlue Airways;États-Unis;CTO;Industrie & Électrification;
+JCAP;Jefferson Capital;États-Unis;CTO;Services financiers;
+JJSF;J&J Snack Foods;États-Unis;CTO;Consommation de base;
+JOYY;JOYY;Singapour;CTO;Internet & Médias;
+KALU;Kaiser Aluminum;États-Unis;CTO;Matériaux & Chimie;
+KLIC;Kulicke and Soffa Industries;Singapour;CTO;Semi-conducteurs;
+KLRA;Kailera Therapeutics;États-Unis;CTO;Santé;
+KMTS;Kestra Medical Technologies;États-Unis;CTO;Santé;
+KNSA;Kiniksa Pharmaceuticals International;Royaume-Uni;CTO;Santé;
+KRYS;Krystal Biotech;États-Unis;CTO;Santé;
+KSPI;Joint Stock Company Kaspi.kz;Kazakhstan;CTO;Logiciels & IT;
+KTOS;Kratos Defense & Security Solutions;États-Unis;CTO;Aéronautique & Défense;
+KYIV;Kyivstar Group;United Arab Emirates;CTO;Télécoms;
+LAMR;Lamar Advertising Company;États-Unis;CTO;Immobilier;
+LASR;nLIGHT;États-Unis;CTO;Semi-conducteurs;
+LAUR;Laureate Education;États-Unis;CTO;Consommation de base;
+LCID;Lucid Group;États-Unis;CTO;Luxe & Consommation;
+LECO;Lincoln Electric Holdings;États-Unis;CTO;Industrie & Électrification;
+LEGN;Legend Biotech;États-Unis;CTO;Santé;
+LFST;LifeStance Health Group;États-Unis;CTO;Santé;
+LFTO;Liftoff Mobile;États-Unis;CTO;Internet & Médias;
+LFUS;Littelfuse;États-Unis;CTO;Logiciels & IT;
+LGIH;LGI Homes;États-Unis;CTO;Luxe & Consommation;
+LIFE;Ethos Technologies;États-Unis;CTO;Assurance;
+LILA;Liberty Latin America;Bermudes;CTO;Télécoms;
+LIME;Neutron Holdings;États-Unis;CTO;Industrie & Électrification;
+LINE;Lineage;États-Unis;CTO;Immobilier;
+LIVN;LivaNova;Royaume-Uni;CTO;Santé;
+LKFN;Lakeland Financial;États-Unis;CTO;Banques;
+LKFT;Lakefront Biotherapeutics;Belgique;CTO;Santé;
+LMRI;Lumexa Imaging Holdings;États-Unis;CTO;Santé;
+LOPE;Grand Canyon Education;États-Unis;CTO;Consommation de base;
+LPLA;LPL Financial Holdings;États-Unis;CTO;Services financiers;
+LQDT;Liquidity Services;États-Unis;CTO;Distribution;
+LSCC;Lattice Semiconductor;États-Unis;CTO;Semi-conducteurs;
+LSTR;Landstar System;États-Unis;CTO;Industrie & Électrification;
+LUMN;Lumen Technologies;États-Unis;CTO;Télécoms;
+LYCA;Lycia Therapeutics;États-Unis;CTO;Santé;
+LYFT;Lyft;États-Unis;CTO;Logiciels & IT;
+MANH;Manhattan Associates;États-Unis;CTO;Logiciels & IT;
+MBLY;Mobileye Global;Israël;CTO;Luxe & Consommation;
+MBWM;Mercantile Bank;États-Unis;CTO;Banques;
+MCBS;MetroCity Bankshares;États-Unis;CTO;Banques;
+MCHB;Mechanics Bancorp;États-Unis;CTO;Banques;
+MCRI;Monarch Casino & Resort;États-Unis;CTO;Luxe & Consommation;
+MDGL;Madrigal Pharmaceuticals;États-Unis;CTO;Santé;
+MDLN;Medline;États-Unis;CTO;Santé;
+MEDP;Medpace Holdings;États-Unis;CTO;Santé;
+MEOH;Methanex;Canada;CTO;Matériaux & Chimie;
+MESO;Mesoblast;Australie;CTO;Santé;
+MGEE;MGE Energy;États-Unis;CTO;Infrastructures & Énergie;
+MGNI;Magnite;États-Unis;CTO;Internet & Médias;
+MGRC;McGrath RentCorp;États-Unis;CTO;Industrie & Électrification;
+MIDD;The Middleby;États-Unis;CTO;Industrie & Électrification;
+MKSI;MKS;États-Unis;CTO;Logiciels & IT;
+MKTX;MarketAxess Holdings;États-Unis;CTO;Services financiers;
+MLCO;Melco Resorts & Entertainment;Hong Kong;CTO;Luxe & Consommation;
+MLKN;MillerKnoll;États-Unis;CTO;Luxe & Consommation;
+MLYS;Mineralys Therapeutics;États-Unis;CTO;Santé;
+MMED;MiniMed Group;États-Unis;CTO;Santé;
+MMSI;Merit Medical Systems;États-Unis;CTO;Santé;
+MMYT;MakeMyTrip;Inde;CTO;Luxe & Consommation;
+MNDY;monday.com;Israël;CTO;Logiciels & IT;
+MORN;Morningstar;États-Unis;CTO;Services financiers;
+MRCY;Mercury Systems;États-Unis;CTO;Aéronautique & Défense;
+MRVI;Maravai LifeSciences Holdings;États-Unis;CTO;Santé;
+MSEX;Middlesex Water Company;États-Unis;CTO;Infrastructures & Énergie;
+MSTR;Strategy;États-Unis;CTO;Logiciels & IT;
+MTCH;Match Group;États-Unis;CTO;Internet & Médias;
+MTSI;MACOM Technology Solutions Holdings;États-Unis;CTO;Semi-conducteurs;
+MYRG;MYR Group;États-Unis;CTO;Industrie & Électrification;
+MZTI;The Marzetti Company;États-Unis;CTO;Consommation de base;
+NAVN;Navan;États-Unis;CTO;Logiciels & IT;
+NBIS;Nebius Group;Pays-Bas;CTO;Internet & Médias;
+NBIX;Neurocrine Biosciences;États-Unis;CTO;Santé;
+NBTB;NBT Bancorp;États-Unis;CTO;Banques;
+NBTX;Nanobiotix;France;CTO;Santé;
+NCNO;nCino;États-Unis;CTO;Logiciels & IT;
+NEOG;Neogen;États-Unis;CTO;Santé;
+NICE;NICE;Israël;CTO;Logiciels & IT;
+NMRK;Newmark Group;États-Unis;CTO;Immobilier;
+NOVT;Novanta;États-Unis;CTO;Logiciels & IT;
+NSIT;Insight Enterprises;États-Unis;CTO;Logiciels & IT;
+NSSC;Napco Security Technologies;États-Unis;CTO;Industrie & Électrification;
+NTCT;NetScout Systems;États-Unis;CTO;Logiciels & IT;
+NTES;NetEase;Chine;CTO;Internet & Médias;
+NTNX;Nutanix;États-Unis;CTO;Logiciels & IT;
+NTRA;Natera;États-Unis;CTO;Santé;
+NTSK;Netskope;États-Unis;CTO;Logiciels & IT;
+NVAX;Novavax;États-Unis;CTO;Santé;
+NVCR;NovoCure;Suisse;CTO;Santé;
+NVMI;Nova;Israël;CTO;Semi-conducteurs;
+NWBI;Northwest Bancshares;États-Unis;CTO;Banques;
+NWCL;newcleo;Royaume-Uni;CTO;Industrie & Électrification;
+NXST;Nexstar Media Group;États-Unis;CTO;Internet & Médias;
+NYAX;Nayax;Israël;CTO;Logiciels & IT;
+OCFC;OceanFirst Financial;États-Unis;CTO;Banques;
+OCSL;Oaktree Specialty Lending;États-Unis;CTO;Services financiers;
+OKTA;Okta;États-Unis;CTO;Logiciels & IT;
+OLED;Universal Display;États-Unis;CTO;Logiciels & IT;
+OMAB;Grupo Aeroportuario del Centro Norte, S.A.B. de C.V;Mexique;CTO;Industrie & Électrification;
+OMCL;Omnicell;États-Unis;CTO;Santé;
+OPCH;Option Care Health;États-Unis;CTO;Santé;
+OPEN;Opendoor Technologies;États-Unis;CTO;Immobilier;
+OPRA;Opera;Norvège;CTO;Internet & Médias;
+OSBC;Old Second Bancorp;États-Unis;CTO;Banques;
+OSIS;OSI Systems;États-Unis;CTO;Logiciels & IT;
+OTEX;Open Text;Canada;CTO;Logiciels & IT;
+OTTR;Otter Tail;États-Unis;CTO;Industrie & Électrification;
+OUST;Ouster;États-Unis;CTO;Logiciels & IT;
+PAGP;Plains GP Holdings, L.P;États-Unis;CTO;Infrastructures & Énergie;
+PATK;Patrick Industries;États-Unis;CTO;Luxe & Consommation;
+PAYP;PayPay;Japon;CTO;Logiciels & IT;
+PBLS;Parabilis Medicines;États-Unis;CTO;Santé;
+PCRX;Pacira BioSciences;États-Unis;CTO;Santé;
+PCTY;Paylocity Holding;États-Unis;CTO;Logiciels & IT;
+PCVX;Vaxcyte;États-Unis;CTO;Santé;
+PDFS;PDF Solutions;États-Unis;CTO;Logiciels & IT;
+PEBO;Peoples Bancorp;États-Unis;CTO;Banques;
+PECO;Phillips Edison & Company;États-Unis;CTO;Immobilier;
+PEGA;Pegasystems;États-Unis;CTO;Logiciels & IT;
+PENG;Penguin Solutions;États-Unis;CTO;Services aux entreprises & Données;
+PENN;PENN Entertainment;États-Unis;CTO;Luxe & Consommation;
+PGEN;Precigen;États-Unis;CTO;Santé;
+PGNY;Progyny;États-Unis;CTO;Santé;
+PHVS;Pharvaris;Suisse;CTO;Santé;
+PLAB;Photronics;États-Unis;CTO;Semi-conducteurs;
+PLMR;Palomar Holdings;États-Unis;CTO;Assurance;
+PLPC;Preformed Line Products Company;États-Unis;CTO;Industrie & Électrification;
+PLTK;Playtika Holding;Israël;CTO;Internet & Médias;
+PLUS;ePlus inc;États-Unis;CTO;Logiciels & IT;
+PLXS;Plexus;États-Unis;CTO;Logiciels & IT;
+PNTG;The Pennant Group;États-Unis;CTO;Santé;
+PONY;Pony AI;Chine;CTO;Services aux entreprises & Données;
+POOL;Pool;États-Unis;CTO;Industrie & Électrification;
+POWI;Power Integrations;États-Unis;CTO;Semi-conducteurs;
+POWL;Powell Industries;États-Unis;CTO;Industrie & Électrification;
+PPLI;People Incorporated;États-Unis;CTO;Internet & Médias;
+PRAX;Praxis Precision Medicines;États-Unis;CTO;Santé;
+PRDO;Perdoceo Education;États-Unis;CTO;Consommation de base;
+PRGS;Progress Software;États-Unis;CTO;Logiciels & IT;
+PRVA;Privia Health Group;États-Unis;CTO;Santé;
+PSMT;PriceSmart;États-Unis;CTO;Distribution;
+PTCT;PTC Therapeutics;États-Unis;CTO;Santé;
+PTEN;Patterson-UTI Energy;États-Unis;CTO;Infrastructures & Énergie;
+PTON;Peloton Interactive;États-Unis;CTO;Luxe & Consommation;
+PTRN;Pattern Group;États-Unis;CTO;Distribution;
+QBTS;D-Wave Quantum;États-Unis;CTO;Logiciels & IT;
+QLYS;Qualys;États-Unis;CTO;Logiciels & IT;
+QNST;QuinStreet;États-Unis;CTO;Internet & Médias;
+QQQX;Nuveen Nasdaq 100 Dynamic Overwrite Fund;États-Unis;CTO;Services financiers;
+QURE;uniQure;Pays-Bas;CTO;Santé;
+RARE;Ultragenyx Pharmaceutical;États-Unis;CTO;Santé;
+RDWR;Radware;Israël;CTO;Logiciels & IT;
+REAL;The RealReal;États-Unis;CTO;Luxe & Consommation;
+RELY;Remitly Global;États-Unis;CTO;Logiciels & IT;
+REPL;Replimune Group;États-Unis;CTO;Santé;
+REYN;Reynolds Consumer Products;États-Unis;CTO;Luxe & Consommation;
+RGEN;Repligen;États-Unis;CTO;Santé;
+RGLD;Royal Gold;États-Unis;CTO;Matériaux & Chimie;
+RIVN;Rivian Automotive;États-Unis;CTO;Luxe & Consommation;
+RJET;Republic Airways Holdings;États-Unis;CTO;Industrie & Électrification;
+RKLB;Rocket Lab;États-Unis;CTO;Aéronautique & Défense;
+RMBS;Rambus;États-Unis;CTO;Semi-conducteurs;
+ROIV;Roivant Sciences;Royaume-Uni;CTO;Santé;
+RPRX;Royalty Pharma;États-Unis;CTO;Santé;
+RVMD;Revolution Medicines;États-Unis;CTO;Santé;
+RXRX;Recursion Pharmaceuticals;États-Unis;CTO;Santé;
+SAFT;Safety Insurance Group;États-Unis;CTO;Assurance;
+SAIA;Saia;États-Unis;CTO;Industrie & Électrification;
+SAIC;Science Applications International;États-Unis;CTO;Services aux entreprises & Données;
+SAIL;SailPoint;États-Unis;CTO;Logiciels & IT;
+SANM;Sanmina;États-Unis;CTO;Logiciels & IT;
+SBCF;Seacoast Banking Corporation of Florida;États-Unis;CTO;Banques;
+SBGI;Sinclair;États-Unis;CTO;Internet & Médias;
+SBLK;Star Bulk Carriers;Grèce;CTO;Industrie & Électrification;
+SBRA;Sabra Health Care REIT;États-Unis;CTO;Immobilier;
+SMTC;Semtech;États-Unis;CTO;Semi-conducteurs;
+SNEX;StoneX Group;États-Unis;CTO;Services financiers;
+SOFI;SoFi Technologies;États-Unis;CTO;Services financiers;
+SOLS;Solstice Advanced Materials;États-Unis;CTO;Matériaux & Chimie;
+SONO;Sonos;États-Unis;CTO;Logiciels & IT;
+SPCX;Space Exploration Technologies;États-Unis;CTO;Aéronautique & Défense;
+SPSC;SPS Commerce;États-Unis;CTO;Logiciels & IT;
+SPTX;Seaport Therapeutics;États-Unis;CTO;Santé;
+SRAD;Sportradar Group;Suisse;CTO;Logiciels & IT;
+SRCE;1st Source;États-Unis;CTO;Banques;
+SRPT;Sarepta Therapeutics;États-Unis;CTO;Santé;
+SRRK;Scholar Rock Holding;États-Unis;CTO;Santé;
+SSNC;SS&C Technologies Holdings;États-Unis;CTO;Logiciels & IT;
+SSRM;SSR Mining;États-Unis;CTO;Matériaux & Chimie;
+STBA;S&T Bancorp;États-Unis;CTO;Banques;
+STEP;StepStone Group;États-Unis;CTO;Services financiers;
+STGW;Stagwell;États-Unis;CTO;Internet & Médias;
+STNE;StoneCo;Îles Caïmans;CTO;Logiciels & IT;
+STOK;Stoke Therapeutics;États-Unis;CTO;Santé;
+STRA;Strategic Education;États-Unis;CTO;Consommation de base;
+STRL;Sterling Infrastructure;États-Unis;CTO;Industrie & Électrification;
+SUPN;Supernus;États-Unis;CTO;Santé;
+SVRA;Savara;États-Unis;CTO;Santé;
+SYBT;Stock Yards Bancorp;États-Unis;CTO;Banques;
+SYNA;Synaptics Incorporated;États-Unis;CTO;Semi-conducteurs;
+SYRE;Spyre Therapeutics;États-Unis;CTO;Santé;
+TARS;Tarsus Pharmaceuticals;États-Unis;CTO;Santé;
+TBBK;The Bancorp;États-Unis;CTO;Banques;
+TCBK;TriCo Bancshares;États-Unis;CTO;Banques;
+TCOM;Trip.com Group;Singapour;CTO;Luxe & Consommation;
+TEAM;Atlassian;Australie;CTO;Logiciels & IT;
+TENB;Tenable Holdings;États-Unis;CTO;Logiciels & IT;
+TFSL;TFS Financial;États-Unis;CTO;Banques;
+THRM;Gentherm Incorporated;États-Unis;CTO;Luxe & Consommation;
+TIGO;Millicom International Cellular;Luxembourg;CTO;Télécoms;
+TILE;Interface;États-Unis;CTO;Luxe & Consommation;
+TOWN;TowneBank;États-Unis;CTO;Banques;
+TRAX;First Tracks Biotherapeutics;États-Unis;CTO;Santé;
+TRMD;TORM;Royaume-Uni;CTO;Infrastructures & Énergie;
+TRMK;Trustmark;États-Unis;CTO;Banques;
+TSAT;Telesat;Canada;CTO;Logiciels & IT;
+TSEM;Tower Semiconductor;Israël;CTO;Semi-conducteurs;
+TSHA;Taysha Gene Therapies;États-Unis;CTO;Santé;
+TTAN;ServiceTitan;États-Unis;CTO;Logiciels & IT;
+TTEK;Tetra Tech;États-Unis;CTO;Industrie & Électrification;
+TTMI;TTM Technologies;États-Unis;CTO;Logiciels & IT;
+TWST;Twist Bioscience;États-Unis;CTO;Santé;
+TXRH;Texas Roadhouse;États-Unis;CTO;Luxe & Consommation;
+TYRA;Tyra Biosciences;États-Unis;CTO;Santé;
+UBSI;United Bankshares;États-Unis;CTO;Banques;
+UCTT;Ultra Clean Holdings;États-Unis;CTO;Semi-conducteurs;
+UFCS;United Fire Group;États-Unis;CTO;Assurance;
+UFPI;UFP Industries;États-Unis;CTO;Matériaux & Chimie;
+ULCC;Frontier Group Holdings;États-Unis;CTO;Industrie & Électrification;
+UMBF;UMB Financial;États-Unis;CTO;Banques;
+UNIT;Uniti Group;États-Unis;CTO;Immobilier;
+UPBD;Upbound Group;États-Unis;CTO;Logiciels & IT;
+UPST;Upstart Holdings;États-Unis;CTO;Services financiers;
+UPWK;Upwork;États-Unis;CTO;Internet & Médias;
+URBN;Urban Outfitters;États-Unis;CTO;Distribution;
+USLM;United States Lime & Minerals;États-Unis;CTO;Matériaux & Chimie;
+UTHR;United Therapeutics;États-Unis;CTO;Santé;
+UVSP;Univest Financial;États-Unis;CTO;Banques;
+VCTR;Victory Capital Holdings;États-Unis;CTO;Services financiers;
+VECO;Veeco Instruments;États-Unis;CTO;Semi-conducteurs;
+VEON;VEON;United Arab Emirates;CTO;Télécoms;
+VIAV;Viavi Solutions;États-Unis;CTO;Logiciels & IT;
+VICR;Vicor;États-Unis;CTO;Logiciels & IT;
+VNOM;Viper Energy;États-Unis;CTO;Infrastructures & Énergie;
+VRNS;Varonis Systems;États-Unis;CTO;Logiciels & IT;
+VSAT;Viasat;États-Unis;CTO;Logiciels & IT;
+VSEC;VSE;États-Unis;CTO;Aéronautique & Défense;
+VSNT;Versant Media Group;États-Unis;CTO;Internet & Médias;
+WABC;Westamerica Bancorporation;États-Unis;CTO;Banques;
+WAFD;WaFd;États-Unis;CTO;Banques;
+WBTN;WEBTOON Entertainment;États-Unis;CTO;Internet & Médias;
+WDFC;WD-40 Company;États-Unis;CTO;Matériaux & Chimie;
+WERN;Werner Enterprises;États-Unis;CTO;Industrie & Électrification;
+WFRD;Weatherford International;États-Unis;CTO;Infrastructures & Énergie;
+WING;Wingstop;États-Unis;CTO;Luxe & Consommation;
+WLTH;Wealthfront;États-Unis;CTO;Logiciels & IT;
+WSBC;WesBanco;États-Unis;CTO;Banques;
+WSFS;WSFS Financial;États-Unis;CTO;Banques;
+WTFC;Wintrust Financial;États-Unis;CTO;Banques;
+XERS;Xeris Biopharma Holdings;États-Unis;CTO;Santé;
+XMTR;Xometry;États-Unis;CTO;Industrie & Électrification;
+XRAY;DENTSPLY SIRONA;États-Unis;CTO;Santé;
+ZBIO;Zenas BioPharma;États-Unis;CTO;Santé;
+ZION;Zions Bancorporation, National Association;États-Unis;CTO;Banques;
+ZYME;Zymeworks;États-Unis;CTO;Santé;
+BATRA;Atlanta Braves Holdings;États-Unis;CTO;Internet & Médias;
+BELFA;Bel Fuse;États-Unis;CTO;Logiciels & IT;
+FCNCA;First Citizens BancShares;États-Unis;CTO;Banques;
+FORTY;Formula Systems (1985);Israël;CTO;Services aux entreprises & Données;
+FWONA;Formula One Group;États-Unis;CTO;Internet & Médias;
+GLIBA;Liberty Capital;États-Unis;CTO;Télécoms;
+IMKTA;Ingles Markets, Incorporated;États-Unis;CTO;Distribution;
+LBTYA;Liberty Global;Bermudes;CTO;Télécoms;
+LLYVA;Liberty Live Holdings;États-Unis;CTO;Internet & Médias;
+RBCAA;Republic Bancorp;États-Unis;CTO;Banques;
+RUSHA;Rush Enterprises;États-Unis;CTO;Luxe & Consommation;
+SENEA;Seneca Foods;États-Unis;CTO;Consommation de base;

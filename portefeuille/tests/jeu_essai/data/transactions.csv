@@ -1,0 +1,8 @@
+date;compte;type;ticker;quantite;prix_unitaire;devise;frais_eur;montant_eur;taux_change;note
+2026-01-02;PEA;VERSEMENT;;;;EUR;;4000;;Exemple fictif
+2026-01-02;CTO;VERSEMENT;;;;EUR;;3000;;Exemple fictif
+2026-01-05;PEA;ACHAT;ASML.AS;3;650;EUR;2;1952;;Exemple fictif
+2026-01-05;PEA;ACHAT;AI.PA;10;170;EUR;2;1702;;Exemple fictif
+2026-01-06;CTO;ACHAT;MSFT;4;420;USD;1;1610;1.045;Exemple fictif
+2026-03-02;CTO;ACHAT;COST;1;900;USD;1;829;1.087;Exemple fictif
+2026-06-15;PEA;DIVIDENDE;AI.PA;;;EUR;;33;;Exemple fictif

@@ -1,0 +1,31 @@
+# Deux thèmes : l'application suit le réglage clair ou sombre de Windows, et le menu « ⋮ > Settings »
+# permet d'en changer. Couleurs de la palette de référence des graphiques (pf/ui.py).
+[theme.light]
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f3f2ee"
+textColor = "#0b0b0b"
+borderColor = "#d8d7d0"
+baseRadius = "0.6rem"
+
+[theme.dark]
+primaryColor = "#3987e5"
+backgroundColor = "#1a1a19"
+secondaryBackgroundColor = "#242422"
+textColor = "#f0efec"
+borderColor = "#3a3a37"
+baseRadius = "0.6rem"
+
+[client]
+# Ni bouton « Deploy » ni outils de développement : l'application ne sert qu'à vous.
+toolbarMode = "viewer"
+
+[server]
+# Interface réservée à cet ordinateur : sans cette ligne, tout le réseau local (Wi-Fi public compris)
+# pourrait voir le portefeuille et modifier le journal.
+address = "localhost"
+headless = true
+runOnSave = false
+
+[browser]
+gatherUsageStats = false

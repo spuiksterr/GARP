@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: portefeuille
+    env:
+      PYTHONIOENCODING: utf-8
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: portefeuille/requirements.txt
+
+      - name: Installation (pyproject.toml, dépendances figées de requirements.txt)
+        run: python -m pip install -e .
+
+      - name: Ligne de commande
+        run: pf --help
+
+      - name: Style et erreurs courantes (ruff, réglages dans pyproject.toml)
+        run: |
+          python -m pip install ruff==0.14.5
+          ruff check
+
+      - name: Tests de calcul
+        run: python -m pytest tests -q
+
+      - name: Tests d'affichage (jeu d'essai, sans réseau)
+        run: python -m pytest tests -q -m pages
