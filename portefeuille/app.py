@@ -11,12 +11,12 @@ from pf.ui import sidebar  # noqa: E402
 # L'icône sert aussi d'icône d'application quand on ajoute la page à l'écran d'accueil du téléphone.
 ICONE = str(Path(__file__).resolve().parent / "assets" / "garp.png")
 st.set_page_config(page_title="G.A.R.P", page_icon=ICONE, layout="wide")
-# En-tête de la barre latérale : l'icône et « G.A.R.P » en grand (assets/entete.png, composer_icones.py), l'icône
+# En-tête de la barre latérale : emblème, « G.A.R.P », promesse et sous-titre (assets/entete.png, composer_icones.py), l'icône
 # seule quand la barre est repliée. st.logo les place au-dessus des rubriques ; la règle de style les agrandit.
 st.logo(str(Path(__file__).resolve().parent / "assets" / "entete.png"), size="large", icon_image=ICONE)
 st.html("""<style>
 [data-testid="stSidebarHeader"] { height: auto; padding-top: 1.5rem; padding-bottom: 1rem; align-items: center; }
-[data-testid="stSidebarLogo"] { height: 4.4rem; max-width: 100%; }
+[data-testid="stSidebarLogo"] { height: auto; width: 100%; max-width: 100%; }
 /* Barre du haut épurée : ni bonhomme animé ni bouton « Stop » pendant les calculs. */
 [data-testid="stStatusWidget"] { display: none; }
 /* Chiffre principal des blocs du tableau de bord, en ocre de la marque (lisible sur les deux thèmes en grand). */

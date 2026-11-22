@@ -42,7 +42,7 @@ La piste « points qui montent » a servi un jour, le 18/11/2026. Le logo rempla
 |---|---|
 | `assets/blender/embleme.png` | Emblème seul, fond transparent, 1024 px : la source de tout le reste |
 | `assets/garp.png`, `assets/garp.ico` | Icône arrondie : fenêtre de l'outil, raccourcis Windows, onglet du navigateur |
-| `assets/entete.png` | Icône et « G.A.R.P » en ocre : en-tête de la barre latérale, écran d'ouverture |
+| `assets/entete.png` | Version compacte du bandeau (emblème, « G.A.R.P » en blanc, promesse en ocre, sous-titre en gris, fond anthracite arrondi) : en-tête de la barre latérale, écran d'ouverture |
 | `docs/bandeau.png` | Bandeau des README et des présentations |
 | `installateur/*.bmp` | Images de l'assistant d'installation Windows (son icône : `assets/garp.ico`) |
 
