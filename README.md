@@ -6,14 +6,25 @@
 
 Application personnelle d'analyse d'actions et de construction de portefeuille de long terme, pensée pour un investisseur français (PEA et compte-titres).
 
-- **Screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars) : filtres d'exclusion, score Qualité / Croissance / Valorisation / Momentum, signaux de santé, note selon quatre regards d'investisseurs.
-- **Fiche valeur** : historique sur dix ans quand les comptes déposés le permettent (SEC, rapports européens ESEF), DCF inversé, scénarios à cinq ans, conditions de vente.
-- **Construction et suivi** du portefeuille : poids cibles, risques, backtest, performance contre l'ETF MSCI World, apport du mois.
+- **La bonne action au bon prix** : les entreprises qui passent les filtres de qualité, classées selon votre style d'investisseur, avec leur prix juste au rendement que vous exigez, votre prix d'achat après marge de sécurité, et un verdict.
+- **Screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars) : filtres d'exclusion, score Qualité / Croissance / Valorisation / Momentum, signaux de santé, avis de quatre grands investisseurs lus un par un.
+- **Fiche valeur** : historique sur dix ans quand les comptes déposés le permettent (SEC, rapports européens ESEF), DCF inversé, multiples, scénarios à cinq ans, conditions de vente.
+- **Mon portefeuille** : import depuis l'export du courtier (CSV ou Excel), analyse des lignes, risques, équilibre proposé ; un questionnaire propose votre style (qualité, croissance, GARP, valeur, momentum).
 - **Commandes Claude Code** pour l'analyse qualitative et les revues (`/analyse-valeur`, `/revue-portefeuille`, `/apport-mensuel`, `/nouvelles-idees`).
 
 Un rang élevé dans le screener n'est pas une recommandation d'achat. Cet outil ne fournit pas de conseil en investissement.
 
-## Démarrer (Windows, Python 3.11 ou plus)
+## Installer (Windows 11)
+
+1. Téléchargez `GARP-Setup-b<n>.exe` sur la [page des versions](https://github.com/spuiksterr/GARP/releases/latest), sous « Assets ».
+2. Lancez-le : il installe G.A.R.P pour votre compte, sans droits d'administrateur, avec tout ce qu'il lui faut (Python compris). L'installateur n'est pas signé : à l'avertissement de SmartScreen, choisissez « Informations complémentaires », puis « Exécuter quand même ».
+3. Ouvrez G.A.R.P depuis le menu Démarrer. Les données, calculées chaque nuit par GitHub, se téléchargent d'elles-mêmes, sans compte ni jeton. Les nouvelles versions se proposent dans la barre latérale.
+
+Détails : [app/README.md](app/README.md). L'application Android est suspendue pour l'instant.
+
+## Depuis le code source (développement)
+
+Pour modifier l'outil ou calculer les données soi-même (Windows, Python 3.11 ou plus) :
 
 ```bat
 cd portefeuille
@@ -21,11 +32,7 @@ installer.bat   :: une seule fois : environnement Python et premier télécharge
 lancer.bat      :: interface dans le navigateur, http://localhost:8501
 ```
 
-Version bureau : icône **G.A.R.P (projet)** (créée par `portefeuille\creer_raccourcis.ps1`), ou `pf bureau`. Version téléphone : `pf mobile`, par le réseau privé Tailscale (voir le README détaillé).
-
-**Application autonome** (Android et Windows, sans PC allumé) : GitHub calcule les données chaque nuit et les publie ; l'application s'installe et se met à jour depuis les Releases du dépôt. Voir [app/README.md](app/README.md).
-
-Ligne de commande : `portefeuille\.venv\Scripts\python.exe -m pf --help`, depuis `portefeuille/`.
+Fenêtre de bureau : `pf bureau` (raccourcis par `portefeuille\creer_raccourcis.ps1`). Ligne de commande : `portefeuille\.venv\Scripts\python.exe -m pf --help`, depuis `portefeuille/`. Mode d'emploi détaillé : [portefeuille/README.md](portefeuille/README.md).
 
 ## Organisation
 
@@ -36,8 +43,8 @@ Ligne de commande : `portefeuille\.venv\Scripts\python.exe -m pf --help`, depuis
 | `portefeuille/pf/` | Calculs et accès aux données (package Python) |
 | `portefeuille/vues/`, `portefeuille/app.py` | Interface Streamlit |
 | `portefeuille/tests/` | Tests (`pytest tests -q`, et `-m pages` pour l'affichage) |
-| `portefeuille/config/` | Univers, réglages, portefeuille modèle et listes de suivi |
-| [app/](app/README.md) | Application Android et Windows (Flutter) : données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
+| `portefeuille/config/` | Univers et réglages ; vos fichiers personnels (portefeuille, watchlist, style) vont dans `portefeuille/profil/`, exclu du dépôt |
+| [app/](app/README.md) | Installateur Windows (`GARP-Setup`) et application Android (Flutter, suspendue) : données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
 | [portefeuille/docs/MARQUE.md](portefeuille/docs/MARQUE.md) | Marque : positionnement, logo, couleurs, ton, textes de présentation |
 | `.claude/skills/` | Commandes Claude Code |
 | [FEUILLE_DE_ROUTE.md](FEUILLE_DE_ROUTE.md) | Améliorations prévues, en tickets confiés à des agents |
