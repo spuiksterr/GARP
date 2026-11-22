@@ -245,6 +245,58 @@ def test_fonds_hors_classement_et_booleens_a_trous():
     assert pd.isna(sc.loc["ETF", "buffett"]) and sc.loc["A", "buffett"] >= 1  # notes pour les actions, pas pour les fonds
 
 
+def test_centiles_sur_eligibles_seulement_et_tri_explicite():
+    """Une société exclue (même avec un ratio extrême) ne doit pas déplacer les centiles des éligibles."""
+    strat = {"filtres": FILTRES}
+    df = pd.DataFrame({
+        "A": _row(rentabilite=0.30, rendement_benefices=0.05),
+        "B": _row(rentabilite=0.20, rendement_benefices=0.08),
+        "EXCLU": _row(rentabilite=0.02, rentabilite_derniere=0.02, rendement_benefices=0.90),  # piège de valeur exclu
+    }).T
+    df["statut_donnees"] = "ok"
+    sc_avec = build_screener(df, strat)
+    sc_sans = build_screener(df.drop(index=["EXCLU"]), strat)
+    for col in ("qualite", "croissance", "valorisation", "score"):
+        assert sc_avec.loc["A", col] == pytest.approx(sc_sans.loc["A", col])
+        assert sc_avec.loc["B", col] == pytest.approx(sc_sans.loc["B", col])
+    assert sc_avec.loc["EXCLU", "statut"] == "Exclu"
+    assert sc_avec.loc["EXCLU", "valorisation"] == pytest.approx(100.0)
+    assert list(sc_avec.index[:2]) == sorted(["A", "B"], key=lambda t: -sc_avec.loc[t, "score"])
+    assert sc_avec.index[-1] == "EXCLU"
+
+
+def test_couverture_interets_manquants_selon_dette():
+    """Intérêts absents chez Yahoo : 999x seulement si la société n'a pas de dette, NaN sinon."""
+    from pf.config import load_strategy
+    from pf.metrics import compute_one
+
+    strat = load_strategy()
+    prix = pd.DataFrame({"X": [100.0] * 40}, index=pd.bdate_range("2026-01-01", periods=40))
+    fx = pd.DataFrame({"EUR": [1.0] * 40, "USD": [1.1] * 40}, index=prix.index)
+
+    def _fund(dette: float):
+        return {
+            "fetched": "2026-11-20T00:00:00",
+            "info": {"currency": "USD", "financialCurrency": "USD", "marketCap": 1e9, "currentPrice": 100.0},
+            "income": {
+                "Total Revenue": {"2025-12-31": 5e8},
+                "EBIT": {"2025-12-31": 1e8},
+                "Net Income": {"2025-12-31": 7e7},
+            },
+            "balance": {
+                "Stockholders Equity": {"2025-12-31": 4e8},
+                "Total Debt": {"2025-12-31": dette},
+                "Cash And Cash Equivalents": {"2025-12-31": 5e7},
+            },
+            "cashflow": {"Operating Cash Flow": {"2025-12-31": 9e7}, "Capital Expenditure": {"2025-12-31": -1e7}},
+        }
+
+    sans = compute_one("X", _fund(0.0), prix, fx, strat, {"holding": set(), "financiere": set(), "tresorerie_clients": set()})
+    avec = compute_one("X", _fund(2e8), prix, fx, strat, {"holding": set(), "financiere": set(), "tresorerie_clients": set()})
+    assert sans["couverture_interets"] == 999.0
+    assert math.isnan(avec["couverture_interets"])
+
+
 # ------------------------------------------------------------------ données
 
 def test_une_paire_refusee_par_yahoo_n_efface_pas_son_historique(tmp_path, monkeypatch):

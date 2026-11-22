@@ -223,12 +223,18 @@ def compute_one(ticker: str, fund: dict, prices: pd.DataFrame, fx: pd.DataFrame,
     m["conversion_fcf"] = min(max(_safe_div(m["fcf_cumule"], ni_sum), -1), 3) if ni_sum and ni_sum > 0 else math.nan
     last = a.iloc[-1] if len(a) else pd.Series(dtype=float)
     ebit_last = last.get("ebit", math.nan)
-    interest = abs(last.get("interest", math.nan)) if np.isfinite(last.get("interest", math.nan)) else math.nan
-    m["couverture_interets"] = (999.0 if (interest == 0 or not np.isfinite(interest)) and ebit_last > 0
-                                else _safe_div(ebit_last, interest))
     # Dette nette au dernier bilan publié (trimestriel s'il existe). Inconnue sans bilan : jamais nulle par défaut.
     bilan = postes.dernier_bilan(fund, tresorerie_clients=clients)
     net_debt = bilan[0] - bilan[1] if bilan else math.nan
+    debt_known = bilan[0] if bilan else last.get("debt", math.nan)
+    interest = abs(last.get("interest", math.nan)) if np.isfinite(last.get("interest", math.nan)) else math.nan
+    # 999x seulement si les intérêts déclarés sont nuls, ou s'ils manquent pour une société effectivement sans dette
+    # (sinon une ligne d'intérêts omise par Yahoo masquerait un endettement réel dans le filtre de solvabilité).
+    sans_dette = np.isfinite(debt_known) and debt_known <= 0
+    m["couverture_interets"] = (
+        999.0 if (interest == 0 or (not np.isfinite(interest) and sans_dette)) and ebit_last > 0
+        else _safe_div(ebit_last, interest)
+    )
     # EBITDA du dernier exercice complet : celui des 12 derniers mois intègre les charges exceptionnelles
     # (dépréciations, recherche acquise) et ferait basculer le filtre d'endettement sur un événement ponctuel.
     ebitda = last.get("ebitda", math.nan)
