@@ -8,7 +8,6 @@ import streamlit as st  # noqa: E402
 
 from pf.ui import sidebar  # noqa: E402
 
-# L'icône sert aussi d'icône d'application quand on ajoute la page à l'écran d'accueil du téléphone.
 ICONE = str(Path(__file__).resolve().parent / "assets" / "garp.png")
 st.set_page_config(page_title="G.A.R.P", page_icon=ICONE, layout="wide")
 # En-tête de la barre latérale : emblème, « G.A.R.P », promesse et sous-titre (assets/entete.png, composer_icones.py), l'icône

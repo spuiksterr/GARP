@@ -53,18 +53,9 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 | DEC-3 | Nom de l'application et du dépôt | **Tranché :** application nommée **G.A.R.P** le 18/11/2026 (d'abord Climax, le 14/11) ; dépôt public `spuiksterr/GARP` le 22/11/2026, le dépôt privé `spuiksterr/Climax` gardé en archive | G-03, U-01 |
 | DEC-4 | Qui fusionne les demandes des agents ? | **Tranché le 14/11/2026 :** relecture et fusion par le propriétaire, jamais de fusion automatique | K-01 |
 | DEC-5 | Pseudo GitHub, adresse anonyme et nom d'auteur des commits | **Tranché le 14/11/2026 :** pseudo et auteur `spuiksterr`, adresse `264869162+spuiksterr@users.noreply.github.com` | G-01, G-03 |
-| DEC-6 | Accords en attente sur des fichiers protégés | Voir la liste ci-dessous | – |
+| DEC-6 | Accords en attente sur des fichiers protégés | Suivi hors dépôt public (`profil/`) | – |
 | DEC-7 | Sources de données avec clé ou payantes, pour l'historique allemand et suisse | Écarté le 08/11/2026 ; à rouvrir seulement sur demande | D-11 |
 | DEC-8 | Ajouter une valeur hors indices depuis l'interface | Écarté une première fois ; depuis, On et Sterling ont été ajoutées à la main | U-02 |
-
-**Accords en attente (DEC-6) :**
-
-- retirer Novo Nordisk de `surveillance.csv` ;
-- ajouter Deckers à `portefeuille_modele.csv` ;
-- renommer l'indicateur « P/FCF hors SBC » ;
-- baisser le poids de la valorisation dans le score ;
-- ajouter MP Materials et Neo Performance à l'univers ;
-- Sterling : prix visé de 250 $, ligne de surveillance, trois scénarios, règle de vente chiffrée.
 
 ## 4. Les chantiers
 
@@ -75,7 +66,7 @@ Trame des améliorations du projet, rédigée le 13 novembre 2026 après une ana
 | G-01 | Anonymiser l'auteur des commits (**fait le 14/11/2026**) | P0 | S |
 | G-02 | Enregistrer ou écarter la watchlist en attente (**fait le 14/11/2026**) | P0 | S |
 | G-03 | Créer le dépôt privé et envoyer le projet (**fait le 14/11/2026**) | P0 | S |
-| G-04 | README à la racine et licence (**fait le 14/11/2026**, sans capture ni licence : dépôt privé) | P1 | S |
+| G-04 | README à la racine et licence (**fait** : README le 14/11/2026, licence MIT le 22/11/2026) | P1 | S |
 | G-05 | Séparer les données personnelles du code (**fait le 14/11/2026**) | P1 | M |
 | G-06 | Créer les tickets GitHub depuis cette feuille de route (**fait le 14/11/2026** : `.github/creer_tickets.py`, relançable sans doublon) | P1 | S |
 | G-07 | Protéger la branche principale, gabarits de ticket et de demande de fusion (**gabarits faits le 14/11/2026**) | P1 | S |

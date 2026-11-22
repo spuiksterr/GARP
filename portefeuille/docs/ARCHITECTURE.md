@@ -47,7 +47,7 @@ formulaires 4 (dirigeants), presse Google News (actualites → actualites/), com
 
 - **Mise à jour** : `maj.tout_mettre_a_jour` enchaîne `data.update_all` (téléchargements), `metrics.compute_all`, `scoring.build_screener`, puis crée les fiches de thèse manquantes. Même code pour le bouton de l'interface (`ui.run_update`) et la commande `pf maj`.
 - **Niveaux** : rapide (cours et changes), normal (en plus, un quart des fiches de fondamentaux par roulement, `config.renouvellement`), complet (tout).
-- **Le screener n'est pas stocké** : il est recalculé à partir de `indicateurs.parquet` à chaque chargement (`ui.screener`, en cache Streamlit une heure, invalidé quand les fichiers changent).
+- **Cache du screener** : en développement, le screener est recalculé à partir de `indicateurs.parquet` (`ui.screener`, en cache Streamlit une heure, invalidé quand les fichiers changent). Pour la version installée, le flux de la nuit pré-calcule `data/cache/screener.parquet` avec une empreinte (`screener.meta.json`) : s'il correspond au poste, il est lu directement et reclassé avec les poids locaux.
 - **Historique** : Yahoo donne 4 exercices ; `postes.prolonger` l'allonge avec la SEC (américaines) ou l'ESEF (européennes), seulement si les deux sources concordent sur au moins deux exercices communs.
 
 ## Dossiers

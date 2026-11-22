@@ -56,6 +56,8 @@ Les données téléchargées, les fiches de thèse, le journal des opérations e
 
 Yahoo Finance (cours, fondamentaux), SEC (comptes des sociétés américaines et formulaires des dirigeants), filings.xbrl.org (rapports européens ESEF), BCE (taux de change), iShares et Nasdaq Trader (composition des indices).
 
-## Crédits
+## Crédits et licence
 
 La méthode d'analyse s'inspire du projet open source [ai-berkshire](https://github.com/xbtlin/ai-berkshire) (licence MIT), gardé en lecture seule sur le poste et absent de ce dépôt.
+
+Distribué sous [licence MIT](LICENSE).
