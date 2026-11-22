@@ -6,10 +6,10 @@
 
 Application personnelle d'analyse d'actions et de construction de portefeuille de long terme, pensée pour un investisseur français (PEA et compte-titres).
 
-- **La bonne action au bon prix** : les entreprises qui passent les filtres de qualité, classées selon votre style d'investisseur, avec leur prix juste au rendement que vous exigez, votre prix d'achat après marge de sécurité, et un verdict.
-- **Screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars) : filtres d'exclusion, score Qualité / Croissance / Valorisation / Momentum, signaux de santé, avis de quatre grands investisseurs lus un par un.
+- **La bonne action au bon prix** : les entreprises qui passent les filtres de qualité, classées par la note GARP (croissance 40 %, valorisation 35 %, qualité 25 %), avec leur prix juste au rendement que vous exigez, votre prix d'achat après marge de sécurité, et un verdict.
+- **Screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars) : filtres d'exclusion, note GARP ; comme repères, hors note : quatre regards d'investisseurs, six critères de qualité, signaux de santé, momentum.
 - **Fiche valeur** : historique sur dix ans quand les comptes déposés le permettent (SEC, rapports européens ESEF), DCF inversé, multiples, scénarios à cinq ans, conditions de vente.
-- **Mon portefeuille** : import depuis l'export du courtier (CSV ou Excel), analyse des lignes, risques, équilibre proposé ; un questionnaire propose votre style (qualité, croissance, GARP, valeur, momentum).
+- **Mon portefeuille** : import depuis l'export du courtier (CSV ou Excel), analyse des lignes, risques, équilibre proposé.
 - **Commandes Claude Code** pour l'analyse qualitative et les revues (`/analyse-valeur`, `/revue-portefeuille`, `/apport-mensuel`, `/nouvelles-idees`).
 
 Un rang élevé dans le screener n'est pas une recommandation d'achat. Cet outil ne fournit pas de conseil en investissement.
@@ -39,11 +39,11 @@ Fenêtre de bureau : `pf bureau` (raccourcis par `portefeuille\creer_raccourcis.
 | Emplacement | Contenu |
 |---|---|
 | [portefeuille/README.md](portefeuille/README.md) | Mode d'emploi détaillé, commandes, routine |
-| [portefeuille/docs/METHODE.md](portefeuille/docs/METHODE.md) | Méthode : filtres, score, quatre regards, règles de vente |
+| [portefeuille/docs/METHODE.md](portefeuille/docs/METHODE.md) | Méthode : filtres, note GARP, repères, règles de vente |
 | `portefeuille/pf/` | Calculs et accès aux données (package Python) |
 | `portefeuille/vues/`, `portefeuille/app.py` | Interface Streamlit |
 | `portefeuille/tests/` | Tests (`pytest tests -q`, et `-m pages` pour l'affichage) |
-| `portefeuille/config/` | Univers et réglages ; vos fichiers personnels (portefeuille, watchlist, style) vont dans `portefeuille/profil/`, exclu du dépôt |
+| `portefeuille/config/` | Univers et réglages ; vos fichiers personnels (portefeuille, watchlist) vont dans `portefeuille/profil/`, exclu du dépôt |
 | [app/](app/README.md) | Installateur Windows (`GARP-Setup`) et application Android (Flutter, suspendue) : données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
 | [portefeuille/docs/MARQUE.md](portefeuille/docs/MARQUE.md) | Marque : positionnement, logo, couleurs, ton, textes de présentation |
 | `.claude/skills/` | Commandes Claude Code |

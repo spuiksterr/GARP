@@ -177,12 +177,7 @@ def load_universe() -> pd.DataFrame:
 
 def load_strategy() -> dict:
     with open(STRATEGIE_JSON, encoding="utf-8") as f:
-        strategie = json.load(f)
-    # Les quatre regards ne comptent plus dans le score composite (22/11/2026) : ils se lisent à part, dans la fiche
-    # et sur leur page, sans être additionnés. Forcé ici, car la version installée ne réécrit jamais ce fichier.
-    if isinstance(strategie.get("poids_score"), dict):
-        strategie["poids_score"]["regards"] = 0
-    return strategie
+        return json.load(f)
 
 
 def save_strategy(strategy: dict) -> None:

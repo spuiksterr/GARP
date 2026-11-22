@@ -92,7 +92,7 @@ with onglet_wl:
                 "ecart_prix_vise": ui.PCT("Écart au prix visé", "Variation du cours qui mènerait au prix visé : −20 % = il "
                                           "faut une baisse de 20 %. Positif : le cours est déjà sous le prix visé."),
                 "objectif": st.column_config.TextColumn("Objectif", help="Le ratio et la cible qui ont fixé le prix visé"),
-                "rang": st.column_config.NumberColumn("Rang", format="%d"), "score": ui.SCORE("Score"),
+                "rang": st.column_config.NumberColumn("Rang", format="%d"), "score": ui.SCORE("Note GARP"),
                 "criteres": st.column_config.TextColumn("Critères", help="Critères de qualité remplis sur critères évalués"),
                 "moat": "Moat estimé",
                 "depuis_ajout": ui.PCT("Depuis l'ajout", "Évolution du cours depuis l'ajout à la watchlist (devise de cotation)"),
@@ -151,7 +151,7 @@ with onglet_surv:
                 "nom": st.column_config.TextColumn("Valeur", pinned=True), "symbole": "Ticker",
                 "raison": st.column_config.TextColumn("Pourquoi pas maintenant", width="large"),
                 "condition_entree": st.column_config.TextColumn("Condition d'entrée", width="large"),
-                "score": ui.SCORE("Score"), "tri_implicite": ui.PCT("TRI implicite"),
+                "score": ui.SCORE("Note GARP"), "tri_implicite": ui.PCT("TRI implicite"),
                 "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"), "mom_12_1": ui.PCT("Momentum"),
             })
         ui.fiche_au_clic(sv, event, cle)

@@ -147,25 +147,20 @@ def risques_portefeuille() -> list[str]:
 
 
 def idees(sc: pd.DataFrame, n: int = 22) -> list[str]:
-    """Valeurs retenues par plusieurs méthodes de notation, et consensus des grands investisseurs."""
+    """Valeurs retenues par la note GARP avec les garde-fous, et consensus des grands investisseurs."""
     from . import investisseurs as inv
     from . import portfolio as pfo
     from .config import load_strategy
 
     c = load_strategy()["construction"]
-    par_methode = {}
-    for lib, _, poids in pfo.NOTATIONS.values():
-        note = pfo.note_construction(sc, poids)
-        par_methode[lib] = pfo.select(sc, n, int(c["max_par_secteur"]), c.get("part_pea"),
-                                      criteres_min=int(c.get("criteres_min", 0)),
-                                      exclure_moat_faible=bool(c.get("exclure_moat_faible")),
-                                      cycliques_max=c.get("cycliques_max"), note=note)
-    compte = pd.Series([t for v in par_methode.values() for t in v]).value_counts()
-    lignes = [f"Valeurs retenues par au moins 4 des {len(par_methode)} méthodes de notation (garde-fous de "
-              "config/strategie.json) :"]
-    for t, k in compte[compte >= 4].items():
+    retenues = pfo.select(sc, n, int(c["max_par_secteur"]), c.get("part_pea"),
+                          criteres_min=int(c.get("criteres_min", 0)),
+                          exclure_moat_faible=bool(c.get("exclure_moat_faible")),
+                          cycliques_max=c.get("cycliques_max"), note=pfo.note_construction(sc))
+    lignes = [f"Les {len(retenues)} meilleures notes GARP qui passent les garde-fous (config/strategie.json) :"]
+    for t in retenues:
         r = sc.loc[t]
-        lignes.append(f"  {t:10s} {str(r['nom'])[:28]:28s} {k} méthodes · score {nombre(r['score'], 0)} · critères "
+        lignes.append(f"  {t:10s} {str(r['nom'])[:28]:28s} note GARP {nombre(r['score'], 0)} · critères "
                       f"{r.get('criteres')} · TRI implicite {pct(r.get('tri_implicite'), 1)}")
     cons = inv.consensus()
     if not cons.empty:

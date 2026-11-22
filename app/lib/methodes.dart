@@ -27,8 +27,8 @@ class Methode {
 }
 
 /// Méthode par défaut, et seule disponible avec un fichier de données publié avant la liste des méthodes.
-const composite = Methode('composite', 'Score composite',
-    'La note de l\'outil : piliers, valorisation, Piotroski, Altman, Beneish.', {'score': 1});
+const composite = Methode('composite', 'Note GARP',
+    'La croissance, sans la surpayer : croissance 40 %, valorisation 35 %, qualité 25 %.', {'score': 1});
 
 /// Les six critères de qualité (pf/criteres.py), avec le seuil en vigueur.
 class Critere {

@@ -210,7 +210,7 @@ with onglets[0]:
                 "depuis_txt": st.column_config.TextColumn(
                     "Détenue depuis", help=f"Premier trimestre d'une détention continue. « ≤ » : déjà détenue au début "
                                            f"de l'historique lu ({trimestre(p.attrs['premiere'])})."),
-                "score": ui.SCORE("Votre score", "Score de l'outil si la valeur est dans votre univers ; clic : sa fiche"),
+                "score": ui.SCORE("Note GARP", "Note GARP de l'outil si la valeur est dans votre univers ; clic : sa fiche"),
             })
             st.caption("Formulaire 13F déposé à la SEC : positions longues en actions cotées aux États-Unis, à la date de "
                        "fin du trimestre, publiées jusqu'à 45 jours plus tard. Ni ventes à découvert, ni options, ni "
@@ -257,7 +257,7 @@ with onglets[1]:
             "detenteurs": st.column_config.NumberColumn("Investisseurs", format="%d"),
             "poids_moyen": ui.PCT("Poids moyen", "Poids moyen chez ceux qui le détiennent"), "poids_max": ui.PCT("Poids max."),
             "qui": st.column_config.TextColumn("Détenu par", width="large"),
-            "score": ui.SCORE("Votre score")})
+            "score": ui.SCORE("Note GARP")})
         st.caption("Titres détenus par au moins deux des investisseurs suivis à leur dernier trimestre déclaré.")
 
 # --------------------------------------------------------------------------- élus

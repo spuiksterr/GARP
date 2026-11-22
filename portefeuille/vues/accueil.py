@@ -8,7 +8,6 @@ from pf import backtest as bt
 from pf import dirigeants, photos, positions, regles, scenarios, ui
 from pf import portfolio as pfo
 from pf import prix_achat as pa
-from pf import styles as sty
 from pf import watchlist as wl
 from pf.config import BENCHMARKS, load_strategy
 from pf.sante import health_alerts
@@ -103,9 +102,8 @@ regl = pa.reglages(strat)
 vises = {t: float(v) for t, v in suivies_wl["prix_cible"].items() if isinstance(v, (int, float)) and math.isfinite(v)}
 reglages_txt = (f"au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de sécurité de "
                 f"{ui.pct(regl['marge'], 0)}, réglables dans « La bonne action au bon prix »")
-mon_style = sty.style_choisi()
 occasions = pa.tableau(sc, {t: "Univers" for t in sc.index[sc["statut"] == "Éligible"]}, strat["valorisation"],
-                       regl["rendement"], regl["marge"], vises, note=sty.note(sc[sc["statut"] != "Fonds"], mon_style))
+                       regl["rendement"], regl["marge"], vises)
 occasions = occasions[occasions["verdict"] == pa.VERDICTS["bon"]] if not occasions.empty else occasions
 lignes = pa.tableau(sc, {t: "Portefeuille" for t in w.index}, strat["valorisation"], regl["rendement"],
                     regl["marge"], vises)
@@ -122,7 +120,7 @@ with b[0].container(border=True, height="stretch"):
     chiffre(len(occasions), "actions de qualité sous votre prix d'achat",
             f"Parmi les valeurs qui passent les filtres de qualité, {reglages_txt}.")
     if len(occasions):
-        st.caption(f"Les mieux classées selon votre style ({sty.STYLES[mon_style].libelle}) : " + " · ".join(
+        st.caption("Les mieux notées (note GARP) : " + " · ".join(
             f"{x['nom']} ({ui.pct(x['ecart_achat'], 0, signe=True)})" for _, x in occasions.head(4).iterrows()))
     if st.button("Voir la sélection", icon=":material/arrow_forward:", key="aller_prix"):
         st.switch_page("vues/prix_achat.py")
@@ -203,8 +201,8 @@ t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_va
 ui.tableau(t, width="stretch", column_config={
     "nom": "Valeur", "enveloppe": "Compte", "poche": "Poche",
     "poids": ui.PCT("Poids"),
-    "score": ui.SCORE("Score", "Moyenne pondérée des analyses, chacune sur 100 : piliers, valorisation, "
-                               "quatre regards, Piotroski, Altman, Beneish"),
+    "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
+                                   "sur 100"),
     "perf_1m": ui.PCT("1 mois"), "perf_12m": ui.PCT("12 mois"),
     "tri_implicite": ui.PCT("TRI implicite"), "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"),
 })

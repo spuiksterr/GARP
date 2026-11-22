@@ -10,7 +10,7 @@ sc = ui.require_data()
 names = ui.label_map(sc)
 
 st.title("Backtest")
-MODES = ["Mon portefeuille : profil de risque", "Méthodes de notation : test à date"]
+MODES = ["Mon portefeuille : profil de risque", "La note GARP : test à date"]
 mode = st.segmented_control("Type de backtest", MODES, default=MODES[0], key="bt_mode",
                             label_visibility="collapsed") or MODES[0]
 
@@ -108,14 +108,10 @@ if mode == MODES[1]:
             "seuls comptes publiés à cette date (comptes déposés à la SEC, réputés connus 90 jours après la clôture), "
             "puis les meilleures valeurs sont gardées un an à poids égaux. On voit ainsi si une méthode de notation "
             "aurait réellement choisi les bonnes actions.", icon=":material/science:")
-    c = st.columns([3, 1, 1])
-    choix_m = c[0].multiselect("Méthodes testées", list(bp.METHODES),
-                               default=["Qualité", "Qualité + valeur", "Piliers (qualité, croissance, valeur, momentum)",
-                                        "Momentum"], key="bt_pit_methodes")
-    n_pit = c[1].slider("Lignes", 10, 40, 20, 5, key="bt_pit_n")
-    debut_pit = c[2].selectbox("Depuis", list(range(2012, 2022)), index=0, key="bt_pit_debut")
-    if not choix_m:
-        st.stop()
+    c = st.columns([1, 1, 3])
+    choix_m = list(bp.METHODES)  # la note GARP seule, face à toutes les valeurs testables et au S&P 500
+    n_pit = c[0].slider("Lignes", 10, 40, 20, 5, key="bt_pit_n")
+    debut_pit = c[1].selectbox("Depuis", list(range(2012, 2022)), index=0, key="bt_pit_debut")
 
     @st.cache_data(show_spinner=False)
     def _preparer(version):
@@ -151,7 +147,7 @@ if mode == MODES[1]:
                                                        "testables à poids égaux", 0),
     })
     with st.expander("Valeurs choisies chaque année"):
-        m_detail = st.selectbox("Méthode", choix_m, key="bt_pit_detail")
+        m_detail = choix_m[0]
         sel = res["selections"].get(m_detail, {})
         st.dataframe(pd.DataFrame({f"{d:%Y}": pd.Series(v) for d, v in sel.items()}), hide_index=True, width="stretch")
     st.caption(f"{res['nb_valeurs']} sociétés américaines testables (comptes SEC sur au moins 4 exercices), hors banques, "

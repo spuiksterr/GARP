@@ -83,7 +83,7 @@ with tab_lignes:
                 "verdict": ui.colonne_verdict(), "ecart_achat": ui.PCT("Cours / prix d'achat", "Négatif : sous votre prix d'achat.", 0),
                 "cours": st.column_config.NumberColumn("Cours", format="%.2f"),
                 "prix_achat": st.column_config.NumberColumn("Prix d'achat", format="%.2f"), "devise": "Devise",
-                "score": ui.SCORE("Score"), "moat": "Moat estimé",
+                "score": ui.SCORE("Note GARP"), "moat": "Moat estimé",
                 "criteres": st.column_config.TextColumn("Critères", help="Critères de qualité remplis sur évalués."),
                 "tri_implicite": ui.PCT("TRI implicite"), "perf_12m": ui.PCT("12 mois"),
                 "homme_cle": st.column_config.NumberColumn("Homme-clé / 10", format="%.1f"),

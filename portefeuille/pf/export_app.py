@@ -35,7 +35,7 @@ COLONNES = [
     "croiss_bpa_estimee", "croiss_ca_estimee", "rendement_benefices", "mom_12_1", "ecart_mm200", "perf_3m",
     "perf_6m", "objectif_analystes", "p_fcf_historique", "ecart_p_fcf_historique", "p_fcf_net",
     "p_fcf_net_historique", "ecart_p_fcf_net_historique", "rendement_fcf_hors_sbc", "p_ca", "rentabilite",
-    "score_piliers", "pts_valorisation", "pts_piotroski", "pts_altman", "pts_beneish", "pts_criteres",
+    "pts_piotroski", "pts_altman", "pts_beneish",
     "regards_correction", "verif_sec", "rendement_actionnaire", "stabilite_marge", "couverture_interets",
     "nb_analystes", "evol_ca_12m", "ecart_plus_haut_52s",
 ]

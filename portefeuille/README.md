@@ -2,11 +2,11 @@
 
 Outils pour constituer, suivre et faire vivre un portefeuille d'actions de long terme, pensé pour un investisseur français (PEA + compte-titres) :
 
-- un **screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars et une sélection internationale), avec filtres d'exclusion et score Qualité / Croissance / Valorisation / Momentum ;
+- un **screener** d'environ 1 760 entreprises (S&P 500, STOXX Europe 600, Nasdaq Global Select d'au moins 1 milliard de dollars et une sélection internationale), avec filtres d'exclusion et note GARP (croissance 40 %, valorisation 35 %, qualité 25 %) ;
 - **votre portefeuille réel** (repris le 29/10/2026 depuis votre courtier : 8 lignes sur le compte-titres) avec ses poids cibles, une fiche de thèse par ligne et le suivi de performance contre l'ETF MSCI World ;
 - la **sélection de 25 valeurs proposée par Claude** le 29/10/2026, archivée dans `profil/selection_claude_2026-10.csv` et comparable dans le backtest ;
 - trois **signaux de santé** (Piotroski, Altman, Beneish) et une note selon **quatre regards**, intégrés au score avec la valorisation, qui y compte aussi comme un bloc à part ;
-- un **moat estimé** et une comparaison du PER à son historique, hors score ;
+- un **moat estimé** et une comparaison du PER à son historique, hors note ;
 - **six critères de qualité** remplis ou non (croissance du CA et du free cash flow, ROCE, dette nette / FCF, nombre d'actions, marge de FCF), en cartes sur la fiche valeur et en filtre dans le screener, hors score par défaut ;
 - une **interface** locale (Streamlit) : tableau de bord, fiche valeur avec DCF inversé, construction, backtest, suivi réel, apport du mois ;
 - une **ligne de commande** et des **commandes Claude Code** en français pour l'analyse et les revues.
@@ -41,7 +41,7 @@ sans fenêtre). `pf mobile --arreter` coupe l'accès.
 |---|---|
 | Chaque mois | Mise à jour, tableau de bord, « La bonne action au bon prix », proposition d'apport (onglet « Équilibre » du portefeuille) |
 | Chaque trimestre | `/revue-portefeuille` dans Claude Code après les publications de résultats |
-| Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleurs scores hors portefeuille |
+| Chaque semestre | Revue de la poche opportunités, `/nouvelles-idees` pour les meilleures notes GARP hors portefeuille |
 | Chaque année | Bilan contre l'ETF MSCI World, rééquilibrage par les apports |
 
 ## Ligne de commande
@@ -63,7 +63,7 @@ Depuis ce dossier : `.venv\Scripts\python.exe -m pf <commande>`, ou `.venv\Scrip
 | `screener --top 30 --enveloppe PEA` | Classement ; `--tous` inclut les exclues |
 | `fiche ASML.AS` | Tous les indicateurs d'une valeur et sa thèse |
 | `modele` | Composition du portefeuille (poids cibles), caractéristiques, répartitions |
-| `construire --n 22` | Construction de portefeuille : portefeuille construit par des règles (plancher de qualité, cycliques plafonnés), réglages de config/strategie.json ; `--notation regards` choisit la méthode de notation (composite, regards, buffett, munger, fisher, smith, qualite, croissance, valeur, momentum), `--pea 0.5` impose une part PEA |
+| `construire --n 22` | Construction de portefeuille : portefeuille construit par des règles (plancher de qualité, cycliques plafonnés), réglages de config/strategie.json , classement par la note GARP ; `--pea 0.5` impose une part PEA |
 | `backtest --depuis 2016-01-01 --reequilibrage annuel` | Profil de risque historique (attention au biais rétrospectif) |
 | `suivi` | Positions, performance, écart à l'ETF, écarts aux poids cibles |
 | `apport 1000 --compte PEA` | Ordres à passer pour investir un apport sans vendre |
@@ -124,9 +124,9 @@ Une valeur hors univers doit être ajoutée à `config/univers.csv`. Pour un ETF
 G.A.R.P sert d'abord à **trouver la bonne action au bon prix**. Votre portefeuille, importé de votre courtier, est analysé avec les mêmes outils ; l'équilibre n'y est qu'un onglet de propositions.
 
 - **Tableau de bord** : les actions de qualité au bon prix aujourd'hui, le verdict de vos lignes, les points de vigilance.
-- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, classement selon votre style, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict ; ouvrir une fiche ou ajouter à la watchlist depuis le tableau), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
-- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Risques, Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles), Mon style d'investisseur (questionnaire qui propose l'un des cinq styles : qualité, croissance, GARP, valeur, momentum ; comparaison des styles).
-- **Explorer** : Actualités, Quatre regards (lus un par un, hors score), Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
+- **Trouver** : La bonne action au bon prix (dans tout l'univers, votre portefeuille ou votre watchlist : qualité, classement par note GARP, prix juste au rendement exigé, prix d'achat après marge de sécurité, verdict ; ouvrir une fiche ou ajouter à la watchlist depuis le tableau), Screener (douze colonnes par défaut, « Colonnes avancées » pour toutes), Fiche valeur (qui commence par cours, prix d'achat, prix juste, verdict et « Suivre à ce prix »), Watchlist.
+- **Mon portefeuille** : Analyse de mon portefeuille (analyse des lignes, répartition et risques, équilibre proposé, poids modifiables, thèses), Risques, Importer mon portefeuille (CSV, Excel, tableau collé ; les quantités peuvent être enregistrées pour comparer poids réels et cibles).
+- **Explorer** : Actualités, Quatre regards (lus un par un, hors note), Grands investisseurs, Construction automatique, Backtest, Méthode et routine.
 
 Les quantités de vos lignes viennent du dernier import (photo du portefeuille, `profil/positions.csv`), remplacée à chaque réimport : rien à saisir à la main. Performance et fiscalité restent chez le courtier ; l'ancien journal des opérations (`data/transactions.csv`) n'est plus tenu par l'interface, mais reste lu s'il n'y a pas encore de photo.
 

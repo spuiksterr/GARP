@@ -25,7 +25,7 @@ INDICATEURS_FICHE = [
     ("croissance_implicite", "Croissance implicite dans le cours", "pct"),
     ("tri_implicite", "TRI implicite", "pct"),
     ("mom_12_1", "Momentum 12-1 mois", "pct"),
-    ("score", "Score composite (0-100)", "n"),
+    ("score", "Note GARP (0-100)", "n"),
 ]
 
 

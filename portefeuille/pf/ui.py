@@ -451,20 +451,17 @@ def data_version(paths: list[Path] | None = None) -> float:
     return max((p.stat().st_mtime for p in paths if p.exists()), default=0.0)
 
 
-def screener(poids: tuple | None = None) -> pd.DataFrame:
+def screener() -> pd.DataFrame:
     # La version entre dans la clé du cache : un changement ne laisse jamais un ancien tableau en mémoire.
-    return _screener(poids, data_version())
+    return _screener(data_version())
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def _screener(poids: tuple | None, version: float) -> pd.DataFrame:
+def _screener(version: float) -> pd.DataFrame:
     strat = load_strategy()
-    if poids:
-        strat["poids_piliers"] = dict(poids)
-    else:
-        pret = screener_prepare(strat)  # calculé par le flux de la nuit, s'il correspond aux données du poste
-        if pret is not None:
-            return pret
+    pret = screener_prepare(strat)  # calculé par le flux de la nuit, s'il correspond aux données du poste
+    if pret is not None:
+        return pret
     if load_metrics().empty:
         return pd.DataFrame()
     return build_screener(strategy=strat)

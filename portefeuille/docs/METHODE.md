@@ -50,36 +50,21 @@ Inspirés des sept critères « anti-médiocrité » du framework ai-berkshire :
 
 **Dérogation « devenue rentable »** : une entreprise dont la moyenne est plombée par une phase d'investissement terminée passe le filtre de rentabilité si sa dernière année dépasse 12 %, avec une marge brute supérieure à 30 % et des flux d'exploitation positifs deux ans de suite.
 
-## 3. Le score composite (0 à 100)
+## 3. La note GARP (0 à 100)
 
-Le score final est la moyenne de cinq analyses, chacune ramenée sur 100 :
+G.A.R.P suit une seule stratégie : *growth at a reasonable price*, la croissance sans la surpayer. Les entreprises qui passent les filtres d'exclusion sont classées par une seule note, sur trois piliers :
 
-| Analyse | Conversion sur 100 |
-|---|---|
-| **Piliers** | Le bloc décrit ci-dessous (colonne « Piliers » du screener) |
-| **Valorisation** | Le pilier valorisation seul : rang centile du rendement du FCF, du rendement des bénéfices, du TRI implicite et du PER prospectif |
-| **Piotroski** | Note sur 9 ramenée sur 100 |
-| **Altman** | 0 sous 1,81, 100 au-dessus de 2,99, progression linéaire entre les deux |
-| **Beneish** | 0 au-dessus de -1,78, 100 à -2,22 ou moins, progression linéaire entre les deux |
-
-Les poids sont égaux par défaut (0 pour les six critères) et se règlent dans `config/strategie.json` (`poids_score`), sauf celui des quatre regards, toujours nul. Un signal absent, comme Piotroski pour une banque, reçoit la médiane de l'univers : la société n'a ni bonus ni malus. Sans cela, les financières seraient pénalisées d'office.
-
-**Pourquoi un bloc Valorisation à part.** L'audit du 04/11/2026 a montré que, dans le seul bloc Piliers, la valorisation ne pesait que 5 % du score (25 % d'un bloc sur cinq), alors que Piotroski, Altman et Beneish mesurent la santé financière et que les regards recoupent le pilier qualité (corrélation de rang de 0,59). Pour une stratégie « qualité à prix raisonnable », le prix ne passait donc presque que par les filtres. Compté aussi à part, il pèse environ 25 % du score. Momentum et croissance ne comptent que dans le bloc Piliers. La grille des six critères peut devenir un sixième bloc (`criteres` dans `poids_score`, 0 par défaut).
-
-**Pourquoi les quatre regards ne comptent plus (22/11/2026).** Buffett, Munger, Fisher et Terry Smith sont quatre grilles cohérentes, mais de la même famille, « qualité, temps long » : additionnées, elles comptaient la qualité une seconde fois (corrélation de rang de 0,59 avec le pilier qualité), et leur moyenne effaçait ce qui les rend utiles, leurs désaccords. Ils se lisent désormais un par un, dans la fiche et sur leur page, sans total. Le poids `regards` est forcé à 0 au chargement de la stratégie, y compris dans un ancien `strategie.json`.
-
-### Le bloc Piliers
-
-Chaque indicateur est converti en **rang centile** dans l'univers (100 = meilleur), puis moyenné par pilier. Les banques, assureurs et holdings sont comparés entre eux sur la qualité et la valorisation (un PER d'assureur ne se compare pas à une VE/EBIT d'industriel).
-
-| Pilier | Poids par défaut | Indicateurs |
+| Pilier | Poids | Indicateurs |
 |---|---|---|
-| Qualité | 35 % | ROIC/ROE moyen, marge brute, marge opérationnelle, conversion du résultat en cash, stabilité des marges, dette nette/EBITDA, évolution du nombre d'actions |
-| Valorisation | 25 % | Rendement du flux de trésorerie (après rémunérations en actions), EBIT/valeur d'entreprise, TRI implicite, PER prospectif |
-| Croissance | 20 % | Croissance historique du CA, du BPA et du flux par action, consensus des analystes (BPA, CA) |
-| Momentum | 20 % | Performance 12 mois hors dernier mois, performance 6 mois, écart à la moyenne 200 jours |
+| **Croissance** | 40 % | Croissance historique du CA, du BPA et du flux par action, consensus des analystes (BPA, CA) |
+| **Valorisation** | 35 % | Rendement du flux de trésorerie (après rémunérations en actions), EBIT/valeur d'entreprise, TRI implicite, PER prospectif |
+| **Qualité** | 25 % | ROIC/ROE moyen, marge brute, marge opérationnelle, conversion du résultat en cash, stabilité des marges, dette nette/EBITDA, évolution du nombre d'actions |
 
-Les poids se règlent dans le screener ou dans `config/strategie.json`. Le facteur momentum est l'un des mieux documentés en finance ; il évite d'acheter trop tôt une action dont les mauvaises nouvelles ne sont pas finies.
+Chaque indicateur est converti en **rang centile** dans l'univers (100 = meilleur), puis moyenné par pilier ; la note est la moyenne pondérée des trois piliers. Les banques, assureurs et holdings sont comparés entre eux sur la qualité et la valorisation (un PER d'assureur ne se compare pas à une VE/EBIT d'industriel). Les poids sont fixés dans le code (`pf/scoring.py`, `POIDS_GARP`) : c'est la stratégie de l'outil, pas un réglage.
+
+**Repères, hors note.** Le momentum (performance 12 mois hors dernier mois, 6 mois, écart à la moyenne 200 jours), les quatre regards, les six critères de qualité, les signaux de santé (Piotroski, Altman, Beneish), le moat estimé et le risque homme-clé restent calculés et affichés. Ils se lisent à côté de la note, un par un, et ne s'y additionnent jamais.
+
+**Pourquoi une seule note (22/11/2026).** L'ancien score composite moyennait six analyses (piliers, valorisation, regards, Piotroski, Altman, Beneish). Il récompensait surtout la qualité et la solidité, comptées plusieurs fois (les regards étaient corrélés à 0,59 avec le pilier qualité), et ne disait pas quelle stratégie il servait. La note GARP la dit : la croissance d'abord, payée à un prix raisonnable, sur un socle de qualité. Les filtres d'exclusion gardent leur rôle de plancher : ce qui ne les passe pas n'est pas classé.
 
 ## 4. La valorisation : que suppose le cours ?
 
@@ -96,7 +81,7 @@ Lecture : un TRI implicite supérieur à 10 % pour une entreprise de qualité es
 
 ## Moat estimé, P/FCF et PER historique
 
-Ces deux données éclairent la décision mais n'entrent ni dans le score ni dans les filtres.
+Ces deux données éclairent la décision mais n'entrent ni dans la note GARP ni dans les filtres.
 
 **Moat estimé (Large, Étroit, Faible).** Le moat de Morningstar est un jugement d'analystes vendu sous licence : il n'est pas accessible ici. Celui-ci en est une approximation chiffrée, qui mesure les traces d'un avantage dans les comptes, avec un point par critère :
 
@@ -127,31 +112,15 @@ La section « Prix juste » de la fiche répond à une question simple : à quel
 
 ## La bonne action au bon prix
 
-La page « La bonne action au bon prix » et l'en-tête de la fiche répondent à la question « à quel prix acheter ? » par un autre chemin que les multiples : le rendement que l'on exige. La page cherche par défaut dans toutes les actions qui passent les filtres de qualité, et montre d'abord celles qui sont au bon prix ou à un prix correct, classées selon votre style d'investisseur (section suivante) ; on peut aussi y analyser son portefeuille ou sa watchlist, et filtrer par compte, critères et moat.
+La page « La bonne action au bon prix » et l'en-tête de la fiche répondent à la question « à quel prix acheter ? » par un autre chemin que les multiples : le rendement que l'on exige. La page cherche par défaut dans toutes les actions qui passent les filtres de qualité, et montre d'abord celles qui sont au bon prix ou à un prix correct, classées par note GARP ; on peut aussi y analyser son portefeuille ou sa watchlist, et filtrer par compte, critères et moat.
 
 - **Prix juste.** C'est le cours auquel l'action rapporterait exactement votre rendement exigé (9 % par an par défaut), si sa croissance attendue se réalise. Le modèle est celui du TRI implicite (« value drivers », section 4) : croissance retenue pendant 5 ans, ralentissement en 5 ans vers 3 %, rentabilité des nouveaux investissements bornée. Il est aussi utilisé par la page « Pour moi » de l'application du téléphone. Au rendement égal au TRI implicite, le prix juste est le cours actuel : les deux mesures disent la même chose.
 - **Prix d'achat.** C'est le prix juste diminué de la marge de sécurité (20 % par défaut), qui couvre l'erreur d'estimation : une croissance surestimée de quelques points suffit à faire baisser fortement le prix juste.
 - **Verdict.** « Au bon prix » quand le cours est au plus au prix d'achat ; « prix correct » entre le prix d'achat et le prix juste ; « à attendre » au-dessus du prix juste ; « non évalué » pour une holding, une société en perte ou un fonds.
 - **Réglages.** Rendement exigé et marge se règlent sur la page et sont retenus (`profil/prix_achat.json`). « Viser le prix d'achat » ou « Suivre à ce prix » l'inscrit comme prix visé dans la watchlist : le tableau de bord prévient quand le cours y passe.
-- **Classement.** À verdict égal, la note de votre style (de 0 à 100) range les valeurs ; un autre style se choisit sur la page pour comparer. Le prix d'achat et le verdict n'en dépendent pas : ils jugent le prix, pas l'entreprise. Le tableau de bord classe ses occasions de la même façon.
+- **Classement.** À verdict égal, la note GARP range les valeurs. Le prix d'achat et le verdict n'en dépendent pas : ils jugent le prix, pas l'entreprise. Le tableau de bord classe ses occasions de la même façon.
 - **Actions.** Cocher une ligne ouvre sa fiche ; en cocher plusieurs permet de les ajouter à la watchlist, avec ou sans le prix d'achat comme prix visé.
 - **Limite.** Le prix juste dépend surtout de la croissance retenue, qui reste une estimation. C'est un repère pour comparer et attendre son prix, pas un signal d'achat : la thèse et l'analyse qualitative décident.
-
-## Votre style d'investisseur
-
-La méthode qui marche le mieux est souvent celle que l'on arrive à tenir dans les mauvaises années. La page « Mon style d'investisseur » (espace « Mon portefeuille ») propose l'un des cinq styles à partir de huit questions (ce que l'on cherche, durée de détention, réaction à une baisse de 30 %, prix accepté, entreprises mal aimées, retard sur le marché, temps de suivi, regret le plus redouté), et explique le choix : les réponses qui ont pesé, et le style le plus proche quand les réponses hésitent. On peut en retenir un autre. Le choix est enregistré dans `profil/style.json` ; sans questionnaire, le style par défaut est GARP.
-
-| Style | Ce qu'il cherche | Note (rangs centiles combinés) |
-|---|---|---|
-| **Qualité** | Payer pour l'excellence et la durabilité | Pilier qualité 60 %, six critères 40 % |
-| **Croissance** | Accepter un prix élevé pour une croissance forte | Pilier croissance |
-| **GARP** | La croissance, sans la surpayer | Croissance 40 %, valorisation 35 %, qualité 25 % |
-| **Valeur** | Acheter ce qui est décoté | Valorisation 70 %, qualité 30 % |
-| **Momentum** | Suivre la tendance | Momentum 12-1 mois |
-
-Le second onglet compare les styles. Un style **retient** une action quand elle passe les filtres de qualité, figure dans la tête de son classement (le quart le mieux noté des éligibles par défaut) et se trouve au bon prix ou à un prix correct. On y voit combien d'actions chacun retient, combien deux styles ont en commun, celles que plusieurs styles retiennent et celles qu'un seul retient. Un rappel du comportement passé suit : les mauvaises années connues de chaque style et, à la demande, le backtest à date de chacun depuis 2012 (section « Backtest à date »), avec ses limites.
-
-Un questionnaire reste grossier et aucun style ne garantit un résultat : G.A.R.P propose un style et l'explique, le choix reste celui de l'utilisateur. Ce n'est pas un conseil personnalisé.
 
 ## Équilibre du portefeuille (proposition)
 
@@ -189,27 +158,17 @@ L'onglet « Équilibre (proposition) » de « Analyse de mon portefeuille » com
 
 La page « Construction automatique » (espace « Explorer ») construit un portefeuille par des règles seules. Il sert de point de comparaison et de liste d'idées, pas de cible : il ne modifie jamais vos poids cibles.
 
-- **Méthode de notation.** Elle classe les candidats. Chaque note est ramenée à son rang dans l'univers (0 à 100) pour rester comparable, et le score composite départage les ex aequo. Méthodes proposées :
-  - **Score composite** : la note de l'outil ;
-  - **un regard seul** : Buffett, Munger, Fisher ou Terry Smith (leur moyenne n'est plus proposée : voir section 3) ;
-  - **GARP** : croissance 40 %, valorisation 35 %, qualité 25 % ;
-  - **Qualité d'abord** : pilier qualité 60 %, six critères 40 % ;
-  - **Croissance** ;
-  - **Valeur** : valorisation 70 %, qualité 30 % ;
-  - **Momentum** ;
-  - **Personnalisée** : des curseurs dosent chaque composante.
-
-  L'onglet « Comparer les méthodes » montre quelles valeurs chaque méthode retient avec les mêmes garde-fous. Une valeur retenue par beaucoup de méthodes plaît sous plusieurs angles.
+- **Note.** La note GARP classe les candidats, ramenée à son rang parmi les valeurs éligibles.
 - **Sélection.** Les meilleures notes parmi les valeurs éligibles, sous trois conditions réglables :
   - un plancher de qualité : par défaut, au moins 4 des 6 critères remplis, en proportion des critères évalués (une banque n'en a que deux, elle doit les remplir tous les deux) ;
   - pas de moat estimé « Faible » ;
   - au plus 25 % des lignes et du poids dans les secteurs cycliques (énergie et infrastructures, matériaux et chimie, banques).
 
-  Ces garde-fous corrigent un biais connu du score : au sommet du cycle, les cycliques paraissent bon marché et le bloc valorisation les favorise.
+  Ces garde-fous corrigent un biais connu de la note : au sommet du cycle, les cycliques paraissent bon marché et le pilier valorisation les favorise.
 - **Diversification.** Nombre de lignes, plafond par secteur, poids minimal et maximal par ligne. La part PEA n'est imposée que si on le demande.
-- **Pondération.** Note de la méthode choisie × 1/volatilité par défaut, ou parts égales, ou variance minimale.
+- **Pondération.** Note GARP × 1/volatilité par défaut, ou parts égales, ou variance minimale.
 - **Ce que montre la page.**
-  - Pour chaque idée : note de la méthode, score composite, les quatre regards (1 à 5), critères, moat, P/FCF comparé à son niveau habituel, nombre de grands investisseurs qui la détiennent, achats de dirigeants.
+  - Pour chaque idée : note GARP, les quatre regards (1 à 5), critères, moat, P/FCF comparé à son niveau habituel, nombre de grands investisseurs qui la détiennent, achats de dirigeants.
   - Une comparaison avec la seule partie actions de votre portefeuille : les ETF et ETC n'ont pas ces indicateurs.
 - **Interactions.** Cocher une ligne l'ajoute à la watchlist ; cliquer sur une cellule ouvre la fiche.
 - **Usage partagé.** Les réglages enregistrés servent aussi au backtest du portefeuille systématique et à la commande `construire`.
@@ -227,9 +186,9 @@ Le backtest du portefeuille note les actions avec les comptes d'aujourd'hui : il
 
   Les quatre regards et les critères ne sont pas reconstitués.
 - **Capitalisation d'époque.** Elle est déduite de celle d'aujourd'hui, avec les divisions d'actions repérées et neutralisées : la SEC publie les nombres d'actions d'origine.
-- **Méthodes.** Qualité, croissance, valeur, momentum, leurs combinaisons, et GARP (croissance 40 %, valeur 35 %, qualité 25 %) : les cinq styles d'investisseur ont chacun la leur, reprise dans la comparaison des styles.
+- **Méthode.** La note GARP (croissance 40 %, valeur 35 %, qualité 25 %), reconstituée à chaque date, face à toutes les valeurs testables à poids égaux et au S&P 500.
 - **Simulation.** Les valeurs choisies sont gardées un an à poids égaux, en euros. La comparaison se fait avec toutes les valeurs testables à poids égaux et avec le S&P 500.
-- **Ce que montre le test (novembre 2026, 20 lignes, 2012-2026).** Qualité et valeur n'ont pas battu l'ensemble des valeurs à poids égaux (environ 1,5 à 2 points de moins par an). Elles l'ont fait avec moins de volatilité et des pertes maximales plus faibles pour la qualité. Croissance et momentum ont fait beaucoup mieux, mais avec un biais : l'univers d'aujourd'hui contient les sociétés qui ont réussi à grossir, ce qui avantage précisément ces méthodes.
+- **Premier test (novembre 2026, 20 lignes, 2012-2026, quand plusieurs méthodes étaient comparées).** Qualité et valeur n'ont pas battu l'ensemble des valeurs à poids égaux (environ 1,5 à 2 points de moins par an). Elles l'ont fait avec moins de volatilité et des pertes maximales plus faibles pour la qualité. Croissance et momentum ont fait beaucoup mieux, mais avec un biais : l'univers d'aujourd'hui contient les sociétés qui ont réussi à grossir, ce qui avantage précisément ces méthodes.
 - **Limite principale : le biais du survivant.** Il gonfle toutes les courbes ; seule la comparaison au sein du même univers est juste.
 
 ## Grands investisseurs
@@ -285,11 +244,11 @@ Une grille simple, critère rempli ou non, affichée en cartes vertes ou rouges 
 - **Historique.** Yahoo ne donne que 4 exercices, soit 3 ans de croissance. Pour les sociétés américaines, les comptes déposés à la SEC prolongent chaque série vers le passé, mais seulement avec un poste qui reproduit les chiffres Yahoo à 3 % près sur les exercices communs : un poste de périmètre différent n'allonge rien. Les sociétés européennes sont prolongées de la même façon par leurs rapports annuels ESEF, souvent de deux exercices, ce qui donne 5 ans de croissance. Sans rapport trouvé (Suisse, la plupart des sociétés allemandes), elles restent sur 3 ans. La fenêtre réellement utilisée est écrite sur chaque carte.
 - **Cas particuliers.** Un free cash flow négatif en début ou en fin de période fait échouer le critère de croissance. Une société sans dette nette remplit le critère de dette même avec un flux négatif. Pour les banques, assureurs et holdings, seuls la croissance du chiffre d'affaires et le nombre d'actions sont évalués : les quatre autres critères supposent un bilan d'entreprise classique.
 - **Usage.** Le screener affiche le décompte (« 5/6 »), les six valeurs, et permet d'exiger un nombre minimal de critères remplis. Les seuils se règlent dans `config/strategie.json` (`criteres`).
-- **Hors score par défaut.** La grille recoupe les piliers qualité et croissance, et une grille de seuils sert surtout de filtre. Pour l'intégrer au score composite, donner un poids à `criteres` dans `poids_score` : le bloc vaut alors la part des critères remplis, sur 100, et la médiane de l'univers quand moins de quatre critères sont évalués.
+- **Hors note.** La grille recoupe les piliers qualité et croissance, et une grille de seuils sert surtout de filtre : c'est un repère, jamais additionné à la note GARP.
 
 ## Les trois signaux de santé
 
-Ils sont calculés sur les deux derniers exercices annuels et s'affichent dans le screener, la fiche valeur et la page Composition. Ils déclenchent une alerte et comptent dans le score, mais pas dans les filtres. Ils ne sont pas calculés pour les banques, assureurs et holdings, dont le bilan ne s'y prête pas.
+Ils sont calculés sur les deux derniers exercices annuels et s'affichent dans le screener, la fiche valeur et la page Composition. Ils déclenchent une alerte et servent de repères, hors note GARP et hors filtres. Ils ne sont pas calculés pour les banques, assureurs et holdings, dont le bilan ne s'y prête pas.
 
 - **Piotroski (0 à 9)** : la situation s'améliore-t-elle ? Un point par critère rempli : résultat positif, flux d'exploitation positif, rentabilité des actifs en hausse, flux supérieur au résultat, dette longue qui n'augmente pas, liquidité en hausse, pas de nouvelles actions, marge brute en hausse, rotation des actifs en hausse. Alerte à 2 ou moins. Si un critère manque, la note est ramenée sur 9.
 - **Altman (Z-Score de 1968)** : risque de faillite. Sous 1,81 : zone fragile ; au-dessus de 2,99 : zone sûre. Pensé pour les industriels, il sous-note les entreprises aux gros actifs et celles dont les rachats d'actions ont réduit les réserves.
@@ -326,7 +285,7 @@ Où la lire :
 - **screener et composition** : la colonne « Homme-clé » ;
 - **tableau de bord** : un point de vigilance pour une ligne du portefeuille au risque élevé, d'au moins 5 % du poids.
 
-Elle n'entre ni dans le score composite ni dans les filtres d'exclusion. Un fondateur aux commandes est aussi souvent une force : vision longue, intérêts alignés avec les actionnaires. La note signale une question à poser dans la thèse (que se passerait-il sans cette personne ?), pas un défaut.
+Elle n'entre ni dans la note GARP ni dans les filtres d'exclusion. Un fondateur aux commandes est aussi souvent une force : vision longue, intérêts alignés avec les actionnaires. La note signale une question à poser dans la thèse (que se passerait-il sans cette personne ?), pas un défaut.
 
 Les dirigeants arrivent avec le renouvellement des fiches de fondamentaux, en un mois environ pour tout l'univers. `pf homme-cle` les relit tout de suite, pour le portefeuille et la watchlist (une seconde par valeur ; `--tous` pour l'univers, environ 40 minutes). Les limites :
 - la liste de Yahoo manque parfois ;
@@ -373,10 +332,9 @@ Une ligne qui dépasse le double de son poids cible peut être allégée, de pr�
 
 | Fréquence | Durée | Quoi |
 |---|---|---|
-| Une fois, puis chaque année | 5 min | Questionnaire de « Mon style d'investisseur » : le style retenu classe « La bonne action au bon prix » |
 | Chaque mois | 15 min | Mise à jour complète (les mises à jour rapides suffisent entre-temps), regarder le tableau de bord et « La bonne action au bon prix », voir la proposition d'apport (onglet « Équilibre » de « Analyse de mon portefeuille »), réimporter son portefeuille après des achats |
 | Chaque trimestre | 1 h | Après les publications : relire les conditions de vente, noter les faits marquants dans les fiches (commande Claude `/revue-portefeuille`) |
-| Chaque semestre | 1 h | Revoir la poche opportunités au regard du score et du TRI implicite ; étudier les meilleurs scores hors portefeuille (`/analyse-valeur`) |
+| Chaque semestre | 1 h | Revoir la poche opportunités au regard de la note GARP et du TRI implicite ; étudier les meilleures notes hors portefeuille (`/analyse-valeur`) |
 | Chaque année | 2 h | Bilan contre l'ETF MSCI World ; rééquilibrage si une ligne dépasse 2x sa cible ou un secteur 30 % ; mise à jour de l'univers |
 
 ## 8. Fiscalité française (repères)

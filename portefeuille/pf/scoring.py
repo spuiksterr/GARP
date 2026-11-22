@@ -1,10 +1,10 @@
-"""Filtres d'exclusion et score composite Qualité / Croissance / Valorisation / Momentum.
+"""Filtres d'exclusion et note GARP (croissance, valorisation, qualité).
 
 Étape 1 — exclure les entreprises qui ne sont pas de premier ordre (inspiré des 7 critères
 « anti-médiocrité » d'ai-berkshire) : rentabilité, cash réel, solidité financière, pouvoir de prix,
 respect de l'actionnaire.
 Étape 2 — classer les survivantes par rangs centiles (0-100) au sein de l'univers, pilier par pilier,
-puis combiner les piliers avec les poids de `config/strategie.json`.
+puis combiner les trois piliers de la stratégie GARP (POIDS_GARP) en une note de 0 à 100.
 """
 from __future__ import annotations
 
@@ -144,49 +144,31 @@ def pillar_scores(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-# La valorisation a son propre bloc : dans le seul bloc Piliers, elle ne pesait que 5 % du score (25 % d'un
-# bloc sur cinq), alors que les autres blocs mesurent surtout la qualité. La grille des six critères
-# (criteres.py) recoupe les piliers qualité et croissance : poids nul par défaut. Les quatre regards non plus ne
-# comptent pas (22/11/2026) : quatre grilles « qualité » additionnées doublaient le pilier qualité (corrélation de
-# rang de 0,59) ; ils se lisent un par un (config.load_strategy force leur poids à 0).
-POIDS_SCORE = {"piliers": 1, "valorisation": 1, "regards": 0, "piotroski": 1, "altman": 1, "beneish": 1, "criteres": 0}
-LIBELLES_BLOCS = {"piliers": "Piliers", "valorisation": "Valorisation", "regards": "Regards", "piotroski": "Piotroski",
-                  "altman": "Altman", "beneish": "Beneish", "criteres": "Six critères"}
-CRITERES_MIN_EVALUES = 4  # en dessous (banques, assureurs, holdings), le bloc reçoit la médiane
+# La note GARP (« growth at a reasonable price » : la croissance, sans la surpayer), seule note de l'outil depuis le
+# 22/11/2026 : moyenne pondérée de trois piliers, chacun en rangs centiles dans l'univers (0 à 100). Le momentum
+# n'y entre pas (il reste affiché comme repère), pas plus que les quatre regards, les six critères ni les signaux de
+# santé (Piotroski, Altman, Beneish) : des repères à lire à côté, pas des notes à additionner.
+POIDS_GARP = {"croissance": 0.40, "valorisation": 0.35, "qualite": 0.25}
+LIBELLES_GARP = {"croissance": "Croissance", "valorisation": "Valorisation", "qualite": "Qualité"}
 
 
-def composite_score(df: pd.DataFrame, weights: dict | None = None) -> pd.DataFrame:
-    """Score final : moyenne pondérée des analyses, chacune sur 100, et détail des points.
-
-    Un signal absent (banques, assureurs, holdings) reçoit la médiane de l'univers : une moyenne limitée
-    aux signaux disponibles avantagerait ou pénaliserait ces sociétés mécaniquement.
-    """
-    weights = weights or POIDS_SCORE
-    pts = health_points(df)
-    pts["pts_regards"] = df["regards_total"] * 5
-    if "criteres_ok" in df.columns:
-        evalues = pd.to_numeric(df["criteres_evalues"], errors="coerce")
-        pts["pts_criteres"] = (pd.to_numeric(df["criteres_ok"], errors="coerce") / evalues * 100).where(
-            evalues >= CRITERES_MIN_EVALUES)
-    if "valorisation" in df.columns:
-        pts["pts_valorisation"] = df["valorisation"]
-    parts = pts.rename(columns=lambda c: c.removeprefix("pts_")).assign(piliers=df["score_piliers"])
-    parts = parts.dropna(axis=1, how="all")
-    parts = parts.fillna(parts.median())
-    w = pd.Series(weights, dtype=float).reindex(parts.columns).fillna(0.0)
-    pts["score"] = (parts * w).sum(axis=1) / w.sum()
-    return pts
+def note_garp(df: pd.DataFrame) -> pd.Series:
+    """Note GARP de 0 à 100 : croissance 40 %, valorisation 35 %, qualité 25 % (colonnes des piliers)."""
+    return sum(pd.to_numeric(df[p], errors="coerce") * w for p, w in POIDS_GARP.items()) / sum(POIDS_GARP.values())
 
 
 def _empreinte(strategy: dict) -> dict:
-    """Ce dont dépend le screener : stratégie, indicateurs, corrections des regards et code du calcul. Les fins de
-    ligne sont normalisées (GitHub construit sous Linux et sous Windows)."""
+    """Ce dont dépend le screener : réglages utiles de la stratégie (filtres, valorisation, critères), indicateurs,
+    corrections des regards et code du calcul. Les fins de ligne sont normalisées (GitHub construit sous Linux et
+    sous Windows). Les autres clés de strategie.json (construction, suivi…) n'y entrent pas : la version installée
+    garde son propre fichier, qui ne doit pas empêcher d'utiliser le screener calculé la nuit."""
     def h(octets: bytes) -> str:
         return hashlib.sha1(octets.replace(b"\r\n", b"\n")).hexdigest()
 
     ici = Path(__file__).resolve().parent
     return {
-        "strategie": h(json.dumps(strategy, sort_keys=True, ensure_ascii=False).encode("utf-8")),
+        "strategie": h(json.dumps({k: strategy.get(k) for k in ("filtres", "valorisation", "criteres")},
+                                  sort_keys=True, ensure_ascii=False).encode("utf-8")),
         "indicateurs": h(METRICS_PARQUET.read_bytes()) if METRICS_PARQUET.exists() else "",
         "ajustements": h(AJUSTEMENTS_CSV.read_bytes()) if AJUSTEMENTS_CSV.exists() else "",
         "code": h(b"".join((ici / f).read_bytes() for f in _CODE_DU_CALCUL)),
@@ -216,7 +198,7 @@ def screener_prepare(strategy: dict | None = None) -> pd.DataFrame | None:
 
 
 def build_screener(metrics: pd.DataFrame | None = None, strategy: dict | None = None) -> pd.DataFrame:
-    """Tableau complet : indicateurs + scores par pilier + score composite + statut + motifs."""
+    """Tableau complet : indicateurs + piliers + note GARP (`score`) + statut + motifs."""
     strategy = strategy or load_strategy()
     df = metrics if metrics is not None else load_metrics()
     if df.empty or (metrics is None and not metrics_a_jour(strategy)):
@@ -227,17 +209,14 @@ def build_screener(metrics: pd.DataFrame | None = None, strategy: dict | None = 
     # Les fonds (ETF, ETC) restent visibles avec leurs indicateurs de cours, hors classement.
     fonds = df["fonds"].fillna(False).astype(bool) if "fonds" in df.columns else pd.Series(False, index=df.index)
     funds, df = df[fonds].copy(), df[~fonds].copy()
-    scores = pillar_scores(df)
-    weights = strategy["poids_piliers"]
-    total = sum(weights.values()) or 1.0
-    df = df.join(scores)
-    df["score_piliers"] = sum(scores[p] * w for p, w in weights.items()) / total
+    df = df.join(pillar_scores(df))
+    df["score"] = note_garp(df)
     filtres = strategy["filtres"]
     df["motifs_exclusion"] = [" ; ".join(exclusion_reasons(t, r, filtres)) for t, r in df.iterrows()]
     df["alertes"] = [" ; ".join(alerts(r)) for _, r in df.iterrows()]
     df["statut"] = np.where(df["motifs_exclusion"].str.len() > 0, "Exclu", "Éligible")
-    df = df.join(notes_frame(df))
-    df = df.join(composite_score(df, strategy.get("poids_score")))
+    df = df.join(notes_frame(df))  # quatre regards : repères, hors note
+    df = df.join(health_points(df))  # signaux de santé ramenés sur 100 : repères, hors note
     if not funds.empty:
         df = pd.concat([df, funds.assign(motifs_exclusion="", alertes="", statut="Fonds")])
     df = df.sort_values(["statut", "score"], ascending=[False, False])

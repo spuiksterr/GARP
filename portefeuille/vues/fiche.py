@@ -23,7 +23,6 @@ from pf import watchlist as wl
 from pf.config import load_cas_particuliers, load_strategy
 from pf.data import fx_rate, load_fundamentals, load_fx
 from pf.metrics import annual_table
-from pf.scoring import LIBELLES_BLOCS, POIDS_SCORE
 from pf.theses import append_journal, read_thesis
 from pf.valuation import implied_growth, implied_irr, value_driver_ev
 
@@ -74,7 +73,7 @@ if isinstance(r.get("profil"), str) and r["profil"]:
 if r["statut"] == "Exclu":
     st.error(f"Exclue par les filtres : {r['motifs_exclusion']}", icon=":material/block:")
 elif r["statut"] == "Fonds":
-    st.info("Fonds (ETF ou ETC) : sans états financiers, il n'a ni filtres, ni score, ni valorisation. "
+    st.info("Fonds (ETF ou ETC) : sans états financiers, il n'a ni filtres, ni note GARP, ni valorisation. "
             "Seuls le cours, le risque et la fiche de thèse s'appliquent.", icon=":material/info:")
 else:
     st.success(f"Éligible, rang {int(r['rang'])} sur {int((sc['statut'] == 'Éligible').sum())}", icon=":material/verified:")
@@ -141,22 +140,19 @@ if section == "Résumé":
     if not est_fonds:
         a, b = st.columns([1, 2])
         with a:
-            poids = strat.get("poids_score") or POIDS_SCORE
-            detail = {LIBELLES_BLOCS[b]: (r.get("score_piliers") if b == "piliers" else r.get(f"pts_{b}"))
-                      for b, p in poids.items() if p and b in LIBELLES_BLOCS}
-            st.metric("Score composite", ui.num(r["score"], 0) + " / 100", border=True,
-                      help=f"Moyenne des {len(detail)} analyses, chacune sur 100. Un signal absent compte pour la médiane de l'univers.")
-            st.caption(" · ".join(f"{k} {ui.num(v, 0)}" for k, v in detail.items()))
-            st.markdown("**Détail du bloc Piliers**")
-            piliers = pd.Series({"Qualité": r["qualite"], "Croissance": r["croissance"],
-                                 "Valorisation": r["valorisation"], "Momentum": r["momentum"]})
-            fig = ui.hbar(piliers / 100, fmt=".0%", height=200)
+            st.metric("Note GARP", ui.num(r["score"], 0) + " / 100", border=True,
+                      help="La croissance, sans la surpayer : croissance 40 %, valorisation 35 %, qualité 25 %, chaque "
+                           "pilier en rang centile dans l'univers (100 = meilleur).")
+            st.markdown("**Les trois piliers de la note**")
+            piliers = pd.Series({"Croissance · 40 %": r["croissance"], "Valorisation · 35 %": r["valorisation"],
+                                 "Qualité · 25 %": r["qualite"]})
+            fig = ui.hbar(piliers / 100, fmt=".0%", height=170)
             fig.update_traces(text=[f"{v:.0f}" for v in piliers.sort_values().values])
             ui.show(fig)
-            st.caption("Rangs centiles dans l'univers (100 = meilleur). Banques, assureurs et holdings sont comparés entre eux "
-                       "sur la qualité et la valorisation.")
-            # Quatre avis à lire un par un : ni additionnés, ni comptés dans le score (22/11/2026).
-            st.markdown("**Quatre regards**, sur 5, hors score", help="Chacun juge selon sa propre grille : un écart "
+            st.caption("Rangs centiles dans l'univers (100 = meilleur). Banques, assureurs et holdings sont comparés entre "
+                       f"eux sur la qualité et la valorisation. Hors note : momentum {ui.num(r.get('momentum'), 0)} / 100.")
+            # Quatre avis à lire un par un : ni additionnés, ni comptés dans la note (22/11/2026).
+            st.markdown("**Quatre regards**, sur 5, hors note", help="Chacun juge selon sa propre grille : un écart "
                         "entre eux (Fisher enthousiaste, Buffett réservé sur le prix) est instructif.")
             st.markdown(f"Buffett **{int(r['buffett'])}** · Munger **{int(r['munger'])}** · "
                         f"Fisher **{int(r['fisher'])}** · Smith **{int(r['smith'])}**")
@@ -304,7 +300,7 @@ if section == "Résumé":
         st.subheader("Rang dans le screener")
         dernier = evo.iloc[-1]
         st.caption(f"{len(evo)} photos depuis le {evo.index[0]:%d/%m/%Y} ; rang actuel {ui.num(dernier['rang'], 0)} "
-                   f"({dernier['statut']}). Plus le rang est petit, meilleur est le score. Une photo est prise à "
+                   f"({dernier['statut']}). Plus le rang est petit, meilleure est la note GARP. Une photo est prise à "
                    "chaque mise à jour normale ou complète.")
         ui.show(ui.lines(evo[["rang"]].rename(columns={"rang": "Rang"}), yfmt=",.0f", height=240))
 
