@@ -3,7 +3,7 @@
 `pf bureau`, le raccourci « G.A.R.P » (GARP.pyw, sans console) ou la version installée (pf/autonome.py) :
 ouvre aussitôt la fenêtre sur un écran d'attente, démarre le serveur Streamlit en arrière-plan, y branche la
 fenêtre dès qu'il répond, et l'arrête quand on la ferme. Si un serveur tourne déjà sur le port (lancé par
-lancer.bat ou laissé actif pour le téléphone), la fenêtre s'y branche et le laisse tourner. La version installée
+lancer.bat), la fenêtre s'y branche et le laisse tourner. La version installée
 prend un autre port, pour ne jamais se brancher sur l'outil de développement.
 
 La fenêtre est toujours en thème sombre (celui de .streamlit/config.toml), quel que soit le réglage de Windows.

@@ -18,22 +18,8 @@ La méthode complète est dans [docs/METHODE.md](docs/METHODE.md) (aussi visible
 1. Double-cliquez sur `installer.bat` (une seule fois : environnement Python et premier téléchargement des données, environ 5 minutes). Déjà fait sur ce poste.
 2. Ouvrez **G.A.R.P (projet)** (icône sur le bureau et dans le menu Démarrer ; « G.A.R.P » tout court est la version installée par `GARP-Setup`) : l'application s'ouvre dans sa propre fenêtre, et s'arrête quand on la ferme. Raccourcis à recréer après un déplacement du dossier : clic droit sur `creer_raccourcis.ps1` > « Exécuter avec PowerShell ». Toujours possible : `lancer.bat`, qui l'ouvre dans le navigateur sur http://localhost:8501. La fenêtre est toujours en thème sombre.
 
-**Sur un autre PC, sans Python ni ce dossier** : l'installateur `GARP-Setup-b<n>.exe` des Releases GitHub installe ce même outil avec tout ce qu'il lui faut (voir [app/README.md](../app/README.md)). Il télécharge, sans jeton, chaque nuit les données calculées par GitHub (`pf export-outil`) au lieu de les calculer ; « Importer mon portefeuille » reprend les lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`).
+**Sur un autre PC, sans Python ni ce dossier** : l'installateur `GARP-Setup-b<n>.exe` des Releases GitHub installe ce même outil avec tout ce qu'il lui faut (voir [installateur/README.md](../installateur/README.md)). Il télécharge, sans jeton, chaque nuit les données calculées par GitHub (`pf export-outil`) au lieu de les calculer ; « Importer mon portefeuille » reprend les lignes depuis l'export du courtier, en CSV ou en classeur Excel (`.xlsx`).
 3. Dans l'interface (barre latérale), bouton « Mise à jour rapide » avant chaque session : cours, changes et scores en quelques minutes. Une fois par semaine, « Mise à jour complète » : fondamentaux par roulement et comptes déposés (SEC, rapports européens), environ 10 minutes. La barre latérale signale une mise à jour complète vieille de plus d'une semaine.
-
-## Sur le téléphone
-
-L'application tourne sur le PC ; le téléphone y accède de partout par un réseau privé chiffré (Tailscale, gratuit
-pour un usage personnel). Rien n'est ouvert sur Internet et vos données restent sur le PC.
-
-1. Installez Tailscale sur le PC et sur le téléphone (https://tailscale.com/download, ou l'App Store / le Play
-   Store), et connectez-vous **avec le même compte** sur les deux.
-2. Sur le PC : `.venv\Scripts\python.exe -m pf mobile`. La commande affiche l'adresse à ouvrir sur le téléphone
-   (`https://<nom-du-pc>.<…>.ts.net`). À faire une fois : le réglage est mémorisé par Tailscale.
-3. Sur le téléphone : ouvrez cette adresse, puis menu du navigateur > « Ajouter à l'écran d'accueil ».
-
-Le PC doit être allumé et l'application lancée (fenêtre G.A.R.P ouverte, ou `lancer.bat` pour la laisser tourner
-sans fenêtre). `pf mobile --arreter` coupe l'accès.
 
 ## Routine conseillée
 

@@ -1388,52 +1388,6 @@ def test_garde_fous_de_concentration():
     assert risques.seuils_garde_fous({})["ligne_max"] == 0.25  # valeurs par défaut sans réglage
 
 
-def test_mobile_adresse_tailscale():
-    from pf import mobile
-    assert mobile.adresse({"BackendState": "Running", "Self": {"DNSName": "pc-maison.tail1234.ts.net."}}) \
-        == "https://pc-maison.tail1234.ts.net"
-    assert mobile.adresse({"BackendState": "NeedsLogin", "Self": {"DNSName": "pc.tail1234.ts.net."}}) is None
-    assert mobile.adresse({}) is None
-
-
-def test_export_application_sans_donnee_personnelle(tmp_path):
-    import gzip
-    import json
-
-    from pf.export_app import exporter
-    chemin = exporter(tmp_path)
-    d = json.load(gzip.open(chemin, "rt", encoding="utf-8"))
-    assert d["format"] == 1 and d["nb_valeurs"] == len(d["valeurs"]) == 16
-    adbe = next(v for v in d["valeurs"] if v["ticker"] == "ADBE")
-    assert adbe["statut"] == "Éligible" and isinstance(adbe["score"], float) and adbe["devise"] == "USD"
-    assert 0.5 < adbe["cours_eur"] / adbe["cours"] < 1.2  # dollar converti en euros
-    assert len(d["cours"]["ADBE"]["c"]) > 200 and d["rangs"]["ADBE"][0][0] == "2026-11-01"
-    # Méthodes d'évaluation et six critères, que l'application recalcule.
-    ids = [m["id"] for m in d["methodes"]]
-    assert ids == ["garp"] and d["methodes"][0]["poids"] == {"score": 1}
-    assert [c["cle"] for c in d["criteres"]] == ["ca", "fcf", "roce", "dette", "actions", "marge"]
-    assert {"criteres_ok", "criteres_evalues"} <= set(adbe)
-    # Valorisation recalculable par l'application : mêmes entrées que metrics.py, ramenées à la capitalisation.
-    from pf.valuation import implied_irr
-    v = d["strategie"]["valorisation"]
-    tri = implied_irr(1 + adbe["val_dette_cap"], adbe["val_base_cap"], adbe["croissance_attendue"],
-                      g_term=v["croissance_terminale"], roic=adbe["val_roic"], years_high=v["annees_croissance"],
-                      years_fade=v["annees_convergence"])
-    assert abs(tri - adbe["tri_implicite"]) < 1e-3
-    assert len(d["changes"]["USD"]["c"]) > 200 and 0.5 < d["changes"]["USD"]["c"][-1] < 1.2
-    assert d["strategie"]["garde_fous"]["ligne_max"] > 0 and "notation" not in d["strategie"]["construction"]
-    # Fichiers complémentaires : fiches (historique, repères des multiples) et investisseurs.
-    fiches = json.load(gzip.open(tmp_path / "garp-fiches.json.gz", "rt", encoding="utf-8"))["fiches"]
-    h = fiches["ADBE"]["h"]
-    assert len(h["an"]) == len(h["chiffre_affaires"]) >= 4 and h["chiffre_affaires"][-1] > 1e9
-    assert fiches["ADBE"]["r"]["PER"]["actuel"] > 0 and len(fiches["ADBE"]["r"]["PER"]["v"]) >= 4
-    inv = json.load(gzip.open(tmp_path / "garp-investisseurs.json.gz", "rt", encoding="utf-8"))
-    assert {"investisseurs", "partages", "elus", "operations"} <= set(inv)
-    texte = gzip.open(chemin, "rt", encoding="utf-8").read()
-    for interdit in ("poids_cible", "transactions", "quantite", "contact_sec", "Exemple fictif"):
-        assert interdit not in texte, interdit
-
-
 def test_13f_sans_contact_sec_l_echec_se_voit(monkeypatch, capsys):
     """Sans adresse de contact SEC, la commande échoue (étape en orange dans le flux de la nuit) au lieu d'annoncer
     « 0 trimestres lus » : c'est ainsi que les 13F sont restés figés dans l'ancien dépôt."""

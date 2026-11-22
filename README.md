@@ -20,7 +20,7 @@ Un rang élevé dans le screener n'est pas une recommandation d'achat. Cet outil
 2. Lancez-le : il installe G.A.R.P pour votre compte, sans droits d'administrateur, avec tout ce qu'il lui faut (Python compris). L'installateur n'est pas signé : à l'avertissement de SmartScreen, choisissez « Informations complémentaires », puis « Exécuter quand même ».
 3. Ouvrez G.A.R.P depuis le menu Démarrer. Les données, calculées chaque nuit par GitHub, se téléchargent d'elles-mêmes, sans compte ni jeton. Les nouvelles versions se proposent dans la barre latérale.
 
-Détails : [app/README.md](app/README.md). L'application Android est suspendue pour l'instant.
+Détails : [installateur/README.md](installateur/README.md).
 
 ## Depuis le code source (développement)
 
@@ -44,7 +44,7 @@ Fenêtre de bureau : `pf bureau` (raccourcis par `portefeuille\creer_raccourcis.
 | `portefeuille/vues/`, `portefeuille/app.py` | Interface Streamlit |
 | `portefeuille/tests/` | Tests (`pytest tests -q`, et `-m pages` pour l'affichage) |
 | `portefeuille/config/` | Univers et réglages ; vos fichiers personnels (portefeuille, watchlist) vont dans `portefeuille/profil/`, exclu du dépôt |
-| [app/](app/README.md) | Installateur Windows (`GARP-Setup`) et application Android (Flutter, suspendue) : données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
+| [installateur/](installateur/README.md) | Installateur Windows (`GARP-Setup`) : l'outil du PC et son Python, données de la nuit publiées par GitHub, installation et mises à jour depuis les Releases |
 | [portefeuille/docs/MARQUE.md](portefeuille/docs/MARQUE.md) | Marque : positionnement, logo, couleurs, ton, textes de présentation |
 | `.claude/skills/` | Commandes Claude Code |
 | [FEUILLE_DE_ROUTE.md](FEUILLE_DE_ROUTE.md) | Améliorations prévues, en tickets confiés à des agents |

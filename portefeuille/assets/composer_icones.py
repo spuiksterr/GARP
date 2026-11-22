@@ -4,8 +4,8 @@
     .venv/Scripts/python.exe assets/composer_icones.py icones <embleme.png>
 
 « planche » compare les concepts rendus (grande icône et petites tailles). « icones » écrit toutes les icônes :
-application de bureau (assets/garp.png, garp.ico, logo.png), application Flutter (app/assets/logo.png,
-icônes Android adaptatives et monochromes, icône Windows) et le bandeau du README (docs/bandeau.png).
+outil du PC (assets/garp.png, garp.ico, entete.png), images de l'installateur Windows (installateur/*.bmp) et
+bandeau du README (docs/bandeau.png).
 """
 import sys
 from pathlib import Path
@@ -14,7 +14,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 ICI = Path(__file__).resolve().parent
 RACINE = ICI.parent.parent
-APP = RACINE / "app"
+INSTALLATEUR = RACINE / "installateur"
 
 # Couleurs de la marque (voir docs/MARQUE.md), depuis le 15/11/2026 : anthracite, ocre, ivoire.
 ANTHRACITE = (24, 25, 28)   # #18191C
@@ -167,15 +167,8 @@ def icones(source: Path) -> None:
     grande.save(ICI / "garp.ico", sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
     bandeau(e).convert("RGB").save(ICI.parent / "docs" / "bandeau.png", optimize=True)
 
-    # Application Flutter : logo affiché dans l'application, icône Windows.
-    (APP / "assets").mkdir(exist_ok=True)
-    grande.resize((512, 512), Image.LANCZOS).save(APP / "assets" / "logo.png", optimize=True)
-    recadrer(e).resize((512, 512), Image.LANCZOS).save(APP / "assets" / "embleme.png", optimize=True)
-    grande.save(APP / "windows" / "runner" / "resources" / "app_icon.ico",
-                sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
-
     # Installateur Windows (Inno Setup) : bandeau vertical de l'assistant et vignette, en 100 % et 200 %.
-    inst = APP / "windows" / "installateur"
+    inst = INSTALLATEUR
     inst.mkdir(exist_ok=True)
     for suffixe, f in (("", 1), ("@2x", 2)):
         larg, h = 164 * f, 314 * f
@@ -186,36 +179,6 @@ def icones(source: Path) -> None:
         v.alpha_composite(icone(e, 55 * f))
         v.convert("RGB").save(inst / f"petite{suffixe}.bmp")
 
-    # Android : icône classique, icône adaptative (fond + premier plan, 108 dp) et monochrome (Android 13).
-    res = APP / "android" / "app" / "src" / "main" / "res"
-    for dossier, facteur in {"mdpi": 1, "hdpi": 1.5, "xhdpi": 2, "xxhdpi": 3, "xxxhdpi": 4}.items():
-        m = res / f"mipmap-{dossier}"
-        m.mkdir(exist_ok=True)
-        grande.resize((round(48 * facteur),) * 2, Image.LANCZOS).save(m / "ic_launcher.png", optimize=True)
-        t = round(108 * facteur)
-        # Zone sûre : cercle de 66 dp au centre ; l'emblème n'en sort pas.
-        avec_ombre(e, t, 0.50).save(m / "ic_launcher_foreground.png", optimize=True)
-        degrade(t).save(m / "ic_launcher_background.png", optimize=True)
-        silhouette(e, t, 0.50).save(m / "ic_launcher_monochrome.png", optimize=True)
-
-
-PAGE_TELECHARGEMENT = "https://github.com/spuiksterr/GARP/releases/latest"
-
-
-def qr(source: Path) -> None:
-    """QR code vers la page de téléchargement, l'emblème au centre (paquet segno : pip install segno)."""
-    import io
-
-    import segno
-
-    tampon = io.BytesIO()
-    segno.make(PAGE_TELECHARGEMENT, error="h").save(tampon, kind="png", scale=16, border=4, dark="#18191C")
-    code = Image.open(tampon).convert("RGBA")
-    centre = round(code.width * 0.2)
-    pastille = icone(Image.open(source).convert("RGBA"), centre)
-    code.alpha_composite(pastille, ((code.width - centre) // 2, (code.height - centre) // 2))
-    code.resize((512, 512), Image.LANCZOS).save(APP / "assets" / "qr-telechargement.png", optimize=True)
-
 
 if __name__ == "__main__":
     mode = sys.argv[1]
@@ -223,6 +186,4 @@ if __name__ == "__main__":
         planche(Path(sys.argv[2]), Path(sys.argv[3]), *sys.argv[4:5])
     elif mode == "icones":
         icones(Path(sys.argv[2]))
-    elif mode == "qr":
-        qr(Path(sys.argv[2]))
     print("fait")

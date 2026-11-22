@@ -1,7 +1,7 @@
 """Import d'un portefeuille depuis ce que l'utilisateur a sous la main : export CSV du courtier, tableau copié
 d'Excel ou du site du courtier, ou simple liste « ticker ; poids ».
 
-Repris de l'application (app/lib/import_portefeuille.dart), avec les mêmes règles. Trois étapes, sans réseau :
+Trois étapes, sans réseau :
 lire le tableau (séparateur et ligne d'en-tête devinés), reconnaître chaque ligne parmi les valeurs de l'univers
 (ISIN déjà vu, ticker, puis nom), calculer les poids (poids donnés, sinon montants, sinon quantités × cours en
 euros). L'utilisateur vérifie ensuite le résultat (page « Importer mon portefeuille ») avant de l'enregistrer.

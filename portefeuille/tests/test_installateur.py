@@ -1,4 +1,4 @@
-"""La version installée (app/windows/installateur/preparer_outil.ps1) embarque chaque fichier que l'interface lit.
+"""La version installée (installateur/preparer_outil.ps1) embarque chaque fichier que l'interface lit.
 
 Un oubli ne se voit qu'une fois installé (la page « Méthode et routine » a ainsi planté faute de docs/METHODE.md) :
 on relève dans le code les fichiers de assets/, docs/ et static/ lus par l'interface, et l'on vérifie que le script
@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-SCRIPT = RACINE.parent / "app" / "windows" / "installateur" / "preparer_outil.ps1"
+SCRIPT = RACINE.parent / "installateur" / "preparer_outil.ps1"
 SOURCES = [RACINE / "app.py", *(RACINE / "vues").glob("*.py"), *(RACINE / "pf").glob("*.py")]
 # « "assets" / "entete.png" », « / "docs" / "METHODE.md" », « app/static/polices/Manrope.ttf »…
 CHEMIN = re.compile(r'"(assets|docs|static)"\s*/\s*"([^"]+)"')

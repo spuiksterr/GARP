@@ -2,7 +2,7 @@
 
 # Marque G.A.R.P
 
-Le projet s'appelle **G.A.R.P** depuis le 18/11/2026. Il s'appelait auparavant Climax. Depuis le 22/11/2026, le dépôt public (`spuiksterr/GARP`), les fichiers publiés (`GARP-Setup`, `GARP-b<n>.apk`, `garp-*.json.gz`), le lanceur (`GARP.pyw`) et les icônes (`garp.png`, `garp.ico`) portent aussi le nouveau nom. Gardent l'ancien, invisible à l'usage : l'identifiant Android `fr.climax.climax` et l'alias de la clé de signature (sinon le téléphone refuserait la mise à jour), le dossier de données `%LOCALAPPDATA%\Climax` (portefeuille et données déjà installés) et le dépôt privé d'origine `spuiksterr/Climax`, archive de l'historique.
+Le projet s'appelle **G.A.R.P** depuis le 18/11/2026. Il s'appelait auparavant Climax. Depuis le 22/11/2026, le dépôt public (`spuiksterr/GARP`), les fichiers publiés (`GARP-Setup`, `garp-outil.zip`), le lanceur (`GARP.pyw`) et les icônes (`garp.png`, `garp.ico`) portent aussi le nouveau nom. Gardent l'ancien, invisible à l'usage : le dossier de données `%LOCALAPPDATA%\Climax` (portefeuille et données déjà installés) et le dépôt privé d'origine `spuiksterr/Climax`, archive de l'historique.
 
 ## Positionnement
 
@@ -42,12 +42,9 @@ La piste « points qui montent » a servi un jour, le 18/11/2026. Le logo rempla
 |---|---|
 | `assets/blender/embleme.png` | Emblème seul, fond transparent, 1024 px : la source de tout le reste |
 | `assets/garp.png`, `assets/garp.ico` | Icône arrondie : fenêtre de l'outil, raccourcis Windows, onglet du navigateur |
-| `app/assets/logo.png`, `app/assets/embleme.png` | Logo dans l'application Android |
-| `app/android/.../mipmap-*` | Icônes Android : classique, adaptative (fond et premier plan), monochrome (Android 13) |
-| `app/windows/runner/resources/app_icon.ico` | Icône de l'installateur Windows |
+| `assets/entete.png` | Icône et « G.A.R.P » en ocre : en-tête de la barre latérale, écran d'ouverture |
 | `docs/bandeau.png` | Bandeau des README et des présentations |
-| `app/windows/installateur/*.bmp` | Images de l'assistant d'installation Windows |
-| `app/assets/qr-telechargement.png` | QR code vers la page de téléchargement (`composer_icones.py qr`, paquet `segno`) |
+| `installateur/*.bmp` | Images de l'assistant d'installation Windows (son icône : `assets/garp.ico`) |
 
 Règles d'usage :
 - **Fond** : l'emblème se pose sur le dégradé anthracite → graphite, ou sur une couleur unie sombre. Pas de fond blanc : la pousse ivoire disparaît.
@@ -91,7 +88,6 @@ Les couleurs d'état (vert pour une hausse, rouge pour une baisse ou une exclusi
 ## Typographie
 
 - **Outil** : titres en Manrope (licence OFL, embarquée dans `static/polices/`, aucun téléchargement à l'usage), texte courant en Source Sans 3, la police de Streamlit.
-- **Application du téléphone** : Source Sans 3.
 - **En-tête de la barre latérale et écran d'ouverture** : `assets/entete.png` (icône et « G.A.R.P » en ocre), produite par `composer_icones.py`.
 - **Bandeau et présentations** : Segoe UI Bold pour le nom, Segoe UI pour l'accroche.
 - **Le nom** s'écrit toujours « G.A.R.P », avec ses points et sans point final : ni « GARP », ni « Garp », ni « G.A.R.P. ». Dans une phrase qui se termine par le nom, le point de la phrase suffit. L'expression anglaise s'écrit *Growth at a reasonable price*.

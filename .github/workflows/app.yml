@@ -1,17 +1,14 @@
-name: Application
+name: Installateur Windows
 
-# Vérifie, construit et publie G.A.R.P : installateur Windows, qui installe l'outil du PC lui-même (Streamlit, avec
-# son Python : app/windows/installateur/preparer_outil.ps1), et APK Android (application Flutter, signée).
-# APK suspendu depuis le 22/11/2026 : construit seulement à la demande (plateformes android ou les deux) ; sur main,
-# la release ne contient que l'installateur Windows.
-# Sur main, chaque construction devient une release « app-b<numéro> », que G.A.R.P propose d'installer.
-# Sobriété (le dépôt d'origine, privé, avait des minutes comptées) : construit sur main seulement, ou à la
-# demande pour essayer une branche avant fusion (gh workflow run app.yml --ref <branche> -f plateformes=windows).
+# Construit et publie l'installateur Windows de G.A.R.P, qui installe l'outil du PC lui-même (Streamlit, avec son
+# Python : installateur/preparer_outil.ps1). Sur main, chaque construction devient une release « app-b<numéro> »,
+# que G.A.R.P propose d'installer. Sobriété : construit sur main seulement, ou à la demande pour essayer une branche
+# avant fusion (gh workflow run app.yml --ref <branche>).
 on:
   push:
     branches: [main]
     paths:
-      - app/**
+      - installateur/**
       - portefeuille/pf/**
       - portefeuille/vues/**
       - portefeuille/app.py
@@ -26,15 +23,9 @@ on:
       - .github/workflows/app.yml
       - .github/notes_release_app.md
   workflow_dispatch:
-    inputs:
-      plateformes:
-        description: Que construire
-        type: choice
-        options: [windows, android, les deux]
-        default: windows
 
 # Numéro de version = numéro du passage + 40 : le dépôt public a repris à 1 le 22/11/2026, après la b37 du dépôt
-# d'origine ; les versions installées ne proposent qu'un numéro plus grand que le leur (Android aussi).
+# d'origine ; les versions installées ne proposent qu'un numéro plus grand que le leur.
 permissions:
   contents: write
 
@@ -43,62 +34,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Analyse et tests de l'application Flutter : seulement quand l'APK est demandé (suspendu sur main).
-  verifier:
-    if: inputs.plateformes == 'android' || inputs.plateformes == 'les deux'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
-
-  android:
-    needs: verifier
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-      - name: Numéro de version
-        run: echo "NUMERO=$(( ${{ github.run_number }} + 40 ))" >> "$GITHUB_ENV"
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - name: Clé de signature (secrets du dépôt)
-        env:
-          CLE: ${{ secrets.ANDROID_CLE_B64 }}
-          MOT_DE_PASSE: ${{ secrets.ANDROID_CLE_MOT_DE_PASSE }}
-        run: |
-          if [ -n "$CLE" ]; then
-            echo "$CLE" | base64 -d > android/app/garp.p12
-            printf 'storeFile=garp.p12\nstorePassword=%s\nkeyAlias=climax\nkeyPassword=%s\n' "$MOT_DE_PASSE" "$MOT_DE_PASSE" > android/key.properties
-          else
-            echo "::warning::Pas de clé de signature : APK signé avec la clé de débogage (non installable par-dessus une version signée)."
-          fi
-      - run: flutter build apk --release --target-platform android-arm64 --build-number ${{ env.NUMERO }}
-      - run: cp build/app/outputs/flutter-apk/app-release.apk GARP-b${{ env.NUMERO }}.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android
-          path: app/GARP-b${{ env.NUMERO }}.apk
-
-  # L'installateur Windows ne dépend pas de l'application Flutter : pas d'attente de son analyse.
   windows:
-    if: github.event_name == 'push' || inputs.plateformes != 'android'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -111,7 +47,7 @@ jobs:
           "NUMERO=$(${{ github.run_number }} + 40)" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
       - name: Outil du PC et son Python
         shell: pwsh
-        run: app\windows\installateur\preparer_outil.ps1 -Sortie build\garp-pc -Numero ${{ env.NUMERO }}
+        run: installateur\preparer_outil.ps1 -Sortie build\garp-pc -Numero ${{ env.NUMERO }}
       - name: Installateur (Inno Setup)
         shell: pwsh
         run: |
@@ -120,9 +56,9 @@ jobs:
             choco install innosetup -y --no-progress | Out-Null
             $iscc = Get-ChildItem "${env:ProgramFiles(x86)}\Inno Setup*\ISCC.exe", "$env:ProgramFiles\Inno Setup*\ISCC.exe" | Select-Object -First 1
           }
-          & $iscc.FullName /Q "/DNumero=${{ env.NUMERO }}" "/DSource=$PWD\build\garp-pc" app\windows\installateur\garp.iss
+          & $iscc.FullName /Q "/DNumero=${{ env.NUMERO }}" "/DSource=$PWD\build\garp-pc" installateur\garp.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          Move-Item app\windows\installateur\sortie\GARP-Setup-b${{ env.NUMERO }}.exe .
+          Move-Item installateur\sortie\GARP-Setup-b${{ env.NUMERO }}.exe .
           Write-Host ("Installateur : {0:N0} Mo" -f ((Get-Item GARP-Setup-b${{ env.NUMERO }}.exe).Length / 1MB))
       - uses: actions/upload-artifact@v4
         with:
@@ -130,12 +66,9 @@ jobs:
           path: GARP-Setup-b${{ env.NUMERO }}.exe
           compression-level: 0
 
-  # Publie dès que l'installateur Windows est prêt ; l'APK s'y ajoute seulement s'il a été demandé et construit.
   publier:
-    if: >-
-      always() && github.ref == 'refs/heads/main' && needs.windows.result == 'success'
-      && needs.android.result != 'failure' && needs.android.result != 'cancelled'
-    needs: [android, windows]
+    if: github.ref == 'refs/heads/main'
+    needs: windows
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}

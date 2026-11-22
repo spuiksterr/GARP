@@ -25,28 +25,14 @@ config/univers.csv, config/strategie.json, config/cas_particuliers.csv ───
                                      ▼
                               vues/*.py (15 pages, app.py)
 
-Application autonome : chaque nuit, .github/workflows/donnees.yml lance pf maj sur GitHub (cache conservé),
-puis pf export-app (pf/export_app.py) publie garp-donnees.json.gz dans la release « donnees » ; l'application
-Flutter (app/) le télécharge avec un jeton en lecture seule (l'outil du PC installé, sans jeton : le dépôt est public). Aucune donnée personnelle n'y est exportée.
-Le portefeuille de l'application s'importe dans l'appareil (app/lib/import_portefeuille.dart : export de
-courtier, tableau collé ou saisie ; reconnaissance par ISIN retenu, ticker, puis nom ; poids d'après les
-montants ou les quantités × cours_eur de l'export). L'export publie aussi les méthodes de notation
-(`NOTATIONS` de pf/portfolio.py, avec leurs poids) et les six critères avec leurs seuils : app/lib/methodes.dart
-recalcule les notes à l'identique (rangs centiles pondérés). Ajouter une méthode dans `NOTATIONS` suffit pour
-qu'elle apparaisse dans l'application, si ses composantes sont dans `COLONNES` de l'export.
-Deux fichiers complémentaires (pf/export_fiches.py) : `garp-fiches.json.gz` (historique financier, repères
-et séries des multiples, description, dirigeants, ventilation) et `garp-investisseurs.json.gz` (13F, élus).
-Les calculs de l'application reprennent ceux de `pf/` : app/lib/valorisation.dart (valuation.py, prix_juste.py,
-scenarios.py), risques.dart (risques.py, simulation.py, backtest.py, en hebdomadaire), construction.dart
-(portfolio.py), suivi.dart (contribution_plan de tracker.py, regles.py), actualites.dart (actualites.py) ;
-recherche.dart ajoute la recherche personnalisée (prix juste au rendement exigé du profil, marge de sécurité).
-Les sources SEC ne sont lues sur GitHub qu'avec le secret `SEC_CONTACT` (variable `PF_CONTACT_SEC`).
-L'interface de l'application imite celle de Streamlit : app/lib/interface.dart reprend le thème de
-`.streamlit/config.toml` et les briques de pf/ui.py (titres, st.metric, encadrés, onglets, tableaux), et
-app/lib/navigation.dart les rubriques de app.py (barre latérale). Une page ajoutée au PC s'ajoute à `Rubrique`.
+Données de la nuit : chaque nuit, .github/workflows/donnees.yml lance pf maj sur GitHub (cache conservé), puis
+pf export-outil, qui lit d'abord pendant 10 minutes les sources SEC des fiches (dirigeants, ventilation :
+export_outil.prechauffer) et publie garp-outil.zip dans la release « donnees ». Aucune donnée personnelle
+n'y est exportée. Les sources SEC ne sont lues sur GitHub qu'avec le secret `SEC_CONTACT` (variable
+`PF_CONTACT_SEC`).
 
 Outil du PC installé (GARP-Setup, Windows) : cet outil lui-même, avec son Python
-(app/windows/installateur/preparer_outil.ps1). GARP.pyw → pf/autonome.py (autonome.json présent) :
+(installateur/preparer_outil.ps1). GARP.pyw → pf/autonome.py (autonome.json présent) :
 PF_DOSSIER = %LOCALAPPDATA%\Climax\donnees, PF_AUTONOME=1. Chaque nuit, pf export-outil publie
 garp-outil.zip (config/, data/cache/, data/historique/) ; la barre latérale le télécharge et l'installe
 fichier par fichier, sans toucher au profil ni au journal des transactions. Pas de pf maj sur ce poste.
@@ -123,7 +109,7 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `scoring` | Filtres d'exclusion, piliers, note GARP (`score` : croissance 40 %, valorisation 35 %, qualité 25 %, `POIDS_GARP`), alertes, `build_screener` ; empreinte du screener préparé limitée aux filtres, à la valorisation et aux critères |
 | `prix_juste` | Prix d'achat juste à un multiple jugé raisonnable |
 | `positions` | Photo du portefeuille : quantités par ligne prises au dernier import (`profil/positions.csv`, remplacée à chaque import) ; valorisée au dernier cours pour les poids réels (onglet Équilibre, tableau de bord, risques). À défaut, positions du journal `data/transactions.csv` (lecture seule) |
-| `prix_achat` | Prix juste au rendement exigé (modèle du TRI implicite, entrées de `export_app._valorisation`), prix d'achat après marge de sécurité, verdict ; réglages dans `profil/prix_achat.json` ; page « La bonne action au bon prix », analyse du portefeuille, en-tête de la fiche et tableau de bord |
+| `prix_achat` | Prix juste au rendement exigé (modèle du TRI implicite, entrées de `entrees_valorisation`), prix d'achat après marge de sécurité, verdict ; réglages dans `profil/prix_achat.json` ; page « La bonne action au bon prix », analyse du portefeuille, en-tête de la fiche et tableau de bord |
 | `scenarios` | Scénarios à 5 ans enregistrés (`profil/scenarios.csv`) |
 | `regles` | Conditions de vente chiffrées (`profil/regles_vente.csv`) |
 | `photos` | Photo datée du screener à chaque mise à jour normale ou complète (`data/historique/scores.parquet`) : évolution du rang, changements de statut, futur test sans biais |
@@ -152,9 +138,7 @@ Tous les chemins sont dans `pf/config.py`. `PF_DOSSIER` déplace les données, `
 | `serveur` | Lanceur du serveur de la fenêtre (`python -m pf.serveur app.py …`) : charge pf.ui puis démarre Streamlit dans le même processus, pour que la première page trouve les modules en mémoire |
 | `autonome` | Version installée par `GARP-Setup` (repérée par `autonome.json` à côté du code) : données dans `%LOCALAPPDATA%\Climax\donnees`, accès anonyme au dépôt public (jeton GitHub facultatif, chiffré par Windows), téléchargement et installation de `garp-outil.zip`, nouvelles versions |
 | `export_outil` | Archive des données publiques (configuration, cache, historique des scores) pour la version installée : `pf export-outil`, publiée chaque nuit |
-| `import_portefeuille` | Import d'un portefeuille (export du courtier en CSV ou classeur Excel, tableau collé, liste tapée ; chaque feuille Excel avec une ligne d'en-tête reconnue devient un tableau tabulé, `textes_fichier`) : mêmes règles que `app/lib/import_portefeuille.dart` ; page `vues/importer.py` |
-| `export_app` | Fichier de données de l'application (`pf export-app`) : valeurs (avec le cours en euros), cours hebdomadaires, rangs, sans donnée personnelle |
-| `mobile` | Accès depuis le téléphone : `tailscale serve` relaie le serveur local sur le réseau privé (`pf mobile`) |
+| `import_portefeuille` | Import d'un portefeuille (export du courtier en CSV ou classeur Excel, tableau collé, liste tapée ; chaque feuille Excel avec une ligne d'en-tête reconnue devient un tableau tabulé, `textes_fichier`) ; page `vues/importer.py` |
 
 ## Pages (`vues/`)
 
