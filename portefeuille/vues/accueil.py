@@ -9,7 +9,7 @@ from pf import dirigeants, photos, positions, regles, scenarios, scoring, tracke
 from pf import portfolio as pfo
 from pf import prix_achat as pa
 from pf import watchlist as wl
-from pf.config import load_strategy
+from pf.config import date_creation_portefeuille, load_strategy
 from pf.sante import health_alerts
 
 sc = ui.require_data()
@@ -225,7 +225,8 @@ periode_choisie = c_per.segmented_control(
     "Début de la comparaison", PERIODES_COMPARAISON, default="Depuis le début", key="acc_periode",
 ) or "Depuis le début"
 
-created = pd.Timestamp(strat["suivi"].get("date_creation_modele") or "2026-10-29")
+date_ajout_str = date_creation_portefeuille() or strat["suivi"].get("date_creation_modele") or "2026-10-29"
+created = pd.Timestamp(date_ajout_str)
 tx = tracker.load_transactions()
 hist_reel = tracker.history(tx) if not tx.empty else pd.DataFrame()
 twr_reel = tracker.twr(hist_reel) if len(hist_reel) >= 2 else pd.Series(dtype=float)
@@ -235,10 +236,15 @@ if not w.empty or a_journal:
     px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
     min_dispo = px.index.min() if not px.empty else twr_reel.index[0]
     fin_dispo = twr_reel.index[-1] if a_journal else px.index.max()
+    attente_seances = False
     if a_journal:
         debut_origine = twr_reel.index[0]
+    elif len(px[px.index >= created]) >= 2:
+        debut_origine = created
     else:
-        debut_origine = created if len(px[px.index >= created]) >= 5 else fin_dispo - pd.Timedelta(days=365)
+        # Portefeuille ajouté aujourd'hui (moins de 2 séances disponibles depuis l'ajout) : repli lisible sur 1 mois.
+        debut_origine = max(fin_dispo - pd.DateOffset(months=1), min_dispo)
+        attente_seances = True
 
     if periode_choisie == "Depuis le début":
         debut = debut_origine
@@ -258,6 +264,11 @@ if not w.empty or a_journal:
         )
         debut = pd.Timestamp(date_choisie)
     debut = max(pd.Timestamp(debut), min_dispo)
+
+    if attente_seances and periode_choisie == "Depuis le début":
+        st.info(f"Portefeuille ajouté le {created:%d/%m/%Y} : la comparaison depuis cette date démarrera dès "
+                "2 séances de bourse. En attendant, affichage simulé sur 1 mois (ou choisissez une autre période).",
+                icon=":material/schedule:")
 
     # Suivi réel (journal des opérations) dès que la date choisie est dans la période du journal ;
     # avant la première opération enregistrée, repli sur la simulation aux poids actuels.
