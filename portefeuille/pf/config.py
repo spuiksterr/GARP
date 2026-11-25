@@ -65,6 +65,7 @@ BENCHMARKS = {
     "CW8.PA": "MSCI World éligible PEA (Amundi)",
     "EXSA.DE": "STOXX Europe 600",
     "SXR8.DE": "S&P 500 (en EUR)",
+    "SXRV.DE": "Nasdaq 100 (en EUR)",
 }
 BENCHMARK_DEFAUT = "IWDA.AS"
 # Fondamentaux renouvelés par mise à jour normale : par roulement, vos lignes d'abord (Yahoo limite le débit).

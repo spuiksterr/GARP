@@ -314,6 +314,20 @@ def test_fiche_au_clic_ouvre_la_fiche_et_renouvelle_la_cle(monkeypatch):
     assert ouvertes == ["vues/fiche.py"]
 
 
+def test_courbe_depuis_et_benchmarks_complets():
+    from pf import tracker
+    from pf.config import BENCHMARKS
+
+    assert {"SXR8.DE", "IWDA.AS", "EXSA.DE", "SXRV.DE"} <= set(BENCHMARKS)
+    idx = pd.bdate_range("2026-10-01", periods=5)
+    s = pd.Series([100.0, 110.0, 120.0, 132.0, 144.0], index=idx)
+    c = tracker.courbe_depuis(s, idx[2])
+    assert list(c.index) == list(idx[2:])
+    assert c.iloc[0] == pytest.approx(100.0)
+    assert c.iloc[-1] == pytest.approx(144.0 / 120.0 * 100.0)
+    assert tracker.courbe_depuis(s, "2027-01-01").empty
+
+
 # ------------------------------------------------------------------ données
 
 def test_une_paire_refusee_par_yahoo_n_efface_pas_son_historique(tmp_path, monkeypatch):
