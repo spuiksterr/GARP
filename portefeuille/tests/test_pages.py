@@ -106,14 +106,17 @@ def test_import_avec_quantites_propose_la_photo():
 
 
 def test_mon_portefeuille_analyse_et_equilibre_propose():
-    """Analyse des lignes (verdict de prix, qualité) et onglet « Équilibre » : poids réels du journal face aux cibles."""
+    """Analyse des lignes (modele) et onglet « Équilibre & apport » (risques) : poids réels face aux cibles."""
     at = _app("modele")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
     assert any(m.label == "Hors des filtres" for m in at.metric)
     assert any("verdict" in df.value.columns for df in at.dataframe)  # analyse des lignes
-    assert any(m.label == "Lignes loin de leur cible" for m in at.metric)  # onglet Équilibre (journal du jeu d'essai)
-    assert any("a_ajuster_eur" in df.value.columns for df in at.dataframe)
+    at_r = _app("risques")
+    at_r.run()
+    assert not at_r.exception, [str(e.value)[:300] for e in at_r.exception]
+    assert any(m.label == "Lignes loin de leur cible" for m in at_r.metric)  # onglet Équilibre & apport
+    assert any("a_ajuster_eur" in df.value.columns for df in at_r.dataframe)
 
 
 def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():

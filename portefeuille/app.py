@@ -57,7 +57,7 @@ pages = {
     "Mon portefeuille": [
         st.Page("vues/modele.py", title="Analyse de mon portefeuille", icon=":material/pie_chart:"),
         st.Page("vues/operations.py", title="Opérations", icon=":material/receipt_long:"),
-        st.Page("vues/risques.py", title="Risques et répartition", icon=":material/shield:"),
+        st.Page("vues/risques.py", title="Risques & équilibre", icon=":material/shield:"),
         st.Page("vues/importer.py", title="Importer mon portefeuille", icon=":material/upload_file:"),
     ],
     "Explorer": [

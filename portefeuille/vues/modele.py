@@ -1,17 +1,13 @@
-"""Mon portefeuille : importé de votre courtier, analysé avec les outils de G.A.R.P. Chaque ligne est-elle une
-bonne action, et à un bon prix ? L'équilibre n'est qu'une proposition, dans son propre onglet."""
+"""Mon portefeuille : qualité fondamentale, verdict de prix et thèses de vos lignes."""
 import math
-import shutil
-from datetime import date
 
-import pandas as pd
 import streamlit as st
 
 from pf import portfolio as pfo
-from pf import positions, risques, tracker, ui
 from pf import prix_achat as pa
+from pf import ui
 from pf import watchlist as wl
-from pf.config import MODELE_CSV, SELECTION_CLAUDE_CSV, load_strategy, write_csv_fr
+from pf.config import SELECTION_CLAUDE_CSV, load_strategy
 from pf.theses import read_thesis
 
 sc = ui.require_data()
@@ -26,7 +22,7 @@ if bouton.button("Importer mon portefeuille", icon=":material/upload_file:", wid
     st.switch_page("vues/importer.py")
 if mp.empty:
     st.info("Aucune ligne pour l'instant : importez votre portefeuille depuis l'export de votre courtier (CSV ou "
-            "Excel), ou ajoutez des lignes dans l'onglet « Modifier les poids ».", icon=":material/upload_file:")
+            "Excel), ou ajoutez des lignes dans « Risques & équilibre → Poids cibles ».", icon=":material/upload_file:")
 st.markdown(
     f"**{len(w)} lignes.** Chacune est analysée comme une action du screener : qualité de l'entreprise, prix "
     "comparé à votre prix d'achat, signaux d'alerte. Les fonds (ETF, or) n'ont que leur cours.")
@@ -46,8 +42,7 @@ c[3].metric("TRI implicite", ui.pct(ch.get("TRI implicite")), border=True,
 c[4].metric("Lignes effectives", ui.num(risk.get("nombre_effectif"), 1), border=True,
             help="1 / somme des poids au carré : nombre de lignes équipondérées équivalent.")
 
-tab_lignes, tab_equilibre, tab_modifier, tab_theses = st.tabs(
-    ["Analyse des lignes", "Équilibre (proposition)", "Modifier les poids", "Thèses"])
+tab_lignes, tab_theses = st.tabs(["Analyse des lignes", "Thèses"])
 
 with tab_lignes:
     regl = pa.reglages(strat)
@@ -95,127 +90,6 @@ with tab_lignes:
                    "valeur pour ouvrir sa fiche. Outil d'aide à la décision, pas un conseil.")
     st.download_button("Exporter la composition (CSV)", mp.to_csv(sep=";").encode("utf-8-sig"),
                        file_name="portefeuille_modele.csv", mime="text/csv", icon=":material/download:")
-
-with tab_equilibre:
-    st.caption("Une proposition, pas une consigne : comparer vos poids réels à vos poids cibles, et voir comment un "
-               "apport rapprocherait le portefeuille de sa cible sans rien vendre. Rien n'est enregistré ici.")
-    # Garde-fous de concentration (seuils de config/strategie.json, suivi.garde_fous), sur les poids réels.
-    poids_reels, _ = risques.poids_actuels()
-    concentration = risques.garde_fous(poids_reels, sc["secteur"])
-    if concentration:
-        st.markdown("**Concentration**")
-        for t, message in concentration:
-            st.markdown(f"- {names.get(t, t) + ' : ' if t else ''}{message}")
-    pos = positions.positions()  # photo du dernier import avec quantités
-    if pos.empty or w.empty:
-        st.info("Pour comparer poids réels et cibles, G.A.R.P a besoin de vos quantités : importez votre portefeuille "
-                "en laissant cochée l'option « Enregistrer aussi mes quantités ».", icon=":material/info:")
-    else:
-        seuil = float(strat["suivi"]["seuil_reequilibrage"])
-        ecarts = tracker.drift_alerts(pos, w, seuil)
-        total = float(pos["valeur_eur"].sum())
-        ecarts["nom"] = [names.get(t, t) for t in ecarts.index]
-        ecarts["a_ajuster_eur"] = -ecarts["ecart"] * total
-        hors = ecarts[ecarts["action"] != "Dans la cible"]
-        k = st.columns(3)
-        k[0].metric("Valeur du portefeuille", ui.eur(total, 0), border=True)
-        k[1].metric("Lignes loin de leur cible", len(hors), border=True,
-                    help=f"Écart de plus de {ui.num(seuil * 100, 0)} points entre poids réel et poids cible.")
-        k[2].metric("Écart le plus fort", f"{ui.num(ecarts['ecart'].abs().max() * 100, 1)} pts", border=True)
-        vue = ecarts.sort_values("ecart")[["nom", "poids_reel", "poids_cible", "ecart", "a_ajuster_eur", "action"]].copy()
-        vue.insert(0, "symbole", vue.index)
-        ev_eq = ui.tableau(ui.as_pct_cols(vue, ["poids_reel", "poids_cible", "ecart"]), hide_index=True, width="stretch",
-                           height=min(520, 35 * len(vue) + 38), on_select="rerun", selection_mode="single-cell",
-                           key=ui.cle_tableau("mp_eq_ecarts"), column_config={
-                               "symbole": st.column_config.TextColumn("Ticker", pinned=True),
-                               "nom": st.column_config.TextColumn("Valeur", pinned=True),
-                               "poids_reel": ui.PCT("Poids réel"), "poids_cible": ui.PCT("Poids cible"),
-                               "ecart": ui.PCT("Écart (points)", d=1),
-                               "a_ajuster_eur": st.column_config.NumberColumn(
-                                   "Pour revenir à la cible (€)", format="%.0f",
-                                   help="Positif : montant qu'il faudrait acheter. Négatif : montant au-dessus de la cible."),
-                               "action": "Proposition"})
-        ui.fiche_au_clic(vue, ev_eq, "mp_eq_ecarts")
-        st.markdown("**Si vous faites un apport**")
-        compte_principal = pfo.compte_principal(w, mp)
-        c = st.columns([1.2, 1, 1.2])
-        montant = c[0].number_input("Montant (€)", min_value=0.0, value=1000.0, step=100.0, key="eq_montant")
-        compte = c[1].segmented_control("Compte", tracker.COMPTES, default=compte_principal,
-                                        key="eq_compte") or compte_principal
-        min_order = c[2].number_input("Ordre minimum (€)", min_value=0.0,
-                                      value=float(strat["suivi"]["ordre_min_eur"]), step=50.0, key="eq_min")
-        ecartees = pfo.lignes_a_ecarter(sc, w.index)
-        plan = tracker.contribution_plan(montant, compte, w.drop(index=list(ecartees)), mp["enveloppe"], pos=pos,
-                                         min_order=min_order)
-        if plan.empty:
-            st.caption("Aucune répartition proposée : montant trop faible face à l'ordre minimum, ou lignes du compte "
-                       "déjà au-dessus de leur cible.")
-        else:
-            plan.insert(1, "nom", plan["ticker"].map(lambda t: names.get(t, t)))
-            ev_plan = ui.tableau(ui.as_pct_cols(plan, ["poids_cible_compte", "poids_apres"]).drop(columns=["ticker"]),
-                                 hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
-                                 key=ui.cle_tableau("mp_eq_plan"), column_config={
-                                     "nom": "Valeur", "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
-                                     "cours_eur": st.column_config.NumberColumn("Cours €", format="%.2f"),
-                                     "montant_eur": st.column_config.NumberColumn("Montant €", format="%.2f"),
-                                     "poids_cible_compte": ui.PCT("Cible dans le compte"),
-                                     "valeur_avant": st.column_config.NumberColumn("Détenu avant €", format="%.0f"),
-                                     "poids_apres": ui.PCT("Poids après achat")})
-            ui.fiche_au_clic(plan.set_index("ticker"), ev_plan, "mp_eq_plan")
-        if ecartees:
-            st.caption("Laissées de côté, le temps de revoir leur thèse : "
-                       + " ; ".join(f"{names.get(t, t)}, {r}" for t, r in ecartees.items()) + ".")
-        st.caption("Une ligne trop lourde n'a pas besoin d'être vendue : les apports suivants peuvent aller aux autres. "
-                   "Proposition indicative, pas un conseil en investissement.")
-
-with tab_modifier:
-    st.caption("Changez un poids, ajoutez une valeur sur la ligne vide du bas, ou supprimez une ligne (case à gauche, "
-               "puis la corbeille). Les poids sont ramenés à 100 % à l'enregistrement ; thèses et conditions de vente "
-               "déjà écrites sont gardées.")
-    noms_sc = sc["nom"].astype(str).to_dict()
-    libelles = {t: f"{noms_sc[t]} ({t})" for t in sorted(sc.index, key=lambda t: noms_sc[t].lower())}
-    for t in mp.index:  # une ligne hors des données reste modifiable sous son ticker
-        libelles.setdefault(t, t)
-    par_libelle = {v: k for k, v in libelles.items()}
-    base = pd.DataFrame({
-        "valeur": [libelles[t] for t in mp.index],
-        "enveloppe": [mp["enveloppe"].get(t) or "CTO" for t in mp.index] if "enveloppe" in mp else "CTO",
-        "poche": [mp["poche"].get(t) or "Cœur" for t in mp.index] if "poche" in mp else "Cœur",
-        "poids": [round(float(w.get(t, 0)) * 100, 2) for t in mp.index],
-    })
-    edite = st.data_editor(
-        base, key="compo_edition", num_rows="dynamic", hide_index=True, width="stretch",
-        column_config={
-            "valeur": st.column_config.SelectboxColumn("Valeur", options=list(libelles.values()), required=True,
-                                                       width="large"),
-            "enveloppe": st.column_config.SelectboxColumn("Compte", options=["PEA", "CTO"], required=True,
-                                                          default="CTO"),
-            "poche": st.column_config.TextColumn("Poche", default="Cœur"),
-            "poids": st.column_config.NumberColumn("Poids cible (%)", min_value=0.0, max_value=100.0, step=0.5,
-                                                   format="%.1f", required=True),
-        })
-    total = pd.to_numeric(edite["poids"], errors="coerce").fillna(0).sum()
-    doublons = edite["valeur"].dropna()[edite["valeur"].dropna().duplicated()].tolist()
-    c = st.columns([1, 3], vertical_alignment="center")
-    c[0].metric("Total saisi", f"{ui.num(total, 1)} %", border=True,
-                help="Il n'a pas besoin de faire 100 % : les poids sont ramenés à 100 % à l'enregistrement.")
-    if doublons:
-        c[1].caption(f"Cité deux fois, poids cumulés à l'enregistrement : {', '.join(doublons)}.")
-    if c[1].button("Enregistrer la composition", type="primary", icon=":material/save:"):
-        lignes = [(par_libelle.get(r["valeur"]), r["enveloppe"], r["poche"],
-                   float(r["poids"]) if pd.notna(r["poids"]) else 0.0) for _, r in edite.iterrows()]
-        try:
-            nouveau = pfo.nouvelle_composition(mp, lignes, noms_sc)
-        except ValueError as e:
-            st.error(f"Composition non enregistrée : {e}.")
-        else:
-            if MODELE_CSV.exists():
-                shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-modif-{date.today():%Y-%m-%d}.csv"))
-            write_csv_fr(nouveau, MODELE_CSV)
-            st.cache_data.clear()
-            st.session_state.pop("compo_edition", None)
-            st.toast(f"Composition enregistrée : {len(nouveau)} lignes.", icon=":material/check:")
-            st.rerun()
 
 with tab_theses:
     choix = st.selectbox("Valeur", list(w.index), format_func=lambda t: f"{names.get(t, t)} ({t})")
