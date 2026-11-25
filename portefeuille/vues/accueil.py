@@ -189,8 +189,8 @@ if rows:
     st.markdown("#### Points de vigilance")
     st.markdown("\n".join(f"- **{names.get(t, t)}** · {genre} : {detail}" for genre, t, detail in rows))
 if pos.empty:
-    st.caption("Sans quantités importées, ce tableau de bord suit les poids de votre portefeuille. Importez-le avec ses "
-               "quantités (page « Importer mon portefeuille ») pour voir sa valeur et ses poids réels.")
+    st.caption("Sans quantités enregistrées, ce tableau de bord suit les poids cibles. Saisissez vos opérations dans "
+               "« Opérations » (ou importez un fichier CSV/Excel à la création du portefeuille) pour voir la valeur réelle.")
 
 # ------------------------------------------------------------------ portefeuille modèle
 st.markdown("#### Profil du portefeuille")
@@ -292,8 +292,7 @@ if not w.empty or a_journal:
             ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve}).dropna(),
                              colors={"Portefeuille": ui.accent()}, yfmt=",.1f", height=300))
 else:
-    st.info("Ce portefeuille est vide : ajoutez vos opérations dans « Opérations » ou importez-le depuis "
-            "« Importer mon portefeuille ».", icon=":material/info:")
+    st.info("Ce portefeuille est vide : ajoutez vos achats dans « Opérations ».", icon=":material/info:")
 
 # ------------------------------------------------------------------ lignes du modèle
 st.markdown("#### Lignes du portefeuille")

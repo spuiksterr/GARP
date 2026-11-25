@@ -18,11 +18,11 @@ names = sc["nom"].to_dict()
 
 titre, bouton = st.columns([4, 1.3], vertical_alignment="bottom")
 titre.title("Mon portefeuille")
-if bouton.button("Importer mon portefeuille", icon=":material/upload_file:", width="stretch"):
-    st.switch_page("vues/importer.py")
+if bouton.button("Ajouter une opération", icon=":material/add:", width="stretch"):
+    st.switch_page("vues/operations.py")
 if mp.empty:
-    st.info("Aucune ligne pour l'instant : importez votre portefeuille depuis l'export de votre courtier (CSV ou "
-            "Excel), ou ajoutez des lignes dans « Risques & équilibre → Poids cibles ».", icon=":material/upload_file:")
+    st.info("Aucune ligne pour l'instant : enregistrez vos achats dans « Opérations », ou créez un portefeuille "
+            "depuis un fichier CSV/Excel avec le bouton « + » en haut de la barre latérale.", icon=":material/info:")
 st.markdown(
     f"**{len(w)} lignes.** Chacune est analysée comme une action du screener : qualité de l'entreprise, prix "
     "comparé à votre prix d'achat, signaux d'alerte. Les fonds (ETF, or) n'ont que leur cours.")

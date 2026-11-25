@@ -563,23 +563,127 @@ def _changer_portefeuille() -> None:
         st.cache_data.clear()
 
 
-@st.dialog("Gérer mes portefeuilles")
+@st.dialog("Gérer mes portefeuilles", width="large")
 def _dialogue_portefeuilles() -> None:
+    from . import import_portefeuille as _imp
+    from . import positions as _positions
     from .config import (
         PORTEFEUILLE_DEFAUT,
+        PROFIL_DIR,
+        SECTEUR_FONDS,
+        chemin_modele,
         creer_portefeuille,
+        ecrire_json,
+        lire_json,
         lister_portefeuilles,
+        load_model_portfolio,
         portefeuille_actif,
         renommer_portefeuille,
         supprimer_portefeuille,
+        write_csv_fr,
     )
 
     st.caption("Chaque portefeuille a ses propres lignes, quantités et opérations (achats, ventes, PRU). "
                "Le cache de marché, la watchlist et vos thèses restent communs.")
-    with st.form("nouveau_pf", clear_on_submit=True):
-        c1, c2 = st.columns([2.5, 1.2], vertical_alignment="bottom")
-        nom = c1.text_input("Nouveau portefeuille", placeholder="Ex. PEA Conjoint, CTO Dividendes…")
-        if c2.form_submit_button("Créer", type="primary", icon=":material/add:", width="stretch"):
+
+    st.markdown("**Créer un portefeuille**")
+    c1, c2 = st.columns([2.4, 1.1])
+    nom = c1.text_input("Nom du portefeuille", placeholder="Ex. PEA Conjoint, CTO Dividendes…", key="pf_new_nom")
+    compte_def = c2.selectbox("Compte par défaut", ["PEA", "CTO"], key="pf_new_compte",
+                              help="Compte attribué aux nouvelles lignes importées.")
+    fichiers = st.file_uploader(
+        "Importer un fichier du courtier (facultatif : .xlsx, .csv)",
+        type=["xlsx", "xlsm", "csv", "txt", "tsv"], accept_multiple_files=True, key="pf_new_fichiers",
+        help="Laissez vide pour créer un portefeuille vierge et saisir vos achats dans « Opérations ».",
+    )
+
+    if fichiers:
+        sc_loc = screener()
+        univers = load_universe()
+        valeurs = univers[univers.index.isin(sc_loc.index)][["nom", "pays", "secteur"]].copy()
+        valeurs["fonds"] = valeurs["secteur"] == SECTEUR_FONDS
+        elig = univers["enveloppe"].to_dict() if "enveloppe" in univers.columns else {}
+        noms_u = valeurs["nom"].astype(str).to_dict()
+        libelles = {t: f"{noms_u[t]} ({t})" for t in sorted(valeurs.index, key=lambda t: noms_u[t].lower())}
+        par_lib = {v: t for t, v in libelles.items()}
+        hors_lib = "— hors des données —"
+        corr_path = PROFIL_DIR / "import_correspondances.json"
+
+        textes, illisibles = [], []
+        for f in fichiers:
+            try:
+                textes += _imp.textes_fichier(f.getvalue())
+            except ValueError as e:
+                illisibles.append(f"{f.name} : {e}")
+        for msg in illisibles:
+            st.error(msg, icon=":material/error:")
+        if textes:
+            r = _imp.importer(textes, valeurs, correspondances=lire_json(corr_path, {}) or {})
+            if not r.lignes:
+                st.warning("Aucune ligne reconnue dans le fichier.")
+            else:
+                table = pd.DataFrame({
+                    "statut": ["Ignorée" if li.ignoree else li.confiance.value for li in r.lignes],
+                    "fichier": [li.libelle for li in r.lignes],
+                    "valeur": [libelles.get(li.ticker, hors_lib) if li.ticker else hors_lib for li in r.lignes],
+                    "compte": [("CTO" if li.ticker and elig.get(li.ticker) == "CTO" else compte_def) for li in r.lignes],
+                    "ignorer": [li.ignoree for li in r.lignes],
+                })
+                edite = st.data_editor(
+                    table, key="pf_new_verif", hide_index=True, width="stretch",
+                    height=min(320, 35 * len(table) + 38), disabled=["statut", "fichier"],
+                    column_config={
+                        "statut": st.column_config.TextColumn("Statut", width="small"),
+                        "fichier": st.column_config.TextColumn("Ligne du fichier", width="medium"),
+                        "valeur": st.column_config.SelectboxColumn("Valeur retenue", options=[hors_lib, *libelles.values()],
+                                                                   required=True, width="large"),
+                        "compte": st.column_config.SelectboxColumn("Compte", options=["PEA", "CTO"], required=True,
+                                                                   width="small"),
+                        "ignorer": st.column_config.CheckboxColumn("Ignorer", width="small"),
+                    })
+                for li, (_, e) in zip(r.lignes, edite.iterrows()):
+                    choisi = par_lib.get(e["valeur"])
+                    if choisi != li.ticker:
+                        li.ticker = choisi
+                        li.confiance = _imp.Confiance.SURE if choisi else _imp.Confiance.AUCUNE
+                    li.ignoree = bool(e["ignorer"])
+                qtes = [li.ticker for li in r.lignes if li.ticker and li.quantite is not None and li.prix is None]
+                cours = {}
+                if qtes:
+                    px = eur_prices(tuple(sorted(set(qtes))))
+                    cours = px.ffill().iloc[-1].dropna().to_dict() if not px.empty else {}
+                _imp.calculer_poids(r.lignes, cours)
+                r.retenues = [li for li in r.lignes if not li.ignoree]
+                comptes = {li.ticker: e["compte"] for li, (_, e) in zip(r.lignes, edite.iterrows()) if li.ticker}
+                nouveau = _imp.lignes_modele(r, pd.DataFrame(), compte_def, noms_u)
+                if not nouveau.empty:
+                    nouveau["enveloppe"] = [comptes.get(t, e) for t, e in zip(nouveau["ticker"], nouveau["enveloppe"])]
+                avec_q = [li for li in r.retenues if li.ticker and li.quantite and li.quantite > 0]
+                avec_qtes = st.checkbox(f"Enregistrer aussi les quantités ({len(avec_q)} lignes)",
+                                        value=bool(avec_q), disabled=not avec_q, key="pf_new_qtes")
+                if st.button(f"Créer et importer ({len(nouveau)} lignes)", type="primary", icon=":material/check:",
+                             disabled=nouveau.empty, key="pf_new_go_imp"):
+                    try:
+                        ident, lib = creer_portefeuille(nom, activer=True)
+                    except ValueError as e:
+                        st.error(str(e))
+                    else:
+                        write_csv_fr(nouveau, chemin_modele(ident))
+                        if avec_qtes and avec_q:
+                            _positions.enregistrer([
+                                {"ticker": li.ticker, "compte": comptes.get(li.ticker, compte_def), "quantite": li.quantite}
+                                for li in avec_q
+                            ])
+                        corr = lire_json(corr_path, {}) or {}
+                        for li in r.lignes:
+                            if not li.ignoree:
+                                corr[li.cle] = li.ticker or ""
+                        ecrire_json(corr_path, corr, indent=1)
+                        st.cache_data.clear()
+                        st.toast(f"Portefeuille « {lib} » créé ({len(nouveau)} lignes).", icon=":material/check:")
+                        st.rerun()
+    else:
+        if st.button("Créer un portefeuille vide", type="primary", icon=":material/add:", key="pf_new_go_vide"):
             try:
                 _, lib = creer_portefeuille(nom, activer=True)
             except ValueError as e:
@@ -595,37 +699,31 @@ def _dialogue_portefeuilles() -> None:
         st.markdown("**Portefeuilles créés**")
         actif = portefeuille_actif()
         for ident, lib in secondaires:
-            r = st.columns([2.2, 1.0, 0.7], vertical_alignment="center")
-            nouveau = r[0].text_input("Nom", value=lib, key=f"pf_ren_{ident}", label_visibility="collapsed")
-            if r[1].button("Renommer", key=f"pf_ok_{ident}", disabled=nouveau.strip() == lib, width="stretch"):
+            r_col = st.columns([2.2, 1.0, 0.7], vertical_alignment="center")
+            nouveau_nom = r_col[0].text_input("Nom", value=lib, key=f"pf_ren_{ident}", label_visibility="collapsed")
+            if r_col[1].button("Renommer", key=f"pf_ok_{ident}", disabled=nouveau_nom.strip() == lib, width="stretch"):
                 try:
-                    renommer_portefeuille(ident, nouveau)
+                    renommer_portefeuille(ident, nouveau_nom)
                 except ValueError as e:
                     st.error(str(e))
                 else:
-                    st.toast(f"Renommé en « {nouveau.strip()} ».", icon=":material/check:")
+                    st.toast(f"Renommé en « {nouveau_nom.strip()} ».", icon=":material/check:")
                     st.rerun()
-            if r[2].button("", icon=":material/delete:", key=f"pf_del_{ident}", width="stretch",
-                           help=f"Supprimer « {lib} » (le portefeuille Principal reste intact)"):
+            if r_col[2].button("", icon=":material/delete:", key=f"pf_del_{ident}", width="stretch",
+                               help=f"Supprimer « {lib} » (le portefeuille Principal reste intact)"):
                 supprimer_portefeuille(ident)
                 st.cache_data.clear()
                 st.toast(f"Portefeuille « {lib} » supprimé." + (" Retour sur Principal." if actif == ident else ""),
                          icon=":material/delete:")
                 st.rerun()
+    elif load_model_portfolio().empty:
+        st.caption("Astuce : créez un portefeuille avec votre fichier CSV/Excel, ou ajoutez vos achats dans « Opérations ».")
 
 
-def sidebar() -> None:
+def sidebar(pages: dict | None = None) -> None:
     from .config import lister_portefeuilles, portefeuille_actif
 
     with st.sidebar:
-        sc = screener()
-        if not sc.empty:
-            noms = sc["nom"].astype(str)
-            st.selectbox("Rechercher une valeur", sorted(sc.index, key=lambda t: noms[t].lower()), index=None,
-                         key="recherche_globale", on_change=_ouvrir_recherche, placeholder="Nom ou ticker…",
-                         format_func=lambda t: f"{noms[t]} ({t})", label_visibility="collapsed")
-            if st.session_state.pop("recherche_ouvrir", False):
-                st.switch_page("vues/fiche.py")
         liste_pf = lister_portefeuilles()
         ids_pf = [i for i, _ in liste_pf]
         lib_pf = dict(liste_pf)
@@ -635,8 +733,25 @@ def sidebar() -> None:
         p1.selectbox("Portefeuille", ids_pf, format_func=lib_pf.get, key="pf_selecteur",
                      on_change=_changer_portefeuille)
         if p2.button("", icon=":material/add:", key="pf_gerer", width="stretch",
-                     help="Créer, renommer ou supprimer un portefeuille"):
+                     help="Créer (avec import CSV/Excel), renommer ou supprimer un portefeuille"):
             _dialogue_portefeuilles()
+
+        if pages:
+            for rubrique, liste in pages.items():
+                if rubrique:
+                    st.caption(rubrique)
+                for p in liste:
+                    st.page_link(p, label=p.title, icon=p.icon)
+            st.divider()
+
+        sc = screener()
+        if not sc.empty:
+            noms = sc["nom"].astype(str)
+            st.selectbox("Rechercher une valeur", sorted(sc.index, key=lambda t: noms[t].lower()), index=None,
+                         key="recherche_globale", on_change=_ouvrir_recherche, placeholder="Nom ou ticker…",
+                         format_func=lambda t: f"{noms[t]} ({t})", label_visibility="collapsed")
+            if st.session_state.pop("recherche_ouvrir", False):
+                st.switch_page("vues/fiche.py")
         d = data_date()
         st.caption(f"Cours au {d}" if d else "Aucune donnée téléchargée")
         if autonome.actif():

@@ -57,7 +57,6 @@ pages = {
         st.Page("vues/modele.py", title="Analyse de mon portefeuille", icon=":material/pie_chart:"),
         st.Page("vues/operations.py", title="Opérations", icon=":material/receipt_long:"),
         st.Page("vues/risques.py", title="Risques & équilibre", icon=":material/shield:"),
-        st.Page("vues/importer.py", title="Importer mon portefeuille", icon=":material/upload_file:"),
     ],
     "Explorer": [
         st.Page("vues/actualites.py", title="Actualités", icon=":material/newspaper:"),
@@ -69,6 +68,6 @@ pages = {
     ],
 }
 
-nav = st.navigation(pages, expanded=True)
-sidebar()
+nav = st.navigation(pages, position="hidden")
+sidebar(pages)
 nav.run()

@@ -60,19 +60,6 @@ def test_simulation_page_risques():
     assert any("Nombre effectif de lignes" in df.value.to_string() for df in at.dataframe)
 
 
-def test_import_d_un_portefeuille_colle():
-    """Lignes collées, lues puis présentées pour vérification (sans enregistrer)."""
-    at = _app("importer")
-    at.run()
-    at.text_area[0].set_value("Air Liquide 30\nMSFT 50\nAXA 20\nSociété inconnue 5")
-    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    metriques = {m.label: m.value for m in at.metric}
-    assert metriques["Lignes retenues"] == "4" and metriques["Hors des données"] == "1"
-    assert any(b.label.startswith("Enregistrer (3 lignes)") for b in at.button)
-
-
 def test_vigilance_homme_cle(monkeypatch):
     """Une ligne relue au risque homme-clé élevé, les autres sans note (cases vides) : le tableau de bord le signale."""
     import yfinance
@@ -90,19 +77,6 @@ def test_vigilance_homme_cle(monkeypatch):
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
     assert any("Homme-clé" in m.value for m in at.markdown)  # liste des points de vigilance
-
-
-def test_import_avec_quantites_propose_la_photo():
-    """Lignes avec quantités : l'enregistrement de la photo du portefeuille est proposé, pour toutes les lignes."""
-    at = _app("importer")
-    at.run()
-    at.text_area[0].set_value("Nom;Quantité\nAir Liquide;10\nAlphabet;5\nLVMH;2")
-    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    bascule = [t for t in at.toggle if t.label.startswith("Enregistrer aussi mes quantités")][0]
-    assert "(3 lignes)" in bascule.label  # la photo remplace tout : rien n'est écarté
-    assert bascule.value
 
 
 def test_mon_portefeuille_analyse_et_equilibre_propose():
