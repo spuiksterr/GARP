@@ -115,7 +115,7 @@ if not est_fonds:
             st.toast("Prix visé inscrit dans la watchlist.", icon=":material/flag:")
             st.rerun()
         precisions = [f"Au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de "
-                      f"{ui.pct(regl['marge'], 0)}, réglables dans « La bonne action au bon prix »."]
+                      f"{ui.pct(regl['marge'], 0)}, réglables dans le Screener."]
         if vise is not None and pd.notna(vise):
             precisions.append(f"Votre prix visé dans la watchlist : {ui.num(float(vise), 2)} {devise}.")
         if not math.isfinite(juste):

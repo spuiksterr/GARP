@@ -737,3 +737,147 @@ def label_map(sc: pd.DataFrame) -> dict:
 
 def stamp() -> str:
     return datetime.now().strftime("%Y-%m-%d")
+
+
+_TYPES_OPERATION = {
+    "ACHAT": "Achat / Renforcement",
+    "VENTE": "Vente / Allègement",
+    "REPRISE": "Position initiale",
+}
+
+
+def _synchroniser_modele(mp: pd.DataFrame, noms: dict[str, str]) -> int:
+    """Met à jour `portefeuille_modele.csv` à partir des positions détenues (`positions.positions()`),
+    en conservant les thèses, poches et conditions de vente existantes."""
+    import shutil
+    from datetime import date as _date
+
+    from . import portfolio as _pfo
+    from . import positions as _positions
+    from .config import MODELE_CSV, write_csv_fr
+
+    pos = _positions.positions()
+    if pos.empty:
+        return 0
+    lignes = []
+    for _, r in pos.groupby("ticker", as_index=False).agg(poids=("poids", "sum"), compte=("compte", "first")).iterrows():
+        t = r["ticker"]
+        poche = str(mp.loc[t, "poche"]) if t in mp.index and "poche" in mp.columns and mp.loc[t, "poche"] else "Cœur"
+        lignes.append((t, r["compte"], poche, float(r["poids"]) * 100))
+    nouveau = _pfo.nouvelle_composition(mp, lignes, noms)
+    if MODELE_CSV.exists():
+        shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-op-{_date.today():%Y-%m-%d}.csv"))
+    write_csv_fr(nouveau, MODELE_CSV)
+    return len(nouveau)
+
+
+def formulaire_operation(sc: pd.DataFrame, mp: pd.DataFrame, cle: str = "op") -> bool:
+    """Formulaire ergonomique pour enregistrer un achat, une vente ou une position initiale à date précise.
+
+    Suggère automatiquement le compte (PEA/CTO) et le cours de clôture à la date choisie.
+    Renvoie True si une opération vient d'être enregistrée.
+    """
+    from datetime import date as _date
+
+    from . import positions as _positions
+    from . import tracker as _tracker
+
+    noms = sc["nom"].astype(str).to_dict()
+    choix = list(dict.fromkeys(list(mp.index) + sorted(sc.index, key=lambda t: noms[t].lower())))
+    with st.container(border=True):
+        op_type = st.segmented_control(
+            "Type d'opération", list(_TYPES_OPERATION), default="ACHAT",
+            format_func=_TYPES_OPERATION.get, key=f"{cle}_type",
+            help="Achat / Renforcement : modifie le PRU et entre dans la performance à compter de cette date. "
+                 "Vente : allège la position à cette date. Position initiale : titre déjà détenu au départ.",
+        ) or "ACHAT"
+        r1 = st.columns([2.4, 1.2, 1.1])
+        ticker = r1[0].selectbox(
+            "Valeur", choix, index=None, placeholder="Tapez un nom ou un ticker (ex. Nvidia, NVDA, Air Liquide)…",
+            format_func=lambda t: f"{noms.get(t, t)} ({t})", key=f"{cle}_ticker",
+        )
+        op_date = r1[1].date_input("Date de l'opération", value=_date.today(), min_value=_date(2000, 1, 1),
+                                   max_value=_date.today(), key=f"{cle}_date")
+        compte_def = "CTO"
+        if ticker:
+            if ticker in mp.index and "enveloppe" in mp.columns and mp.loc[ticker, "enveloppe"] in _tracker.COMPTES:
+                compte_def = str(mp.loc[ticker, "enveloppe"])
+            elif ticker in sc.index and sc.loc[ticker, "enveloppe"] in _tracker.COMPTES:
+                compte_def = str(sc.loc[ticker, "enveloppe"])
+        op_compte = r1[2].segmented_control("Compte", _tracker.COMPTES, default=compte_def,
+                                            key=f"{cle}_compte_{ticker or 'aucun'}") or compte_def
+
+        # Cours de clôture indicatif à la date choisie (pré-remplit le prix unitaire).
+        devise = (str(sc.loc[ticker, "devise"])
+                  if ticker and ticker in sc.index and pd.notna(sc.loc[ticker, "devise"]) else "EUR")
+        cours_date = None
+        if ticker:
+            px_loc = local_prices(ticker)
+            if not px_loc.empty:
+                dispo = px_loc[px_loc.index <= pd.Timestamp(op_date)]
+                if not dispo.empty:
+                    cours_date = round(float(dispo.iloc[-1]), 4)
+        ref_cle = f"{cle}_prix_{ticker or 'aucun'}_{op_date.isoformat()}"
+        r2 = st.columns([1.1, 1.3, 1.3, 0.9])
+        op_qte = r2[0].number_input("Quantité", min_value=0.0, value=0.0, step=1.0, format="%.4g",
+                                    key=f"{cle}_qte")
+        op_prix = r2[1].number_input(
+            f"Prix unitaire ({devise})", min_value=0.0, value=float(cours_date or 0.0), step=1.0, format="%.4g",
+            key=ref_cle,
+            help="Pré-rempli avec le cours de clôture connu à cette date : remplacez par votre prix d'exécution réel.",
+        )
+        op_montant = r2[2].number_input(
+            "Montant total (€, facultatif)", min_value=0.0, value=0.0, step=100.0, format="%.2f",
+            key=f"{cle}_montant",
+            help="Montant réellement débité/crédité (frais inclus). Laissez à 0 pour le calculer depuis "
+                 "quantité × prix unitaire + frais.",
+        )
+        op_frais = r2[3].number_input("Frais (€)", min_value=0.0, value=0.0, step=1.0, format="%.2f",
+                                      key=f"{cle}_frais")
+        if ticker and cours_date is not None:
+            st.caption(f"Cours de clôture connu au {op_date:%d/%m/%Y} : **{nombre(cours_date, 2)} {devise}** "
+                       "(modifiable avec votre prix d'achat exact).")
+
+        r3 = st.columns([2.2, 1.5, 1.3], vertical_alignment="center")
+        op_note = r3[0].text_input("Note (facultative)", placeholder="Ex. Renforcement post-résultats",
+                                   key=f"{cle}_note")
+        sync_pos = r3[1].checkbox(
+            "Mettre à jour mon portefeuille", value=True, key=f"{cle}_sync",
+            help="Met aussi à jour vos quantités détenues et les lignes/poids de « Analyse de mon portefeuille » "
+                 "(thèses et conditions de vente conservées).",
+        )
+        if r3[2].button("Enregistrer l'opération", type="primary", icon=":material/add:", width="stretch",
+                        key=f"{cle}_valider"):
+            if not ticker:
+                st.error("Choisissez une valeur.")
+            elif op_qte <= 0:
+                st.error("La quantité doit être strictement positive.")
+            elif op_prix <= 0 and op_montant <= 0:
+                st.error("Renseignez le prix unitaire ou le montant total en euros.")
+            else:
+                _tracker.append_transaction({
+                    "date": op_date.isoformat(),
+                    "compte": op_compte,
+                    "type": op_type,
+                    "ticker": ticker,
+                    "quantite": op_qte,
+                    "prix_unitaire": op_prix if op_prix > 0 else "",
+                    "devise": devise,
+                    "frais_eur": op_frais if op_frais > 0 else "",
+                    "montant_eur": op_montant if op_montant > 0 else "",
+                    "taux_change": "",
+                    "note": op_note.replace(";", ",").strip(),
+                })
+                if sync_pos:
+                    pos_tx = _tracker.positions()
+                    if not pos_tx.empty:
+                        lignes = [{"ticker": r["ticker"], "compte": r["compte"], "quantite": float(r["quantite"])}
+                                  for _, r in pos_tx[pos_tx["quantite"] > 0].iterrows()]
+                        if lignes:
+                            _positions.enregistrer(lignes)
+                            _synchroniser_modele(mp, noms)
+                st.cache_data.clear()
+                st.toast(f"{_TYPES_OPERATION[op_type]} enregistré : {op_qte:g} {noms.get(ticker, ticker)} "
+                         f"le {op_date:%d/%m/%Y}.", icon=":material/check:")
+                return True
+    return False
