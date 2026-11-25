@@ -76,7 +76,7 @@ with tab_lignes:
             t[["symbole", "nom", "poids", "verdict", "ecart_achat", "cours", "prix_achat", "devise", "score", "moat",
                "criteres", "tri_implicite", "perf_12m", "homme_cle", "statut", "alerte"]],
             hide_index=True, width="stretch", height=min(760, 35 * len(t) + 38), on_select="rerun",
-            selection_mode="single-row", key="mp_lignes",
+            selection_mode="single-cell", key=ui.cle_tableau("mp_lignes"),
             column_config={
                 "symbole": st.column_config.TextColumn("Ticker", pinned=True),
                 "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"), "poids": ui.PCT("Poids"),
@@ -89,14 +89,10 @@ with tab_lignes:
                 "homme_cle": st.column_config.NumberColumn("Homme-clé / 10", format="%.1f"),
                 "statut": "Filtres", "alerte": st.column_config.TextColumn("Alerte", width="large"),
             })
-        lignes_choisies = selection.selection.rows if selection else []
-        if st.button("Ouvrir la fiche de la ligne choisie", icon=":material/query_stats:",
-                     disabled=not lignes_choisies):
-            st.session_state["fiche_ticker"] = t.index[lignes_choisies[0]]
-            st.switch_page("vues/fiche.py")
+        ui.fiche_au_clic(t, selection, "mp_lignes")
         st.caption(f"Prix d'achat au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de "
-                   f"{ui.pct(regl['marge'], 0)} (réglables dans « La bonne action au bon prix »). Choisissez une ligne "
-                   "pour ouvrir sa fiche. Outil d'aide à la décision, pas un conseil.")
+                   f"{ui.pct(regl['marge'], 0)} (réglables dans « La bonne action au bon prix »). Cliquez sur une "
+                   "valeur pour ouvrir sa fiche. Outil d'aide à la décision, pas un conseil.")
     st.download_button("Exporter la composition (CSV)", mp.to_csv(sep=";").encode("utf-8-sig"),
                        file_name="portefeuille_modele.csv", mime="text/csv", icon=":material/download:")
 
@@ -161,15 +157,20 @@ with tab_equilibre:
         k[1].metric("Lignes loin de leur cible", len(hors), border=True,
                     help=f"Écart de plus de {ui.num(seuil * 100, 0)} points entre poids réel et poids cible.")
         k[2].metric("Écart le plus fort", f"{ui.num(ecarts['ecart'].abs().max() * 100, 1)} pts", border=True)
-        vue = ecarts.sort_values("ecart")[["nom", "poids_reel", "poids_cible", "ecart", "a_ajuster_eur", "action"]]
-        ui.tableau(ui.as_pct_cols(vue, ["poids_reel", "poids_cible", "ecart"]), width="stretch",
-                   height=min(520, 35 * len(vue) + 38), column_config={
-                       "nom": "Valeur", "poids_reel": ui.PCT("Poids réel"), "poids_cible": ui.PCT("Poids cible"),
-                       "ecart": ui.PCT("Écart (points)", d=1),
-                       "a_ajuster_eur": st.column_config.NumberColumn(
-                           "Pour revenir à la cible (€)", format="%.0f",
-                           help="Positif : montant qu'il faudrait acheter. Négatif : montant au-dessus de la cible."),
-                       "action": "Proposition"})
+        vue = ecarts.sort_values("ecart")[["nom", "poids_reel", "poids_cible", "ecart", "a_ajuster_eur", "action"]].copy()
+        vue.insert(0, "symbole", vue.index)
+        ev_eq = ui.tableau(ui.as_pct_cols(vue, ["poids_reel", "poids_cible", "ecart"]), hide_index=True, width="stretch",
+                           height=min(520, 35 * len(vue) + 38), on_select="rerun", selection_mode="single-cell",
+                           key=ui.cle_tableau("mp_eq_ecarts"), column_config={
+                               "symbole": st.column_config.TextColumn("Ticker", pinned=True),
+                               "nom": st.column_config.TextColumn("Valeur", pinned=True),
+                               "poids_reel": ui.PCT("Poids réel"), "poids_cible": ui.PCT("Poids cible"),
+                               "ecart": ui.PCT("Écart (points)", d=1),
+                               "a_ajuster_eur": st.column_config.NumberColumn(
+                                   "Pour revenir à la cible (€)", format="%.0f",
+                                   help="Positif : montant qu'il faudrait acheter. Négatif : montant au-dessus de la cible."),
+                               "action": "Proposition"})
+        ui.fiche_au_clic(vue, ev_eq, "mp_eq_ecarts")
         st.markdown("**Si vous faites un apport**")
         compte_principal = pfo.compte_principal(w, mp)
         c = st.columns([1.2, 1, 1.2])
@@ -186,14 +187,16 @@ with tab_equilibre:
                        "déjà au-dessus de leur cible.")
         else:
             plan.insert(1, "nom", plan["ticker"].map(lambda t: names.get(t, t)))
-            ui.tableau(ui.as_pct_cols(plan, ["poids_cible_compte", "poids_apres"]).drop(columns=["ticker"]),
-                       hide_index=True, width="stretch", column_config={
-                           "nom": "Valeur", "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
-                           "cours_eur": st.column_config.NumberColumn("Cours €", format="%.2f"),
-                           "montant_eur": st.column_config.NumberColumn("Montant €", format="%.2f"),
-                           "poids_cible_compte": ui.PCT("Cible dans le compte"),
-                           "valeur_avant": st.column_config.NumberColumn("Détenu avant €", format="%.0f"),
-                           "poids_apres": ui.PCT("Poids après achat")})
+            ev_plan = ui.tableau(ui.as_pct_cols(plan, ["poids_cible_compte", "poids_apres"]).drop(columns=["ticker"]),
+                                 hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
+                                 key=ui.cle_tableau("mp_eq_plan"), column_config={
+                                     "nom": "Valeur", "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
+                                     "cours_eur": st.column_config.NumberColumn("Cours €", format="%.2f"),
+                                     "montant_eur": st.column_config.NumberColumn("Montant €", format="%.2f"),
+                                     "poids_cible_compte": ui.PCT("Cible dans le compte"),
+                                     "valeur_avant": st.column_config.NumberColumn("Détenu avant €", format="%.0f"),
+                                     "poids_apres": ui.PCT("Poids après achat")})
+            ui.fiche_au_clic(plan.set_index("ticker"), ev_plan, "mp_eq_plan")
         if ecartees:
             st.caption("Laissées de côté, le temps de revoir leur thèse : "
                        + " ; ".join(f"{names.get(t, t)}, {r}" for t, r in ecartees.items()) + ".")

@@ -228,14 +228,19 @@ t = mp[["nom", "enveloppe", "poche"]].copy()
 t["poids"] = w
 t = t.join(sc[["score", "perf_1m", "perf_12m", "tri_implicite", "per_prospectif"]])
 t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_values("poids", ascending=False)
-ui.tableau(t, width="stretch", column_config={
-    "nom": st.column_config.TextColumn("Valeur", width="medium"), "enveloppe": "Compte", "poche": "Poche",
+t.insert(0, "symbole", t.index)
+ev_lignes = ui.tableau(t, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
+                       key=ui.cle_tableau("acc_lignes"), column_config={
+    "symbole": st.column_config.TextColumn("Ticker", pinned=True),
+    "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"), "enveloppe": "Compte", "poche": "Poche",
     "poids": ui.PCT("Poids"),
     "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
                                    "sur 100"),
     "perf_1m": ui.PCT("1 mois"), "perf_12m": ui.PCT("12 mois"),
     "tri_implicite": ui.PCT("TRI implicite"), "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"),
 })
+ui.fiche_au_clic(t, ev_lignes, "acc_lignes")
+st.caption("Cliquez sur une valeur pour ouvrir sa fiche.")
 
 # ------------------------------------------------------------------ actualités
 dernieres = act.fil(sc)

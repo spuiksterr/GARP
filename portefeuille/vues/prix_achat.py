@@ -89,12 +89,13 @@ vue["prix_vise"] = [("—" if not math.isfinite(v) else ui.num(v, 2) + (" · att
 vue["verdict"] = ui.pastilles_verdict(vue["verdict"])
 # Barre d'actions au-dessus du tableau (remplie après lui, une fois la sélection connue).
 barre = st.container()
+cle = f"bon_prix_tableau_{ou}"
 colonnes = ["symbole", "nom", "verdict", "ecart_achat", "cours", "prix_achat", "prix_juste", "devise", "score",
             "moat",
             "criteres", "tri_implicite", "croissance_attendue", "secteur", "enveloppe", "prix_vise"]
 selection = ui.tableau(
     vue[colonnes], hide_index=True, width="stretch", height=min(720, 35 * len(vue) + 38), on_select="rerun",
-    selection_mode="multi-row", key=f"bon_prix_tableau_{ou}",
+    selection_mode=["single-cell", "multi-row"], key=ui.cle_tableau(cle),
     column_config={
         "symbole": st.column_config.TextColumn("Ticker", pinned=True),
         "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"),
@@ -114,6 +115,7 @@ selection = ui.tableau(
         "secteur": "Secteur", "enveloppe": "Compte",
         "prix_vise": st.column_config.TextColumn("Votre prix visé", help="Fixé dans la watchlist."),
     })
+ui.fiche_au_clic(vue, selection, cle, lignes=False)
 choisies = [vue.index[i] for i in (selection.selection.rows if selection else [])]
 with barre:
     b = st.columns([1.2, 1.5, 1.8, 2.5])
@@ -138,7 +140,7 @@ with barre:
                            f"Prix d'achat : rendement {ui.num(rendement, 1)} %, marge {marge} %", cours=tab.loc[t, "cours"])
         st.toast(f"{len(fixables)} valeur(s) suivie(s) au prix d'achat.", icon=":material/flag:")
         st.rerun()
-    b[3].caption("Cochez une ligne (case à gauche du tableau) pour ouvrir sa fiche, ou plusieurs pour les ajouter à la "
+    b[3].caption("Cliquez sur une valeur pour ouvrir sa fiche, ou cochez des lignes (à gauche) pour les ajouter à la "
                  "watchlist." if not choisies else f"{len(choisies)} ligne(s) cochée(s).")
 st.caption(
     f"Modèle : croissance retenue pendant {vcfg['annees_croissance']} ans, puis ralentissement en "

@@ -149,7 +149,22 @@ if mode == MODES[1]:
     with st.expander("Valeurs choisies chaque année"):
         m_detail = choix_m[0]
         sel = res["selections"].get(m_detail, {})
-        st.dataframe(pd.DataFrame({f"{d:%Y}": pd.Series(v) for d, v in sel.items()}), hide_index=True, width="stretch")
+        df_sel = pd.DataFrame({f"{d:%Y}": pd.Series(v) for d, v in sel.items()})
+        ev_sel = st.dataframe(df_sel, hide_index=True, width="stretch", on_select="rerun",
+                              selection_mode="single-cell", key=ui.cle_tableau("bt_pit_sel"))
+        cellules = ev_sel.selection.cells if ev_sel and ev_sel.selection else []
+        if cellules:
+            row_i, col = cellules[0]
+            if isinstance(col, str) and col in df_sel.columns:
+                tk = df_sel.iloc[row_i][col]
+            elif isinstance(col, int) and 0 <= col < df_sel.shape[1]:
+                tk = df_sel.iloc[row_i, col]
+            else:
+                tk = None
+            st.session_state["bt_pit_sel"] = st.session_state.get("bt_pit_sel", 0) + 1
+            if isinstance(tk, str) and tk in sc.index:
+                st.session_state["fiche_ticker"] = tk
+                st.switch_page("vues/fiche.py")
     st.caption(f"{res['nb_valeurs']} sociétés américaines testables (comptes SEC sur au moins 4 exercices), hors banques, "
                "assureurs et sociétés financières. Indicateurs reconstitués : rentabilité des fonds propres, marges "
                "opérationnelle et de FCF, dilution (qualité) ; croissance du CA sur 3 ans ; rendements du FCF et des "
