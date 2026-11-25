@@ -119,18 +119,15 @@ def test_mon_portefeuille_analyse_et_equilibre_propose():
     assert any("a_ajuster_eur" in df.value.columns for df in at_r.dataframe)
 
 
-def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
-    at = _app("prix_achat")
+def test_screener_unifie_avec_verdicts_de_prix():
+    at = _app("screener")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert at.segmented_control[0].value == "Toutes les actions de qualité" or any(
-        s.value == "Toutes les actions de qualité" for s in at.get("segmented_control"))
+    assert any(s.value == "Actions de qualité" for s in at.get("segmented_control"))
     assert any(m.label == "Au bon prix" for m in at.metric)
-    # Classement par la note GARP, sans choix de style ; boutons d'action au-dessus du tableau.
-    assert not [s for s in at.get("segmented_control") if s.label == "Classer selon le style"]
-    assert any("score" in df.value.columns for df in at.dataframe)
+    assert any("score" in df.value.columns and "verdict" in df.value.columns for df in at.dataframe)
     libelles = [b.label for b in at.button]
-    assert "Ouvrir la fiche" in libelles and "Ajouter à la watchlist (0)" in libelles
+    assert "Ajouter à la watchlist (0)" in libelles and "Suivre au prix d'achat (0)" in libelles
 
 
 

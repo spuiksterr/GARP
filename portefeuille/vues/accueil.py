@@ -50,7 +50,7 @@ with st.expander(f"Pondération de la note GARP : {resume_poids}", icon=":materi
     b1, b2 = st.columns([1, 3], vertical_alignment="center")
     b1.button("Rétablir 40 / 35 / 25", on_click=_poids_par_defaut, disabled=poids_actuels == scoring.POIDS_GARP)
     b2.caption("Les poids sont ramenés à 100 % et retenus pour les prochaines ouvertures. Ils changent la note GARP et "
-               "le classement partout (screener, « La bonne action au bon prix », fiche, construction), pas le prix "
+               "le classement partout (screener, fiche, construction), pas le prix "
                "d'achat ni le verdict. 40 / 35 / 25 est un choix de conviction, pas un résultat d'étude : la "
                "littérature étaye surtout la valorisation et la qualité.")
 st.caption(f"Cours au {ui.data_date()} · univers de {len(sc)} valeurs dont {int((sc['statut'] == 'Éligible').sum())} "
@@ -133,7 +133,7 @@ for t, a in wl.prix_vises_atteints(sc["cours"]).iterrows():
 regl = pa.reglages(strat)
 vises = {t: float(v) for t, v in suivies_wl["prix_cible"].items() if isinstance(v, (int, float)) and math.isfinite(v)}
 reglages_txt = (f"au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de sécurité de "
-                f"{ui.pct(regl['marge'], 0)}, réglables dans « La bonne action au bon prix »")
+                f"{ui.pct(regl['marge'], 0)}, réglables dans le Screener")
 occasions = pa.tableau(sc, {t: "Univers" for t in sc.index[sc["statut"] == "Éligible"]}, strat["valorisation"],
                        regl["rendement"], regl["marge"], vises)
 occasions = occasions[occasions["verdict"] == pa.VERDICTS["bon"]] if not occasions.empty else occasions
@@ -155,7 +155,8 @@ with b[0].container(border=True, height="stretch"):
         st.caption("Les mieux notées (note GARP) : " + " · ".join(
             f"{x['nom']} ({ui.pct(x['ecart_achat'], 0, signe=True)})" for _, x in occasions.head(4).iterrows()))
     if st.button("Voir la sélection", icon=":material/arrow_forward:", key="aller_prix"):
-        st.switch_page("vues/prix_achat.py")
+        st.session_state["scr_prefiltre_verdict"] = [pa.VERDICTS["bon"]]
+        st.switch_page("vues/screener.py")
 with b[1].container(border=True, height="stretch"):
     st.markdown("##### :material/pie_chart: Mon portefeuille")
     if lignes.empty:

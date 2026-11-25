@@ -86,7 +86,7 @@ with tab_lignes:
             })
         ui.fiche_au_clic(t, selection, "mp_lignes")
         st.caption(f"Prix d'achat au rendement exigé de {ui.pct(regl['rendement'], 1)} et avec une marge de "
-                   f"{ui.pct(regl['marge'], 0)} (réglables dans « La bonne action au bon prix »). Cliquez sur une "
+                   f"{ui.pct(regl['marge'], 0)} (réglables dans le Screener). Cliquez sur une "
                    "valeur pour ouvrir sa fiche. Outil d'aide à la décision, pas un conseil.")
     st.download_button("Exporter la composition (CSV)", mp.to_csv(sep=";").encode("utf-8-sig"),
                        file_name="portefeuille_modele.csv", mime="text/csv", icon=":material/download:")

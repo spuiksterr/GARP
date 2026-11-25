@@ -49,7 +49,6 @@ pages = {
         st.Page("vues/accueil.py", title="Tableau de bord", icon=":material/dashboard:", default=True),
     ],
     "Trouver": [
-        st.Page("vues/prix_achat.py", title="La bonne action au bon prix", icon=":material/sell:"),
         st.Page("vues/screener.py", title="Screener", icon=":material/filter_alt:"),
         st.Page("vues/fiche.py", title="Fiche valeur", icon=":material/query_stats:"),
         st.Page("vues/watchlist.py", title="Watchlist", icon=":material/star:"),
