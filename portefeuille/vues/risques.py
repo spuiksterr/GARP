@@ -9,7 +9,8 @@ from pf import risques, simulation, ui
 from pf.config import BENCHMARKS, load_strategy
 
 sc = ui.require_data()
-st.title("Risques du portefeuille")
+mp = ui.model()
+st.title("Risques et répartition")
 
 w, source = risques.poids_actuels()
 bench = load_strategy().get("suivi", {}).get("benchmark", "IWDA.AS")
@@ -37,7 +38,11 @@ k[1].metric("Trois premières lignes", ui.pct(conc["trois_premieres"], 0), f"{le
 k[2].metric("Nombre effectif de lignes", ui.num(conc["nombre_effectif"], 1),
             help="Diversification réelle : un portefeuille de 10 lignes égales vaut 10 ; s'il est dominé par une ligne, "
                  "il vaut bien moins.", delta="lignes « équivalentes »", delta_color="off", delta_arrow="off")
-k[3].metric("Volatilité", ui.pct(profil.get("volatilite"), 0), "annuelle, sur 3 ans", delta_color="off", delta_arrow="off")
+k[3].metric("Volatilité", ui.pct(profil.get("volatilite"), 0),
+            f"diversification : {ui.num(profil.get('ratio_diversification'), 2)}" if profil.get("ratio_diversification")
+            else "annuelle, sur 3 ans", delta_color="off", delta_arrow="off",
+            help="Volatilité annuelle sur 3 ans (MSCI World ~14-16 %). Ratio de diversification = volatilité moyenne "
+                 "des lignes / volatilité du portefeuille : plus il est élevé, plus les lignes se compensent.")
 k[4].metric("Perte maximale", ui.pct(risques.perte_maximale(r_p), 0),
             f"pire mois : {ui.pct(pire, 0)}" + (f" ({date_pire:%m/%Y})" if date_pire is not None else ""),
             delta_color="off", delta_arrow="off", help="Plus forte baisse depuis un sommet sur 3 ans, avec les poids d'aujourd'hui.")
@@ -84,12 +89,34 @@ with d.container(border=True):
                    "corrélation avec les autres.")
 g, d = st.columns(2)
 with g.container(border=True):
-    st.markdown("**Devises de cotation**")
-    ui.show(ui.hbar(risques.devises(w), fmt=".0%"), key="risques_devises")
-with d.container(border=True):
     st.markdown("**Secteurs**")
     secteurs = w.groupby(lambda t: sc["secteur"].get(t, "Autre")).sum()
     ui.show(ui.hbar(secteurs, fmt=".0%"), key="risques_secteurs")
+with d.container(border=True):
+    st.markdown("**Pays du siège**")
+    pays = w.groupby(lambda t: sc["pays"].get(t, "Autre")).sum()
+    ui.show(ui.hbar(pays, fmt=".0%"), key="risques_pays")
+
+g, d = st.columns(2)
+with g.container(border=True):
+    st.markdown("**Devises de cotation**")
+    ui.show(ui.hbar(risques.devises(w), fmt=".0%"), key="risques_devises")
+with d.container(border=True):
+    st.markdown("**Comptes et poches**")
+    cartes = []
+    if not mp.empty and "enveloppe" in mp.columns:
+        env_map = mp["enveloppe"].to_dict()
+        env = w.groupby(lambda t: env_map.get(t, sc["enveloppe"].get(t, "CTO"))).sum().sort_values(ascending=False)
+        cartes += [({"PEA": "PEA", "CTO": "Compte-titres"}.get(e, e), v) for e, v in env.items()]
+    if not mp.empty and "poche" in mp.columns:
+        poche_map = mp["poche"].to_dict()
+        poches = w.groupby(lambda t: poche_map.get(t, "Autre")).sum().sort_values(ascending=False)
+        cartes += [(f"Poche {str(p).lower()}", v) for p, v in poches.items() if p]
+    if cartes:
+        for col, (label, v) in zip(st.columns(len(cartes)), cartes):
+            col.metric(label, ui.pct(v), border=True)
+    else:
+        st.caption("Importez votre portefeuille pour voir la répartition par compte et par poche.")
 
 # --------------------------------------------------------------------------- corrélations
 st.subheader("Corrélations")

@@ -46,8 +46,8 @@ c[3].metric("TRI implicite", ui.pct(ch.get("TRI implicite")), border=True,
 c[4].metric("Lignes effectives", ui.num(risk.get("nombre_effectif"), 1), border=True,
             help="1 / somme des poids au carré : nombre de lignes équipondérées équivalent.")
 
-tab_lignes, tab_repartition, tab_equilibre, tab_modifier, tab_theses = st.tabs(
-    ["Analyse des lignes", "Répartition et risques", "Équilibre (proposition)", "Modifier les poids", "Thèses"])
+tab_lignes, tab_equilibre, tab_modifier, tab_theses = st.tabs(
+    ["Analyse des lignes", "Équilibre (proposition)", "Modifier les poids", "Thèses"])
 
 with tab_lignes:
     regl = pa.reglages(strat)
@@ -95,41 +95,6 @@ with tab_lignes:
                    "valeur pour ouvrir sa fiche. Outil d'aide à la décision, pas un conseil.")
     st.download_button("Exporter la composition (CSV)", mp.to_csv(sep=";").encode("utf-8-sig"),
                        file_name="portefeuille_modele.csv", mime="text/csv", icon=":material/download:")
-
-with tab_repartition:
-    st.subheader("Répartition")
-    a, b = st.columns(2)
-    with a:
-        st.markdown("**Par secteur**")
-        ui.show(ui.hbar(pfo.breakdown(w, sc, "secteur"), color=ui.accent()))
-    with b:
-        st.markdown("**Par pays du siège**")
-        ui.show(ui.hbar(pfo.breakdown(w, sc, "pays"), color=ui.accent()))
-    env = w.groupby(mp["enveloppe"]).sum().sort_values(ascending=False)  # le compte où la ligne est réellement détenue
-    poches = w.groupby(mp["poche"]).sum()
-    cartes = [({"PEA": "PEA", "CTO": "Compte-titres"}.get(e, e), v) for e, v in env.items()]
-    cartes += [(f"Poche {p.lower()}", v) for p, v in poches.sort_values(ascending=False).items()]
-    for col, (label, v) in zip(st.columns(len(cartes)), cartes):
-        col.metric(label, ui.pct(v), border=True)
-
-    if risk:
-        st.subheader("Risque et corrélations")
-        c = st.columns(3)
-        c[0].metric("Volatilité attendue", ui.pct(risk["volatilite"]), border=True,
-                    help="Sur 3 ans de rendements quotidiens en euros. À comparer à ~14-16 % pour le MSCI World.")
-        c[1].metric("Ratio de diversification", ui.num(risk["ratio_diversification"], 2), border=True,
-                    help="Volatilité moyenne des lignes / volatilité du portefeuille. Plus il est élevé, plus les lignes se compensent.")
-        c[2].metric("Nombre effectif", ui.num(risk["nombre_effectif"], 1), border=True)
-        st.markdown("**Contribution de chaque ligne au risque total**")
-        contrib = risk["contribution_risque"].rename(index=sc["nom"].to_dict())
-        ui.show(ui.hbar(contrib, color=ui.accent()))
-        st.markdown("**Corrélations des rendements hebdomadaires (3 ans)**")
-        names = sc["nom"].to_dict()
-        rets = pfo.returns_eur(list(w.index))
-        weekly = (1 + rets).resample("W-FRI").prod() - 1
-        ui.show(ui.corr_heatmap(weekly.corr(), labels=names))
-        st.caption("Bleu : les deux valeurs évoluent en sens opposé. Rouge : elles évoluent ensemble. "
-                   "Un bloc rouge signale un risque commun aux lignes concernées.")
 
 with tab_equilibre:
     st.caption("Une proposition, pas une consigne : comparer vos poids réels à vos poids cibles, et voir comment un "
