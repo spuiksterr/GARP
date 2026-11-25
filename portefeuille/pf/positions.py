@@ -11,13 +11,25 @@ from __future__ import annotations
 
 import math
 from datetime import date
+from pathlib import Path
 
 import pandas as pd
 
-from .config import PROFIL_DIR, read_csv_fr, write_csv_fr
+from .config import (
+    PORTEFEUILLE_DEFAUT,
+    PROFIL_DIR,
+    chemin_positions,
+    portefeuille_actif,
+    read_csv_fr,
+    write_csv_fr,
+)
 
 POSITIONS_CSV = PROFIL_DIR / "positions.csv"
 COLONNES = ["ticker", "compte", "quantite", "date"]
+
+
+def _chemin() -> Path:
+    return POSITIONS_CSV if portefeuille_actif() == PORTEFEUILLE_DEFAUT else chemin_positions()
 
 
 def enregistrer(lignes: list[dict], jour: date | None = None) -> int:
@@ -33,14 +45,15 @@ def enregistrer(lignes: list[dict], jour: date | None = None) -> int:
     jour = jour or date.today()
     df = pd.DataFrame([{"ticker": t, "compte": c, "quantite": round(q, 6), "date": jour.isoformat()}
                        for (t, c), q in sorted(cumul.items())], columns=COLONNES)
-    write_csv_fr(df, POSITIONS_CSV)
+    write_csv_fr(df, _chemin())
     return len(df)
 
 
 def photo() -> pd.DataFrame:
     """Quantités par ligne (ticker, compte, quantite, date) : la photo du dernier import, sinon le journal."""
-    if POSITIONS_CSV.exists():
-        df = read_csv_fr(POSITIONS_CSV, numeric=("quantite",))
+    cible = _chemin()
+    if cible.exists():
+        df = read_csv_fr(cible, numeric=("quantite",))
         return df[df["quantite"] > 0].reset_index(drop=True) if not df.empty else df
     try:
         from .tracker import positions as positions_journal

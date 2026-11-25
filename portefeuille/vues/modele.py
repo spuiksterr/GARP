@@ -92,6 +92,9 @@ with tab_lignes:
                        file_name="portefeuille_modele.csv", mime="text/csv", icon=":material/download:")
 
 with tab_theses:
-    choix = st.selectbox("Valeur", list(w.index), format_func=lambda t: f"{names.get(t, t)} ({t})")
-    txt = read_thesis(choix)
-    st.markdown(txt or "_Fiche absente : lancez une mise à jour pour la générer._")
+    if w.empty:
+        st.caption("Aucune ligne dans ce portefeuille.")
+    else:
+        choix = st.selectbox("Valeur", list(w.index), format_func=lambda t: f"{names.get(t, t)} ({t})")
+        txt = read_thesis(choix)
+        st.markdown(txt or "_Fiche absente : lancez une mise à jour pour la générer._")

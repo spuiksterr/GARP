@@ -554,7 +554,69 @@ def _ouvrir_recherche() -> None:
         st.session_state["recherche_globale"] = None
 
 
+def _changer_portefeuille() -> None:
+    from .config import choisir_portefeuille
+
+    choix = st.session_state.get("pf_selecteur")
+    if choix:
+        choisir_portefeuille(choix)
+        st.cache_data.clear()
+
+
+@st.dialog("Gérer mes portefeuilles")
+def _dialogue_portefeuilles() -> None:
+    from .config import (
+        PORTEFEUILLE_DEFAUT,
+        creer_portefeuille,
+        lister_portefeuilles,
+        portefeuille_actif,
+        renommer_portefeuille,
+        supprimer_portefeuille,
+    )
+
+    st.caption("Chaque portefeuille a ses propres lignes, quantités et opérations (achats, ventes, PRU). "
+               "Le cache de marché, la watchlist et vos thèses restent communs.")
+    with st.form("nouveau_pf", clear_on_submit=True):
+        c1, c2 = st.columns([2.5, 1.2], vertical_alignment="bottom")
+        nom = c1.text_input("Nouveau portefeuille", placeholder="Ex. PEA Conjoint, CTO Dividendes…")
+        if c2.form_submit_button("Créer", type="primary", icon=":material/add:", width="stretch"):
+            try:
+                _, lib = creer_portefeuille(nom, activer=True)
+            except ValueError as e:
+                st.error(str(e))
+            else:
+                st.cache_data.clear()
+                st.toast(f"Portefeuille « {lib} » créé et activé.", icon=":material/check:")
+                st.rerun()
+
+    secondaires = [(i, lib) for i, lib in lister_portefeuilles() if i != PORTEFEUILLE_DEFAUT]
+    if secondaires:
+        st.divider()
+        st.markdown("**Portefeuilles créés**")
+        actif = portefeuille_actif()
+        for ident, lib in secondaires:
+            r = st.columns([2.2, 1.0, 0.7], vertical_alignment="center")
+            nouveau = r[0].text_input("Nom", value=lib, key=f"pf_ren_{ident}", label_visibility="collapsed")
+            if r[1].button("Renommer", key=f"pf_ok_{ident}", disabled=nouveau.strip() == lib, width="stretch"):
+                try:
+                    renommer_portefeuille(ident, nouveau)
+                except ValueError as e:
+                    st.error(str(e))
+                else:
+                    st.toast(f"Renommé en « {nouveau.strip()} ».", icon=":material/check:")
+                    st.rerun()
+            if r[2].button("", icon=":material/delete:", key=f"pf_del_{ident}", width="stretch",
+                           help=f"Supprimer « {lib} » (le portefeuille Principal reste intact)"):
+                supprimer_portefeuille(ident)
+                st.cache_data.clear()
+                st.toast(f"Portefeuille « {lib} » supprimé." + (" Retour sur Principal." if actif == ident else ""),
+                         icon=":material/delete:")
+                st.rerun()
+
+
 def sidebar() -> None:
+    from .config import lister_portefeuilles, portefeuille_actif
+
     with st.sidebar:
         sc = screener()
         if not sc.empty:
@@ -564,6 +626,17 @@ def sidebar() -> None:
                          format_func=lambda t: f"{noms[t]} ({t})", label_visibility="collapsed")
             if st.session_state.pop("recherche_ouvrir", False):
                 st.switch_page("vues/fiche.py")
+        liste_pf = lister_portefeuilles()
+        ids_pf = [i for i, _ in liste_pf]
+        lib_pf = dict(liste_pf)
+        actif_pf = portefeuille_actif()
+        st.session_state["pf_selecteur"] = actif_pf
+        p1, p2 = st.columns([4, 1], vertical_alignment="bottom")
+        p1.selectbox("Portefeuille", ids_pf, format_func=lib_pf.get, key="pf_selecteur",
+                     on_change=_changer_portefeuille)
+        if p2.button("", icon=":material/add:", key="pf_gerer", width="stretch",
+                     help="Créer, renommer ou supprimer un portefeuille"):
+            _dialogue_portefeuilles()
         d = data_date()
         st.caption(f"Cours au {d}" if d else "Aucune donnée téléchargée")
         if autonome.actif():
@@ -754,7 +827,7 @@ def _synchroniser_modele(mp: pd.DataFrame, noms: dict[str, str]) -> int:
 
     from . import portfolio as _pfo
     from . import positions as _positions
-    from .config import MODELE_CSV, write_csv_fr
+    from .config import chemin_modele, write_csv_fr
 
     pos = _positions.positions()
     if pos.empty:
@@ -765,9 +838,10 @@ def _synchroniser_modele(mp: pd.DataFrame, noms: dict[str, str]) -> int:
         poche = str(mp.loc[t, "poche"]) if t in mp.index and "poche" in mp.columns and mp.loc[t, "poche"] else "Cœur"
         lignes.append((t, r["compte"], poche, float(r["poids"]) * 100))
     nouveau = _pfo.nouvelle_composition(mp, lignes, noms)
-    if MODELE_CSV.exists():
-        shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-op-{_date.today():%Y-%m-%d}.csv"))
-    write_csv_fr(nouveau, MODELE_CSV)
+    cible = chemin_modele()
+    if cible.exists():
+        shutil.copy2(cible, cible.with_name(f"portefeuille_modele.avant-op-{_date.today():%Y-%m-%d}.csv"))
+    write_csv_fr(nouveau, cible)
     return len(nouveau)
 
 

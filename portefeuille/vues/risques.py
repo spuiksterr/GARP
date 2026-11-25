@@ -8,7 +8,7 @@ import streamlit as st
 
 from pf import portfolio as pfo
 from pf import positions, risques, simulation, tracker, ui
-from pf.config import BENCHMARKS, MODELE_CSV, load_strategy, write_csv_fr
+from pf.config import BENCHMARKS, chemin_modele, load_strategy, write_csv_fr
 
 sc = ui.require_data()
 mp = ui.model()
@@ -17,6 +17,9 @@ strat = load_strategy()
 st.title("Risques & équilibre")
 
 w, source = risques.poids_actuels()
+if w.empty:
+    st.info("Ce portefeuille ne contient encore aucune ligne : importez-le ou ajoutez des opérations.", icon=":material/info:")
+    st.stop()
 bench = strat.get("suivi", {}).get("benchmark", "IWDA.AS")
 noms = {t: str(sc["nom"].get(t, t)) for t in w.index}
 names_sc = sc["nom"].astype(str).to_dict()
@@ -242,9 +245,10 @@ with tab_cibles:
         except ValueError as e:
             st.error(f"Composition non enregistrée : {e}.")
         else:
-            if MODELE_CSV.exists():
-                shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-modif-{date.today():%Y-%m-%d}.csv"))
-            write_csv_fr(nouveau, MODELE_CSV)
+            cible = chemin_modele()
+            if cible.exists():
+                shutil.copy2(cible, cible.with_name(f"portefeuille_modele.avant-modif-{date.today():%Y-%m-%d}.csv"))
+            write_csv_fr(nouveau, cible)
             st.cache_data.clear()
             st.session_state.pop("compo_edition", None)
             st.toast(f"Composition enregistrée : {len(nouveau)} lignes.", icon=":material/check:")

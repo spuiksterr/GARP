@@ -328,6 +328,33 @@ def test_courbe_depuis_et_benchmarks_complets():
     assert tracker.courbe_depuis(s, "2027-01-01").empty
 
 
+def test_multi_portefeuilles_isolation_et_cycle_de_vie():
+    from pf import config, positions, tracker
+
+    assert config.portefeuille_actif() == config.PORTEFEUILLE_DEFAUT
+    ident, lib = config.creer_portefeuille("PEA Conjoint", activer=True)
+    try:
+        assert ident == "pea-conjoint" and lib == "PEA Conjoint"
+        assert config.portefeuille_actif() == ident
+        assert config.chemin_modele().parent.name == ident
+        assert config.chemin_positions().parent.name == ident
+        assert config.chemin_transactions().parent.name == ident
+        # Le second portefeuille démarre vide sans toucher au principal.
+        assert config.load_model_portfolio().empty
+        assert tracker.load_transactions().empty
+        positions.enregistrer([{"ticker": "AI.PA", "compte": "PEA", "quantite": 5}])
+        assert len(positions.photo()) == 1
+        # Renommage
+        config.renommer_portefeuille(ident, "PEA Famille")
+        assert config.nom_portefeuille_actif() == "PEA Famille"
+        # Retour sur Principal : intact
+        config.choisir_portefeuille(config.PORTEFEUILLE_DEFAUT)
+        assert not config.load_model_portfolio().empty
+    finally:
+        config.supprimer_portefeuille(ident)
+    assert config.portefeuille_actif() == config.PORTEFEUILLE_DEFAUT
+
+
 # ------------------------------------------------------------------ données
 
 def test_une_paire_refusee_par_yahoo_n_efface_pas_son_historique(tmp_path, monkeypatch):

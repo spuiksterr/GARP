@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .config import MODELE_CSV, load_model_portfolio, load_strategy
+from .config import load_model_portfolio, load_strategy
 from .data import currency_map, load_fx, load_prices, prices_in_eur
 
 METHODES = {
@@ -275,7 +275,7 @@ def build_quant_portfolio(screener: pd.DataFrame, strategy: dict | None = None, 
     return w.sort_values(ascending=False)
 
 
-def model_weights(path: Path = MODELE_CSV) -> pd.Series:
+def model_weights(path: Path | None = None) -> pd.Series:
     mp = load_model_portfolio(path)
     if mp.empty:
         return pd.Series(dtype=float)

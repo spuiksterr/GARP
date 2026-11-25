@@ -231,83 +231,92 @@ hist_reel = tracker.history(tx) if not tx.empty else pd.DataFrame()
 twr_reel = tracker.twr(hist_reel) if len(hist_reel) >= 2 else pd.Series(dtype=float)
 a_journal = not twr_reel.empty
 
-px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
-min_dispo = px.index.min() if not px.empty else twr_reel.index[0]
-fin_dispo = twr_reel.index[-1] if a_journal else px.index.max()
-if a_journal:
-    debut_origine = twr_reel.index[0]
-else:
-    debut_origine = created if len(px[px.index >= created]) >= 5 else fin_dispo - pd.Timedelta(days=365)
+if not w.empty or a_journal:
+    px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
+    min_dispo = px.index.min() if not px.empty else twr_reel.index[0]
+    fin_dispo = twr_reel.index[-1] if a_journal else px.index.max()
+    if a_journal:
+        debut_origine = twr_reel.index[0]
+    else:
+        debut_origine = created if len(px[px.index >= created]) >= 5 else fin_dispo - pd.Timedelta(days=365)
 
-if periode_choisie == "Depuis le début":
-    debut = debut_origine
-elif periode_choisie == "1 mois":
-    debut = fin_dispo - pd.DateOffset(months=1)
-elif periode_choisie == "3 mois":
-    debut = fin_dispo - pd.DateOffset(months=3)
-elif periode_choisie == "6 mois":
-    debut = fin_dispo - pd.DateOffset(months=6)
-elif periode_choisie == "1 an":
-    debut = fin_dispo - pd.DateOffset(years=1)
-else:
-    date_choisie = st.date_input(
-        "Date de début de comparaison",
-        value=min(max(debut_origine.date(), min_dispo.date()), fin_dispo.date()),
-        min_value=min_dispo.date(), max_value=fin_dispo.date(), key="acc_date_debut",
-    )
-    debut = pd.Timestamp(date_choisie)
-debut = max(pd.Timestamp(debut), min_dispo)
+    if periode_choisie == "Depuis le début":
+        debut = debut_origine
+    elif periode_choisie == "1 mois":
+        debut = fin_dispo - pd.DateOffset(months=1)
+    elif periode_choisie == "3 mois":
+        debut = fin_dispo - pd.DateOffset(months=3)
+    elif periode_choisie == "6 mois":
+        debut = fin_dispo - pd.DateOffset(months=6)
+    elif periode_choisie == "1 an":
+        debut = fin_dispo - pd.DateOffset(years=1)
+    else:
+        date_choisie = st.date_input(
+            "Date de début de comparaison",
+            value=min(max(debut_origine.date(), min_dispo.date()), fin_dispo.date()),
+            min_value=min_dispo.date(), max_value=fin_dispo.date(), key="acc_date_debut",
+        )
+        debut = pd.Timestamp(date_choisie)
+    debut = max(pd.Timestamp(debut), min_dispo)
 
-# Suivi réel (journal des opérations) dès que la date choisie est dans la période du journal ;
-# avant la première opération enregistrée, repli sur la simulation aux poids actuels.
-suivi_reel = a_journal and debut >= twr_reel.index[0]
-if suivi_reel:
-    curve = tracker.courbe_depuis(twr_reel, debut)
-else:
-    curve = bt.run_backtest(w, debut, rebalance=None, prices=px[list(w.index)], cost_bps=0)["valeur"]
-
-nom_indice = INDICES_COMPARAISON[bench_choisi]
-bcurve = bt.benchmark_curve(bench_choisi, curve.index[0]) if not curve.empty else pd.Series(dtype=float)
-if not curve.empty:
+    # Suivi réel (journal des opérations) dès que la date choisie est dans la période du journal ;
+    # avant la première opération enregistrée, repli sur la simulation aux poids actuels.
+    suivi_reel = a_journal and debut >= twr_reel.index[0]
     if suivi_reel:
-        mode_txt = "suivi réel, achats et ventes à leur date"
-    elif a_journal:
-        mode_txt = f"simulation poids actuels — votre journal démarre le {twr_reel.index[0]:%d/%m/%Y}"
+        curve = tracker.courbe_depuis(twr_reel, debut)
+    elif not w.empty:
+        curve = bt.run_backtest(w, debut, rebalance=None, prices=px[list(w.index)], cost_bps=0)["valeur"]
     else:
-        mode_txt = "poids cibles"
-    perf_pf = f"portefeuille {ui.pct(curve.iloc[-1] / 100 - 1, signe=True)}"
-    if not bcurve.empty:
-        perf_ind = f"{nom_indice} {ui.pct(bcurve.iloc[-1] / 100 - 1, signe=True)}"
-        st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}, {perf_ind}")
-        ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve, nom_indice: bcurve}).dropna(),
-                         colors={"Portefeuille": ui.accent(), nom_indice: ui.GRIS},
-                         yfmt=",.1f", height=300))
-    else:
-        st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}")
-        st.info(f"Cours de {nom_indice} ({bench_choisi}) absents du cache local : lancez une mise à jour rapide "
-                "(ou téléchargez les données de la nuit) pour l'afficher.", icon=":material/info:")
-        ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve}).dropna(),
-                         colors={"Portefeuille": ui.accent()}, yfmt=",.1f", height=300))
+        curve = pd.Series(dtype=float)
+
+    nom_indice = INDICES_COMPARAISON[bench_choisi]
+    bcurve = bt.benchmark_curve(bench_choisi, curve.index[0]) if not curve.empty else pd.Series(dtype=float)
+    if not curve.empty:
+        if suivi_reel:
+            mode_txt = "suivi réel, achats et ventes à leur date"
+        elif a_journal:
+            mode_txt = f"simulation poids actuels — votre journal démarre le {twr_reel.index[0]:%d/%m/%Y}"
+        else:
+            mode_txt = "poids cibles"
+        perf_pf = f"portefeuille {ui.pct(curve.iloc[-1] / 100 - 1, signe=True)}"
+        if not bcurve.empty:
+            perf_ind = f"{nom_indice} {ui.pct(bcurve.iloc[-1] / 100 - 1, signe=True)}"
+            st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}, {perf_ind}")
+            ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve, nom_indice: bcurve}).dropna(),
+                             colors={"Portefeuille": ui.accent(), nom_indice: ui.GRIS},
+                             yfmt=",.1f", height=300))
+        else:
+            st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}")
+            st.info(f"Cours de {nom_indice} ({bench_choisi}) absents du cache local : lancez une mise à jour rapide "
+                    "(ou téléchargez les données de la nuit) pour l'afficher.", icon=":material/info:")
+            ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve}).dropna(),
+                             colors={"Portefeuille": ui.accent()}, yfmt=",.1f", height=300))
+else:
+    st.info("Ce portefeuille est vide : ajoutez vos opérations dans « Opérations » ou importez-le depuis "
+            "« Importer mon portefeuille ».", icon=":material/info:")
 
 # ------------------------------------------------------------------ lignes du modèle
 st.markdown("#### Lignes du portefeuille")
-t = mp[["nom", "enveloppe", "poche"]].copy()
-t["poids"] = w
-t = t.join(sc[["score", "perf_1m", "perf_12m", "tri_implicite", "per_prospectif"]])
-t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_values("poids", ascending=False)
-t.insert(0, "symbole", t.index)
-ev_lignes = ui.tableau(t, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
-                       key=ui.cle_tableau("acc_lignes"), column_config={
-    "symbole": st.column_config.TextColumn("Ticker", pinned=True),
-    "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"), "enveloppe": "Compte", "poche": "Poche",
-    "poids": ui.PCT("Poids"),
-    "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
-                                   "sur 100"),
-    "perf_1m": ui.PCT("1 mois"), "perf_12m": ui.PCT("12 mois"),
-    "tri_implicite": ui.PCT("TRI implicite"), "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"),
-})
-ui.fiche_au_clic(t, ev_lignes, "acc_lignes")
-st.caption("Cliquez sur une valeur pour ouvrir sa fiche.")
+if not mp.empty:
+    t = mp[["nom", "enveloppe", "poche"]].copy()
+    t["poids"] = w
+    t = t.join(sc[["score", "perf_1m", "perf_12m", "tri_implicite", "per_prospectif"]])
+    t = ui.as_pct_cols(t, ["poids", "perf_1m", "perf_12m", "tri_implicite"]).sort_values("poids", ascending=False)
+    t.insert(0, "symbole", t.index)
+    ev_lignes = ui.tableau(t, hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
+                           key=ui.cle_tableau("acc_lignes"), column_config={
+        "symbole": st.column_config.TextColumn("Ticker", pinned=True),
+        "nom": st.column_config.TextColumn("Valeur", pinned=True, width="medium"), "enveloppe": "Compte", "poche": "Poche",
+        "poids": ui.PCT("Poids"),
+        "score": ui.SCORE("Note GARP", "Croissance 40 %, valorisation 35 %, qualité 25 % : rangs dans l'univers, "
+                                       "sur 100"),
+        "perf_1m": ui.PCT("1 mois"), "perf_12m": ui.PCT("12 mois"),
+        "tri_implicite": ui.PCT("TRI implicite"), "per_prospectif": st.column_config.NumberColumn("PER prosp.", format="%.1f"),
+    })
+    ui.fiche_au_clic(t, ev_lignes, "acc_lignes")
+    st.caption("Cliquez sur une valeur pour ouvrir sa fiche.")
+else:
+    st.caption("Aucune ligne dans ce portefeuille.")
 
 # ------------------------------------------------------------------ actualités
 dernieres = act.fil(sc)

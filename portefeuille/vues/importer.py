@@ -10,9 +10,9 @@ import streamlit as st
 from pf import import_portefeuille as imp
 from pf import positions, ui
 from pf.config import (
-    MODELE_CSV,
     PROFIL_DIR,
     SECTEUR_FONDS,
+    chemin_modele,
     ecrire_json,
     lire_json,
     load_model_portfolio,
@@ -183,9 +183,10 @@ def lignes_photo() -> list[dict]:
 
 
 def enregistrer() -> None:
-    if MODELE_CSV.exists():
-        shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-import-{date.today():%Y-%m-%d}.csv"))
-    write_csv_fr(nouveau, MODELE_CSV)
+    cible = chemin_modele()
+    if cible.exists():
+        shutil.copy2(cible, cible.with_name(f"portefeuille_modele.avant-import-{date.today():%Y-%m-%d}.csv"))
+    write_csv_fr(nouveau, cible)
     if avec_quantites and avec_q:
         positions.enregistrer(lignes_photo())
     correspondances = lire_json(CORRESPONDANCES, {}) or {}
