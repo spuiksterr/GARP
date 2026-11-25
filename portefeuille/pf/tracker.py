@@ -22,7 +22,15 @@ from datetime import date, datetime
 import numpy as np
 import pandas as pd
 
-from .config import SAUVEGARDES_DIR, TRANSACTIONS_CSV, read_csv_fr, write_csv_fr
+from .config import (
+    PORTEFEUILLE_DEFAUT,
+    SAUVEGARDES_DIR,
+    TRANSACTIONS_CSV,
+    chemin_transactions,
+    portefeuille_actif,
+    read_csv_fr,
+    write_csv_fr,
+)
 from .data import currency_map, fx_rate, load_fx, load_prices, prices_in_eur
 
 TYPES = ["ACHAT", "VENTE", "DIVIDENDE", "VERSEMENT", "RETRAIT", "FRAIS", "REPRISE"]
@@ -34,12 +42,17 @@ _ORDRE = {"REPRISE": -1, "VERSEMENT": 0, "VENTE": 1, "DIVIDENDE": 2, "ACHAT": 3,
 _NUM = ("quantite", "prix_unitaire", "frais_eur", "montant_eur", "taux_change")
 
 
+def _chemin():
+    return TRANSACTIONS_CSV if portefeuille_actif() == PORTEFEUILLE_DEFAUT else chemin_transactions()
+
+
 # --------------------------------------------------------------------------- journal
 
 def load_transactions() -> pd.DataFrame:
-    if not TRANSACTIONS_CSV.exists():
+    cible = _chemin()
+    if not cible.exists():
         return pd.DataFrame(columns=COLONNES)
-    df = read_csv_fr(TRANSACTIONS_CSV, numeric=_NUM)
+    df = read_csv_fr(cible, numeric=_NUM)
     for col in COLONNES:
         if col not in df.columns:
             df[col] = np.nan if col in _NUM else ""
@@ -59,10 +72,11 @@ GARDER_SAUVEGARDES = 30
 
 def sauvegarder_journal() -> None:
     """Copie datée du journal avant toute écriture : une ligne supprimée par erreur se retrouve."""
-    if not TRANSACTIONS_CSV.exists():
+    cible = _chemin()
+    if not cible.exists():
         return
     SAUVEGARDES_DIR.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(TRANSACTIONS_CSV, SAUVEGARDES_DIR / f"transactions-{datetime.now():%Y%m%d-%H%M%S-%f}.csv")
+    shutil.copy2(cible, SAUVEGARDES_DIR / f"transactions-{datetime.now():%Y%m%d-%H%M%S-%f}.csv")
     for ancienne in sorted(SAUVEGARDES_DIR.glob("transactions-*.csv"))[:-GARDER_SAUVEGARDES]:
         ancienne.unlink()
 
@@ -77,14 +91,14 @@ def append_transactions(rows: list[dict]) -> None:
     out = pd.concat([df, new], ignore_index=True)
     out["date"] = pd.to_datetime(out["date"]).dt.strftime("%Y-%m-%d")
     sauvegarder_journal()
-    write_csv_fr(out, TRANSACTIONS_CSV)
+    write_csv_fr(out, _chemin())
 
 
 def save_transactions(df: pd.DataFrame) -> None:
     out = df.copy()
     out["date"] = pd.to_datetime(out["date"]).dt.strftime("%Y-%m-%d")
     sauvegarder_journal()
-    write_csv_fr(out[COLONNES], TRANSACTIONS_CSV)
+    write_csv_fr(out[COLONNES], _chemin())
 
 
 def _num(v) -> float:

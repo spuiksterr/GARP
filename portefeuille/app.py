@@ -49,15 +49,14 @@ pages = {
         st.Page("vues/accueil.py", title="Tableau de bord", icon=":material/dashboard:", default=True),
     ],
     "Trouver": [
-        st.Page("vues/prix_achat.py", title="La bonne action au bon prix", icon=":material/sell:"),
         st.Page("vues/screener.py", title="Screener", icon=":material/filter_alt:"),
         st.Page("vues/fiche.py", title="Fiche valeur", icon=":material/query_stats:"),
         st.Page("vues/watchlist.py", title="Watchlist", icon=":material/star:"),
     ],
     "Mon portefeuille": [
         st.Page("vues/modele.py", title="Analyse de mon portefeuille", icon=":material/pie_chart:"),
-        st.Page("vues/risques.py", title="Risques", icon=":material/shield:"),
-        st.Page("vues/importer.py", title="Importer mon portefeuille", icon=":material/upload_file:"),
+        st.Page("vues/operations.py", title="Opérations", icon=":material/receipt_long:"),
+        st.Page("vues/risques.py", title="Risques & équilibre", icon=":material/shield:"),
     ],
     "Explorer": [
         st.Page("vues/actualites.py", title="Actualités", icon=":material/newspaper:"),
@@ -69,6 +68,6 @@ pages = {
     ],
 }
 
-nav = st.navigation(pages, expanded=True)
-sidebar()
+nav = st.navigation(pages, position="hidden")
+sidebar(pages)
 nav.run()

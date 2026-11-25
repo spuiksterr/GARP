@@ -60,19 +60,6 @@ def test_simulation_page_risques():
     assert any("Nombre effectif de lignes" in df.value.to_string() for df in at.dataframe)
 
 
-def test_import_d_un_portefeuille_colle():
-    """Lignes collées, lues puis présentées pour vérification (sans enregistrer)."""
-    at = _app("importer")
-    at.run()
-    at.text_area[0].set_value("Air Liquide 30\nMSFT 50\nAXA 20\nSociété inconnue 5")
-    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    metriques = {m.label: m.value for m in at.metric}
-    assert metriques["Lignes retenues"] == "4" and metriques["Hors des données"] == "1"
-    assert any(b.label.startswith("Enregistrer (3 lignes)") for b in at.button)
-
-
 def test_vigilance_homme_cle(monkeypatch):
     """Une ligne relue au risque homme-clé élevé, les autres sans note (cases vides) : le tableau de bord le signale."""
     import yfinance
@@ -92,42 +79,29 @@ def test_vigilance_homme_cle(monkeypatch):
     assert any("Homme-clé" in m.value for m in at.markdown)  # liste des points de vigilance
 
 
-def test_import_avec_quantites_propose_la_photo():
-    """Lignes avec quantités : l'enregistrement de la photo du portefeuille est proposé, pour toutes les lignes."""
-    at = _app("importer")
-    at.run()
-    at.text_area[0].set_value("Nom;Quantité\nAir Liquide;10\nAlphabet;5\nLVMH;2")
-    [b for b in at.button if b.label == "Lire mes lignes"][0].click()
-    at.run()
-    assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    bascule = [t for t in at.toggle if t.label.startswith("Enregistrer aussi mes quantités")][0]
-    assert "(3 lignes)" in bascule.label  # la photo remplace tout : rien n'est écarté
-    assert bascule.value
-
-
 def test_mon_portefeuille_analyse_et_equilibre_propose():
-    """Analyse des lignes (verdict de prix, qualité) et onglet « Équilibre » : poids réels du journal face aux cibles."""
+    """Analyse des lignes (modele) et onglet « Équilibre & apport » (risques) : poids réels face aux cibles."""
     at = _app("modele")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
     assert any(m.label == "Hors des filtres" for m in at.metric)
     assert any("verdict" in df.value.columns for df in at.dataframe)  # analyse des lignes
-    assert any(m.label == "Lignes loin de leur cible" for m in at.metric)  # onglet Équilibre (journal du jeu d'essai)
-    assert any("a_ajuster_eur" in df.value.columns for df in at.dataframe)
+    at_r = _app("risques")
+    at_r.run()
+    assert not at_r.exception, [str(e.value)[:300] for e in at_r.exception]
+    assert any(m.label == "Lignes loin de leur cible" for m in at_r.metric)  # onglet Équilibre & apport
+    assert any("a_ajuster_eur" in df.value.columns for df in at_r.dataframe)
 
 
-def test_la_bonne_action_au_bon_prix_dans_tout_l_univers():
-    at = _app("prix_achat")
+def test_screener_unifie_avec_verdicts_de_prix():
+    at = _app("screener")
     at.run()
     assert not at.exception, [str(e.value)[:300] for e in at.exception]
-    assert at.segmented_control[0].value == "Toutes les actions de qualité" or any(
-        s.value == "Toutes les actions de qualité" for s in at.get("segmented_control"))
+    assert any(s.value == "Actions de qualité" for s in at.get("segmented_control"))
     assert any(m.label == "Au bon prix" for m in at.metric)
-    # Classement par la note GARP, sans choix de style ; boutons d'action au-dessus du tableau.
-    assert not [s for s in at.get("segmented_control") if s.label == "Classer selon le style"]
-    assert any("score" in df.value.columns for df in at.dataframe)
+    assert any("score" in df.value.columns and "verdict" in df.value.columns for df in at.dataframe)
     libelles = [b.label for b in at.button]
-    assert "Ouvrir la fiche" in libelles and "Ajouter à la watchlist (0)" in libelles
+    assert "Ajouter à la watchlist (0)" in libelles and "Suivre au prix d'achat (0)" in libelles
 
 
 

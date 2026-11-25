@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import time
+import unicodedata
 from collections.abc import Callable
 from pathlib import Path
 
@@ -198,12 +200,122 @@ def load_cas_particuliers() -> dict[str, set[str]]:
     return out
 
 
-def load_model_portfolio(path: Path = MODELE_CSV) -> pd.DataFrame:
-    """Poids cibles du portefeuille (par défaut le portefeuille réel ; `path` pour une autre sélection)."""
-    if not path.exists():
+def load_model_portfolio(path: Path | None = None) -> pd.DataFrame:
+    """Poids cibles du portefeuille actif (ou `path` pour une autre sélection)."""
+    cible = path if path is not None else chemin_modele()
+    if not cible.exists():
         return pd.DataFrame(columns=["ticker", "poids_cible"]).set_index("ticker")
-    df = read_csv_fr(path, numeric=("poids_cible", "conviction"))
+    df = read_csv_fr(cible, numeric=("poids_cible", "conviction"))
     return df.set_index("ticker")
+
+
+# --------------------------------------------------------------------------- multi-portefeuilles
+
+PORTEFEUILLE_DEFAUT = "principal"
+PORTEFEUILLES_DIR = PROFIL_DIR / "portefeuilles"
+
+
+def _slug_portefeuille(nom: str) -> str:
+    sans = unicodedata.normalize("NFKD", nom).encode("ascii", "ignore").decode("ascii")
+    slug = re.sub(r"[^a-z0-9]+", "-", sans.lower()).strip("-")
+    return slug or "portefeuille"
+
+
+def _dossier_portefeuilles() -> Path:
+    return PROFIL_DIR / "portefeuilles"
+
+
+def lister_portefeuilles() -> list[tuple[str, str]]:
+    """Liste ordonnée [(identifiant, libellé)] : Principal d'abord, puis les portefeuilles créés."""
+    out: list[tuple[str, str]] = [(PORTEFEUILLE_DEFAUT, "Principal")]
+    racine = _dossier_portefeuilles()
+    if racine.is_dir():
+        for d in sorted(racine.iterdir(), key=lambda p: p.name.lower()):
+            if not d.is_dir() or d.name == PORTEFEUILLE_DEFAUT:
+                continue
+            meta = lire_json(d / "meta.json", {}) or {}
+            out.append((d.name, str(meta.get("nom") or d.name)))
+    return out
+
+
+def portefeuille_actif() -> str:
+    """Identifiant du portefeuille actif (variable PF_PORTEFEUILLE, sinon profil/portefeuilles/actif.json)."""
+    valides = {ident for ident, _ in lister_portefeuilles()}
+    env = os.environ.get("PF_PORTEFEUILLE", "").strip()
+    if env in valides:
+        return env
+    etat = lire_json(_dossier_portefeuilles() / "actif.json", {}) or {}
+    actif = str(etat.get("actif") or PORTEFEUILLE_DEFAUT)
+    return actif if actif in valides else PORTEFEUILLE_DEFAUT
+
+
+def nom_portefeuille_actif() -> str:
+    actif = portefeuille_actif()
+    return dict(lister_portefeuilles()).get(actif, "Principal")
+
+
+def choisir_portefeuille(identifiant: str) -> str:
+    valides = {ident for ident, _ in lister_portefeuilles()}
+    cible = identifiant if identifiant in valides else PORTEFEUILLE_DEFAUT
+    ecrire_json(_dossier_portefeuilles() / "actif.json", {"actif": cible})
+    return cible
+
+
+def creer_portefeuille(nom: str, activer: bool = True) -> tuple[str, str]:
+    """Crée un portefeuille dans `profil/portefeuilles/<slug>/` et renvoie `(identifiant, nom)`."""
+    nom_propre = " ".join(nom.strip().split())
+    if not nom_propre:
+        raise ValueError("Le nom du portefeuille ne peut pas être vide.")
+    base = _slug_portefeuille(nom_propre)
+    existants = {ident for ident, _ in lister_portefeuilles()}
+    ident = base
+    n = 2
+    while ident in existants or ident == PORTEFEUILLE_DEFAUT:
+        ident = f"{base}-{n}"
+        n += 1
+    dossier = _dossier_portefeuilles() / ident
+    dossier.mkdir(parents=True, exist_ok=True)
+    ecrire_json(dossier / "meta.json", {"nom": nom_propre})
+    if activer:
+        choisir_portefeuille(ident)
+    return ident, nom_propre
+
+
+def renommer_portefeuille(identifiant: str, nouveau_nom: str) -> None:
+    if identifiant == PORTEFEUILLE_DEFAUT:
+        raise ValueError("Le portefeuille principal ne se renomme pas.")
+    nom_propre = " ".join(nouveau_nom.strip().split())
+    if not nom_propre:
+        raise ValueError("Le nom du portefeuille ne peut pas être vide.")
+    dossier = _dossier_portefeuilles() / identifiant
+    if not dossier.is_dir():
+        raise ValueError(f"Portefeuille introuvable : {identifiant}")
+    ecrire_json(dossier / "meta.json", {"nom": nom_propre})
+
+
+def supprimer_portefeuille(identifiant: str) -> None:
+    if identifiant == PORTEFEUILLE_DEFAUT:
+        raise ValueError("Le portefeuille principal ne peut pas être supprimé.")
+    dossier = _dossier_portefeuilles() / identifiant
+    if dossier.is_dir():
+        shutil.rmtree(dossier)
+    if portefeuille_actif() == identifiant:
+        choisir_portefeuille(PORTEFEUILLE_DEFAUT)
+
+
+def chemin_modele(identifiant: str | None = None) -> Path:
+    ident = identifiant or portefeuille_actif()
+    return MODELE_CSV if ident == PORTEFEUILLE_DEFAUT else _dossier_portefeuilles() / ident / "portefeuille_modele.csv"
+
+
+def chemin_positions(identifiant: str | None = None) -> Path:
+    ident = identifiant or portefeuille_actif()
+    return PROFIL_DIR / "positions.csv" if ident == PORTEFEUILLE_DEFAUT else _dossier_portefeuilles() / ident / "positions.csv"
+
+
+def chemin_transactions(identifiant: str | None = None) -> Path:
+    ident = identifiant or portefeuille_actif()
+    return TRANSACTIONS_CSV if ident == PORTEFEUILLE_DEFAUT else _dossier_portefeuilles() / ident / "transactions.csv"
 
 
 def fund_tickers() -> set[str]:
@@ -212,11 +324,15 @@ def fund_tickers() -> set[str]:
 
 
 def all_tracked_tickers() -> list[str]:
-    """Univers + portefeuille modèle + lignes détenues : tout ce dont l'outil a besoin."""
+    """Univers + tous les portefeuilles (modèles et journaux d'opérations) : tout ce dont l'outil a besoin."""
     tickers = list(load_universe().index)
-    tickers += [t for t in load_model_portfolio().index if t not in tickers]
-    if TRANSACTIONS_CSV.exists():
-        tx = read_csv_fr(TRANSACTIONS_CSV)
-        if "ticker" in tx.columns:
-            tickers += [t for t in tx["ticker"].unique() if t and t not in tickers]
+    for ident, _ in lister_portefeuilles():
+        for t in load_model_portfolio(chemin_modele(ident)).index:
+            if t not in tickers:
+                tickers.append(t)
+        tx_path = chemin_transactions(ident)
+        if tx_path.exists():
+            tx = read_csv_fr(tx_path)
+            if "ticker" in tx.columns:
+                tickers += [t for t in tx["ticker"].unique() if t and t not in tickers]
     return tickers
