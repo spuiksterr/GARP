@@ -344,9 +344,13 @@ def test_multi_portefeuilles_isolation_et_cycle_de_vie():
         assert tracker.load_transactions().empty
         positions.enregistrer([{"ticker": "AI.PA", "compte": "PEA", "quantite": 5}])
         assert len(positions.photo()) == 1
-        # Renommage
+        # Renommage : conserve la date de création
+        from datetime import date as _date
+
+        assert config.date_creation_portefeuille(ident) == _date.today().isoformat()
         config.renommer_portefeuille(ident, "PEA Famille")
         assert config.nom_portefeuille_actif() == "PEA Famille"
+        assert config.date_creation_portefeuille(ident) == _date.today().isoformat()
         # Retour sur Principal : intact
         config.choisir_portefeuille(config.PORTEFEUILLE_DEFAUT)
         assert not config.load_model_portfolio().empty

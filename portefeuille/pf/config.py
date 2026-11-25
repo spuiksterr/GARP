@@ -8,6 +8,7 @@ import shutil
 import time
 import unicodedata
 from collections.abc import Callable
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -275,7 +276,7 @@ def creer_portefeuille(nom: str, activer: bool = True) -> tuple[str, str]:
         n += 1
     dossier = _dossier_portefeuilles() / ident
     dossier.mkdir(parents=True, exist_ok=True)
-    ecrire_json(dossier / "meta.json", {"nom": nom_propre})
+    ecrire_json(dossier / "meta.json", {"nom": nom_propre, "cree_le": date.today().isoformat()})
     if activer:
         choisir_portefeuille(ident)
     return ident, nom_propre
@@ -290,7 +291,28 @@ def renommer_portefeuille(identifiant: str, nouveau_nom: str) -> None:
     dossier = _dossier_portefeuilles() / identifiant
     if not dossier.is_dir():
         raise ValueError(f"Portefeuille introuvable : {identifiant}")
-    ecrire_json(dossier / "meta.json", {"nom": nom_propre})
+    meta = lire_json(dossier / "meta.json", {}) or {}
+    meta["nom"] = nom_propre
+    ecrire_json(dossier / "meta.json", meta)
+
+
+def date_creation_portefeuille(identifiant: str | None = None) -> str | None:
+    """Date ISO (AAAA-MM-JJ) à laquelle le portefeuille a été ajouté dans l'outil."""
+    ident = identifiant or portefeuille_actif()
+    if ident != PORTEFEUILLE_DEFAUT:
+        dossier = _dossier_portefeuilles() / ident
+        meta = lire_json(dossier / "meta.json", {}) or {}
+        if meta.get("cree_le"):
+            return str(meta["cree_le"])[:10]
+        cible = chemin_modele(ident)
+        if cible.exists():
+            return datetime.fromtimestamp(cible.stat().st_mtime).date().isoformat()
+        if dossier.is_dir():
+            return datetime.fromtimestamp(dossier.stat().st_mtime).date().isoformat()
+        return None
+    if MODELE_CSV.exists():
+        return datetime.fromtimestamp(MODELE_CSV.stat().st_mtime).date().isoformat()
+    return None
 
 
 def supprimer_portefeuille(identifiant: str) -> None:
