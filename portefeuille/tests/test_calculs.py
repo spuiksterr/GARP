@@ -297,6 +297,23 @@ def test_couverture_interets_manquants_selon_dette():
     assert math.isnan(avec["couverture_interets"])
 
 
+def test_fiche_au_clic_ouvre_la_fiche_et_renouvelle_la_cle(monkeypatch):
+    from types import SimpleNamespace
+
+    from pf import ui
+
+    etat, ouvertes = {}, []
+    monkeypatch.setattr(ui.st, "session_state", etat)
+    monkeypatch.setattr(ui.st, "switch_page", lambda page: ouvertes.append(page))
+    table = pd.DataFrame({"nom": ["Adobe", "LVMH"]}, index=["ADBE", "MC.PA"])
+    assert ui.cle_tableau("tab") == "tab_0"
+    ev = SimpleNamespace(selection=SimpleNamespace(cells=[(1, "nom")], rows=[]))
+    ui.fiche_au_clic(table, ev, "tab", lignes=False)
+    assert etat["fiche_ticker"] == "MC.PA"
+    assert ui.cle_tableau("tab") == "tab_1"
+    assert ouvertes == ["vues/fiche.py"]
+
+
 # ------------------------------------------------------------------ données
 
 def test_une_paire_refusee_par_yahoo_n_efface_pas_son_historique(tmp_path, monkeypatch):

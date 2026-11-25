@@ -39,13 +39,20 @@ if detenues:
 if tri:
     t = t.sort_values([tri.lower(), "rang"], ascending=[False, True], na_position="last")
 st.markdown(f"**{len(t)} valeurs**")
+st.caption("Cliquez sur une valeur pour ouvrir sa fiche.")
 note = lambda label: st.column_config.ProgressColumn(label, min_value=0, max_value=5, format="%d")  # noqa: E731
-ui.tableau(t, width="stretch", height=640, column_config={
-    "rang": st.column_config.NumberColumn("Rang", format="%d", pinned=True),
-    "nom": st.column_config.TextColumn("Valeur", pinned=True), "detenue": st.column_config.CheckboxColumn("Détenue"),
-    "statut": "Filtres", "score": ui.SCORE("Note GARP"), "buffett": note("Buffett"), "munger": note("Munger"), "fisher": note("Fisher"),
-    "smith": note("Smith"), "total": None,  # pas de total : les regards ne s'additionnent pas
-    "correction": st.column_config.TextColumn("Correction", width="large"),
-})
+show = t.copy()
+show.insert(0, "symbole", show.index)
+ev_regards = ui.tableau(
+    show, hide_index=True, width="stretch", height=640, on_select="rerun", selection_mode="single-cell",
+    key=ui.cle_tableau("reg_tableau"), column_config={
+        "symbole": st.column_config.TextColumn("Ticker", pinned=True),
+        "rang": st.column_config.NumberColumn("Rang", format="%d", pinned=True),
+        "nom": st.column_config.TextColumn("Valeur", pinned=True), "detenue": st.column_config.CheckboxColumn("Détenue"),
+        "statut": "Filtres", "score": ui.SCORE("Note GARP"), "buffett": note("Buffett"), "munger": note("Munger"),
+        "fisher": note("Fisher"), "smith": note("Smith"), "total": None,  # pas de total : les regards ne s'additionnent pas
+        "correction": st.column_config.TextColumn("Correction", width="large"),
+    })
+ui.fiche_au_clic(show, ev_regards, "reg_tableau")
 st.download_button("Exporter (CSV)", t.to_csv(sep=";", decimal=",").encode("utf-8-sig"), file_name="quatre_regards.csv",
                    mime="text/csv", icon=":material/download:")

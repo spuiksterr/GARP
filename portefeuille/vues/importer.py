@@ -157,9 +157,11 @@ nouveau["enveloppe"] = [comptes.get(t, e) for t, e in zip(nouveau["ticker"], nou
 st.subheader("Composition qui sera enregistrée")
 total = nouveau["poids_cible"].sum()
 apercu = nouveau[["ticker", "nom", "enveloppe", "poids_cible"]].assign(poids_cible=nouveau["poids_cible"] / total * 100)
-ui.tableau(apercu, hide_index=True, width="stretch", height=min(600, 35 * len(apercu) + 38),
-           column_config={"ticker": "Ticker", "nom": "Valeur", "enveloppe": "Compte",
-                          "poids_cible": ui.PCT("Poids cible")})
+ev_apercu = ui.tableau(apercu, hide_index=True, width="stretch", height=min(600, 35 * len(apercu) + 38),
+                       on_select="rerun", selection_mode="single-cell", key=ui.cle_tableau("imp_apercu"),
+                       column_config={"ticker": "Ticker", "nom": "Valeur", "enveloppe": "Compte",
+                                      "poids_cible": ui.PCT("Poids cible")})
+ui.fiche_au_clic(apercu.set_index("ticker"), ev_apercu, "imp_apercu")
 
 
 # Quantités : la photo du portefeuille (pf/positions.py), remplacée en entier à chaque import, sert à mesurer le

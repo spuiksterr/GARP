@@ -436,20 +436,27 @@ def tableau(data: pd.DataFrame, column_config: dict | None = None, **kwargs):
 
 # --------------------------------------------------------------------------- navigation et watchlist
 
+def cle_tableau(cle: str) -> str:
+    """Clé versionnée d'un tableau cliquable (renouvelée par `fiche_au_clic` pour effacer la sélection au retour)."""
+    return f"{cle}_{st.session_state.get(cle, 0)}"
+
+
 def fiche_au_clic(table: pd.DataFrame, event, cle: str, lignes: bool = True) -> None:
     """Ouvre la fiche de la valeur cliquée dans `table` (cellule, ou case de la ligne si `lignes`).
 
     Le compteur `cle` renouvelle le tableau : au retour sur la page, la sélection est vide et ne renvoie
-    pas aussitôt vers la fiche. Il faut donc créer le tableau avec la clé f"{cle}_{st.session_state.get(cle, 0)}".
+    pas aussitôt vers la fiche. Il faut donc créer le tableau avec la clé `cle_tableau(cle)`.
     """
     sel = event.selection if event else None
     if not sel:
         return
     positions = [c[0] for c in sel.cells] + (list(sel.rows) if lignes else [])
-    if positions:
-        st.session_state["fiche_ticker"] = table.index[positions[0]]
+    if positions and positions[0] < len(table):
+        ticker = table.index[positions[0]]
         st.session_state[cle] = st.session_state.get(cle, 0) + 1
-        st.switch_page("vues/fiche.py")
+        if isinstance(ticker, str) and ticker:
+            st.session_state["fiche_ticker"] = ticker
+            st.switch_page("vues/fiche.py")
 
 
 def ajouter_watchlist(tickers) -> list[str]:

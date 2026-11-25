@@ -50,11 +50,20 @@ if risques.garde_fous(w, sc["secteur"], r):
 st.subheader("Scénarios de choc")
 fonds_or = {t: "or" for t in w.index if re.search(r"\bgold\b|\bor\b", noms[t], re.I)}
 sce = risques.scenarios(w, r, bench, fonds_or)
+tickers_sce = sce["ligne"].copy()
 sce["ligne"] = sce["ligne"].map(lambda t: noms.get(t, t) if isinstance(t, str) else "—")
-ui.tableau(ui.as_pct_cols(sce, ["impact", "effet_ligne"]), hide_index=True, width="stretch", column_config={
+ev_sce = ui.tableau(ui.as_pct_cols(sce, ["impact", "effet_ligne"]), hide_index=True, width="stretch",
+                    on_select="rerun", selection_mode="single-cell", key=ui.cle_tableau("risques_sce"), column_config={
     "scenario": "Scénario", "impact": ui.PCT("Effet sur le portefeuille"),
     "ligne": st.column_config.TextColumn("Ligne la plus touchée"), "effet_ligne": ui.PCT("Dont cette ligne"),
 })
+cellules_sce = ev_sce.selection.cells if ev_sce and ev_sce.selection else []
+if cellules_sce:
+    tk = tickers_sce.iloc[cellules_sce[0][0]]
+    st.session_state["risques_sce"] = st.session_state.get("risques_sce", 0) + 1
+    if isinstance(tk, str) and tk in sc.index:
+        st.session_state["fiche_ticker"] = tk
+        st.switch_page("vues/fiche.py")
 st.caption(f"Marché : chaque ligne bouge selon sa sensibilité passée à l'indice ({BENCHMARKS.get(bench, bench)}) ; "
            "une ligne sans historique suffisant compte pour 1. Dollar : les lignes cotées en dollar perdent 10 % en euros "
            "(l'or et l'uranium, cotés en euros, dépendent aussi du dollar : l'effet réel est plus large). Ordres de "
