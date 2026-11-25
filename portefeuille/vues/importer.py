@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from pf import import_portefeuille as imp
-from pf import positions, tracker, ui
+from pf import positions, ui
 from pf.config import (
     MODELE_CSV,
     PROFIL_DIR,
@@ -50,40 +50,14 @@ def compte_propose(ticker: str | None) -> str:
     return "CTO" if eligibilite.get(ticker) == "CTO" else defaut
 noms = valeurs["nom"].astype(str).to_dict()
 libelles = {t: f"{noms[t]} ({t})" for t in sorted(valeurs.index, key=lambda t: noms[t].lower())}
-mp_courant = load_model_portfolio()
 
-tab_fichier, tab_op, tab_texte = st.tabs(
-    ["Fichier de mon courtier", "Achat / Vente (date précise)", "Coller une liste"])
+tab_fichier, tab_texte = st.tabs(["Fichier de mon courtier", "Coller ou saisir mes lignes"])
 with tab_fichier:
     fichiers = st.file_uploader(
         "Export des positions, CSV ou Excel (Boursorama, Degiro, Fortuneo, Saxo…), un ou plusieurs comptes",
         type=["xlsx", "xlsm", "csv", "txt", "tsv"], accept_multiple_files=True)
     st.caption("Classeur Excel : toutes les feuilles qui ressemblent à un tableau de positions sont lues. Un ancien "
                "fichier .xls est à réenregistrer au format .xlsx dans Excel.")
-with tab_op:
-    st.caption("Ajoutez ponctuellement un achat, un renforcement, une vente ou une position initiale à sa date exacte : "
-               "le coût moyen (PRU) et la courbe du tableau de bord (face au S&P 500, MSCI World, STOXX 600, Nasdaq 100) "
-               "se mettent à jour uniquement à compter de cette date.")
-    if ui.formulaire_operation(sc, mp_courant, cle="imp_op"):
-        st.rerun()
-    tx_recentes = tracker.load_transactions()
-    if not tx_recentes.empty:
-        st.caption(f"{len(tx_recentes)} opération(s) enregistrée(s) dans votre journal. Retrouvez le détail complet, "
-                   "vos PRU et l'édition du journal dans « Analyse de mon portefeuille → Opérations ».")
-        dernieres = tx_recentes.tail(8).iloc[::-1].copy()
-        dernieres["date"] = pd.to_datetime(dernieres["date"]).dt.strftime("%d/%m/%Y")
-        dernieres["nom"] = [noms.get(t, t) for t in dernieres["ticker"]]
-        ev_tx = ui.tableau(
-            dernieres[["date", "type", "compte", "ticker", "nom", "quantite", "prix_unitaire", "devise", "montant_eur"]],
-            hide_index=True, width="stretch", on_select="rerun", selection_mode="single-cell",
-            key=ui.cle_tableau("imp_op_recentes"),
-            column_config={
-                "date": "Date", "type": "Opération", "compte": "Compte", "ticker": "Ticker", "nom": "Valeur",
-                "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
-                "prix_unitaire": st.column_config.NumberColumn("Prix unit.", format="%.2f"),
-                "devise": "Devise", "montant_eur": st.column_config.NumberColumn("Montant €", format="%.2f"),
-            })
-        ui.fiche_au_clic(dernieres.set_index("ticker"), ev_tx, "imp_op_recentes")
 with tab_texte:
     texte = st.text_area(
         "Une ligne par valeur : nom, ticker ou ISIN, puis le poids en %, le montant ou la quantité",
