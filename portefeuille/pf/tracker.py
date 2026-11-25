@@ -276,6 +276,13 @@ def twr(hist: pd.DataFrame) -> pd.Series:
     return 100 * (1 + r).cumprod()
 
 
+def courbe_depuis(serie: pd.Series, debut) -> pd.Series:
+    """Coupe une courbe de performance à partir de `debut` et la ramène en base 100 au premier point."""
+    s = serie.dropna()
+    s = s[s.index >= pd.Timestamp(debut)]
+    return s / s.iloc[0] * 100 if not s.empty and s.iloc[0] > 0 else pd.Series(dtype=float)
+
+
 def xirr(dates: list, amounts: list[float]) -> float:
     """TRI annualisé de flux datés (convention investisseur : apports négatifs, valeur finale positive)."""
     if not dates or all(a >= 0 for a in amounts) or all(a <= 0 for a in amounts):

@@ -46,8 +46,8 @@ c[3].metric("TRI implicite", ui.pct(ch.get("TRI implicite")), border=True,
 c[4].metric("Lignes effectives", ui.num(risk.get("nombre_effectif"), 1), border=True,
             help="1 / somme des poids au carré : nombre de lignes équipondérées équivalent.")
 
-tab_lignes, tab_repartition, tab_equilibre, tab_modifier, tab_theses = st.tabs(
-    ["Analyse des lignes", "Répartition et risques", "Équilibre (proposition)", "Modifier les poids", "Thèses"])
+tab_lignes, tab_repartition, tab_equilibre, tab_operations, tab_modifier, tab_theses = st.tabs(
+    ["Analyse des lignes", "Répartition et risques", "Équilibre (proposition)", "Opérations", "Modifier les poids", "Thèses"])
 
 with tab_lignes:
     regl = pa.reglages(strat)
@@ -202,6 +202,127 @@ with tab_equilibre:
                        + " ; ".join(f"{names.get(t, t)}, {r}" for t, r in ecartees.items()) + ".")
         st.caption("Une ligne trop lourde n'a pas besoin d'être vendue : les apports suivants peuvent aller aux autres. "
                    "Proposition indicative, pas un conseil en investissement.")
+
+with tab_operations:
+    st.caption("Enregistrez vos positions de départ (`REPRISE`) ainsi que vos achats ou ventes ponctuels (`ACHAT`, "
+               "`VENTE`) à leur date exacte. Chaque opération met à jour votre coût moyen (PRU) et n'entre dans la "
+               "courbe du tableau de bord qu'à compter de sa date.")
+    noms_op = sc["nom"].astype(str).to_dict()
+    choix_tickers = list(dict.fromkeys(list(w.index) + sorted(sc.index, key=lambda t: noms_op[t].lower())))
+    with st.form("form_operation", clear_on_submit=True):
+        st.markdown("**Ajouter un achat ou une vente**")
+        r1 = st.columns([1.1, 1.2, 0.9, 2.3])
+        op_type = r1[0].selectbox("Opération", ["ACHAT", "VENTE", "REPRISE"],
+                                  help="ACHAT : nouvel achat ou renforcement ; VENTE : allègement ou cession ; "
+                                       "REPRISE : position déjà détenue au départ.")
+        op_date = r1[1].date_input("Date", value=date.today())
+        op_compte = r1[2].selectbox("Compte", tracker.COMPTES)
+        op_ticker = r1[3].selectbox("Valeur", choix_tickers, index=None, placeholder="Nom ou ticker…",
+                                    format_func=lambda t: f"{noms_op.get(t, t)} ({t})")
+        r2 = st.columns([1.1, 1.2, 1.3, 1.0])
+        op_qte = r2[0].number_input("Quantité", min_value=0.0, value=0.0, step=1.0, format="%.4f")
+        op_prix = r2[1].number_input("Prix unitaire", min_value=0.0, value=0.0, step=1.0, format="%.4f",
+                                     help="Dans la devise de cotation de la valeur (facultatif si le montant en € est saisi).")
+        op_montant = r2[2].number_input("Montant total (€, facultatif)", min_value=0.0, value=0.0, step=100.0,
+                                        format="%.2f", help="Montant réellement débité/crédité frais inclus. "
+                                                            "Si 0, calculé depuis quantité × prix unitaire + frais.")
+        op_frais = r2[3].number_input("Frais (€)", min_value=0.0, value=0.0, step=1.0, format="%.2f")
+        r3 = st.columns([3, 1.3], vertical_alignment="bottom")
+        op_note = r3[0].text_input("Note (facultative)", placeholder="Ex. Renforcement post-résultats")
+        valide = r3[1].form_submit_button("Enregistrer l'opération", type="primary", icon=":material/add:",
+                                          width="stretch")
+        if valide:
+            if not op_ticker:
+                st.error("Choisissez une valeur.")
+            elif op_qte <= 0:
+                st.error("La quantité doit être strictement positive.")
+            elif op_prix <= 0 and op_montant <= 0:
+                st.error("Renseignez le prix unitaire ou le montant total en euros.")
+            else:
+                devise_op = (str(sc.loc[op_ticker, "devise"])
+                             if op_ticker in sc.index and pd.notna(sc.loc[op_ticker, "devise"]) else "EUR")
+                tracker.append_transaction({
+                    "date": op_date.isoformat(),
+                    "compte": op_compte,
+                    "type": op_type,
+                    "ticker": op_ticker,
+                    "quantite": op_qte,
+                    "prix_unitaire": op_prix if op_prix > 0 else "",
+                    "devise": devise_op,
+                    "frais_eur": op_frais if op_frais > 0 else "",
+                    "montant_eur": op_montant if op_montant > 0 else "",
+                    "taux_change": "",
+                    "note": op_note.replace(";", ",").strip(),
+                })
+                st.cache_data.clear()
+                st.toast(f"{op_type} enregistré : {op_qte:g} {noms_op.get(op_ticker, op_ticker)} le {op_date:%d/%m/%Y}.",
+                         icon=":material/check:")
+                st.rerun()
+
+    tx_journal = tracker.load_transactions()
+    if tx_journal.empty:
+        st.info("Aucune opération enregistrée dans le journal (`data/transactions.csv`). Ajoutez vos positions "
+                "ci-dessus pour suivre votre coût moyen (PRU) et votre performance réelle à compter de chaque achat.",
+                icon=":material/info:")
+    else:
+        _, anomalies_tx = tracker.controle_ventes(tx_journal)
+        for msg in anomalies_tx:
+            st.warning(msg, icon=":material/warning:")
+        pos_tx = tracker.positions(tx_journal)
+        pos_act = pos_tx[pos_tx["quantite"] > 0].copy() if not pos_tx.empty else pd.DataFrame()
+        if not pos_act.empty:
+            st.markdown("**Positions et coût moyen (PRU) issus de vos opérations**")
+            pos_act["nom"] = [noms_op.get(t, t) for t in pos_act["ticker"]]
+            pos_act["premier_achat"] = pd.to_datetime(pos_act["premier_achat"]).dt.strftime("%d/%m/%Y")
+            vue_pos = ui.as_pct_cols(
+                pos_act[["ticker", "nom", "compte", "quantite", "pru_eur", "cours_eur", "valeur_eur",
+                         "pv_latente_eur", "pv_latente_pct", "premier_achat"]],
+                ["pv_latente_pct"],
+            )
+            ev_pos = ui.tableau(
+                vue_pos, hide_index=True, width="stretch", height=min(520, 35 * len(vue_pos) + 38),
+                on_select="rerun", selection_mode="single-cell", key=ui.cle_tableau("mp_op_pos"),
+                column_config={
+                    "ticker": st.column_config.TextColumn("Ticker", pinned=True),
+                    "nom": st.column_config.TextColumn("Valeur", pinned=True),
+                    "compte": "Compte",
+                    "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
+                    "pru_eur": st.column_config.NumberColumn("PRU (€)", format="%.2f"),
+                    "cours_eur": st.column_config.NumberColumn("Cours (€)", format="%.2f"),
+                    "valeur_eur": st.column_config.NumberColumn("Valeur (€)", format="%.0f"),
+                    "pv_latente_eur": st.column_config.NumberColumn("Plus-value (€)", format="%+.0f"),
+                    "pv_latente_pct": ui.PCT("Plus-value (%)"),
+                    "premier_achat": "1er achat",
+                })
+            ui.fiche_au_clic(pos_act.set_index("ticker"), ev_pos, "mp_op_pos")
+
+        with st.expander(f"Journal des opérations ({len(tx_journal)})", icon=":material/receipt_long:"):
+            st.caption("Modifiez une ligne ou supprimez-en une (case à gauche puis corbeille), puis enregistrez.")
+            tx_edit = tx_journal.copy()
+            tx_edit["date"] = pd.to_datetime(tx_edit["date"]).dt.date
+            edite_tx = st.data_editor(
+                tx_edit, key="tx_journal_edition", num_rows="dynamic", hide_index=True, width="stretch",
+                column_config={
+                    "date": st.column_config.DateColumn("Date", format="DD/MM/YYYY", required=True),
+                    "compte": st.column_config.SelectboxColumn("Compte", options=tracker.COMPTES, required=True),
+                    "type": st.column_config.SelectboxColumn("Type", options=tracker.TYPES, required=True),
+                    "ticker": st.column_config.TextColumn("Ticker"),
+                    "quantite": st.column_config.NumberColumn("Quantité", format="%.4g"),
+                    "prix_unitaire": st.column_config.NumberColumn("Prix unit.", format="%.4g"),
+                    "devise": "Devise",
+                    "frais_eur": st.column_config.NumberColumn("Frais €", format="%.2f"),
+                    "montant_eur": st.column_config.NumberColumn("Montant €", format="%.2f"),
+                    "taux_change": st.column_config.NumberColumn("Change", format="%.4f"),
+                    "note": "Note",
+                })
+            if st.button("Enregistrer les modifications du journal", icon=":material/save:", key="save_tx_journal"):
+                propre = edite_tx.dropna(subset=["date", "type"]).copy()
+                if "note" in propre.columns:
+                    propre["note"] = propre["note"].fillna("").astype(str).str.replace(";", ",", regex=False)
+                tracker.save_transactions(propre)
+                st.cache_data.clear()
+                st.toast(f"Journal enregistré ({len(propre)} opération(s)).", icon=":material/check:")
+                st.rerun()
 
 with tab_modifier:
     st.caption("Changez un poids, ajoutez une valeur sur la ligne vide du bas, ou supprimez une ligne (case à gauche, "

@@ -5,11 +5,11 @@ import streamlit as st
 
 from pf import actualites as act
 from pf import backtest as bt
-from pf import dirigeants, photos, positions, regles, scenarios, scoring, ui
+from pf import dirigeants, photos, positions, regles, scenarios, scoring, tracker, ui
 from pf import portfolio as pfo
 from pf import prix_achat as pa
 from pf import watchlist as wl
-from pf.config import BENCHMARKS, load_strategy
+from pf.config import load_strategy
 from pf.sante import health_alerts
 
 sc = ui.require_data()
@@ -206,21 +206,78 @@ c[2].metric("PER prospectif", ui.num(ch.get("PER prospectif"), 1, "x"), border=T
 c[3].metric("Volatilité attendue", ui.pct(risk.get("volatilite")), border=True,
             help="Écart-type annualisé des rendements en euros sur 3 ans, corrélations comprises.")
 
+INDICES_COMPARAISON = {
+    "SXR8.DE": "S&P 500",
+    "IWDA.AS": "MSCI World",
+    "EXSA.DE": "STOXX 600",
+    "SXRV.DE": "Nasdaq 100",
+}
+PERIODES_COMPARAISON = ["Depuis le début", "1 mois", "3 mois", "6 mois", "1 an", "Date libre"]
+
+c_ind, c_per = st.columns([2.2, 2.8])
+bench_defaut = bench if bench in INDICES_COMPARAISON else "IWDA.AS"
+bench_choisi = c_ind.segmented_control(
+    "Comparer à", list(INDICES_COMPARAISON), default=bench_defaut,
+    format_func=INDICES_COMPARAISON.get, key="acc_bench",
+) or bench_defaut
+periode_choisie = c_per.segmented_control(
+    "Début de la comparaison", PERIODES_COMPARAISON, default="Depuis le début", key="acc_periode",
+) or "Depuis le début"
+
 created = pd.Timestamp(strat["suivi"].get("date_creation_modele") or "2026-10-29")
-px = ui.eur_prices(tuple(w.index) + (bench,))
-# Suivi réel dès 5 séances après la création du modèle ; avant, simulation sur un an (poids actuels).
-debut = created if len(px[px.index >= created]) >= 5 else px.index.max() - pd.Timedelta(days=365)
-curve = bt.run_backtest(w, debut, rebalance=None, prices=px[list(w.index)], cost_bps=0)["valeur"]
-bcurve = bt.benchmark_curve(bench, debut)
-resume = (f"portefeuille {ui.pct(curve.iloc[-1] / 100 - 1, signe=True)}, "
-          f"{BENCHMARKS.get(bench, bench)} {ui.pct(bcurve.iloc[-1] / 100 - 1, signe=True)}")
-if debut == created:
-    st.markdown(f"**Depuis le début du suivi ({created:%d/%m/%Y}, poids cibles)** : {resume}")
+tx = tracker.load_transactions()
+hist_reel = tracker.history(tx) if not tx.empty else pd.DataFrame()
+twr_reel = tracker.twr(hist_reel) if len(hist_reel) >= 2 else pd.Series(dtype=float)
+suivi_reel = not twr_reel.empty
+
+if suivi_reel:
+    debut_origine, min_dispo, fin_dispo = twr_reel.index[0], twr_reel.index[0], twr_reel.index[-1]
 else:
-    st.markdown(f"**Sur un an glissant (simulation, poids actuels)** : {resume}. Le suivi réel démarre le {created:%d/%m/%Y}.")
-ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve, BENCHMARKS.get(bench, bench): bcurve}).dropna(),
-                 colors={"Portefeuille": ui.accent(), BENCHMARKS.get(bench, bench): ui.GRIS},
-                 yfmt=",.1f", height=300))
+    px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
+    min_dispo, fin_dispo = px.index.min(), px.index.max()
+    debut_origine = created if len(px[px.index >= created]) >= 5 else fin_dispo - pd.Timedelta(days=365)
+
+if periode_choisie == "Depuis le début":
+    debut = debut_origine
+elif periode_choisie == "1 mois":
+    debut = fin_dispo - pd.DateOffset(months=1)
+elif periode_choisie == "3 mois":
+    debut = fin_dispo - pd.DateOffset(months=3)
+elif periode_choisie == "6 mois":
+    debut = fin_dispo - pd.DateOffset(months=6)
+elif periode_choisie == "1 an":
+    debut = fin_dispo - pd.DateOffset(years=1)
+else:
+    date_choisie = st.date_input(
+        "Date de début de comparaison",
+        value=min(max(debut_origine.date(), min_dispo.date()), fin_dispo.date()),
+        min_value=min_dispo.date(), max_value=fin_dispo.date(), key="acc_date_debut",
+    )
+    debut = pd.Timestamp(date_choisie)
+debut = max(pd.Timestamp(debut), min_dispo)
+
+if suivi_reel:
+    curve = tracker.courbe_depuis(twr_reel, debut)
+else:
+    curve = bt.run_backtest(w, debut, rebalance=None, prices=px[list(w.index)], cost_bps=0)["valeur"]
+
+nom_indice = INDICES_COMPARAISON[bench_choisi]
+bcurve = bt.benchmark_curve(bench_choisi, curve.index[0]) if not curve.empty else pd.Series(dtype=float)
+if not curve.empty:
+    mode_txt = "suivi réel, achats et ventes à leur date" if suivi_reel else "poids cibles"
+    perf_pf = f"portefeuille {ui.pct(curve.iloc[-1] / 100 - 1, signe=True)}"
+    if not bcurve.empty:
+        perf_ind = f"{nom_indice} {ui.pct(bcurve.iloc[-1] / 100 - 1, signe=True)}"
+        st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}, {perf_ind}")
+        ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve, nom_indice: bcurve}).dropna(),
+                         colors={"Portefeuille": ui.accent(), nom_indice: ui.GRIS},
+                         yfmt=",.1f", height=300))
+    else:
+        st.markdown(f"**Depuis le {curve.index[0]:%d/%m/%Y} ({mode_txt})** : {perf_pf}")
+        st.info(f"Cours de {nom_indice} ({bench_choisi}) absents du cache local : lancez une mise à jour rapide "
+                "(ou téléchargez les données de la nuit) pour l'afficher.", icon=":material/info:")
+        ui.show(ui.lines(pd.DataFrame({"Portefeuille": curve}).dropna(),
+                         colors={"Portefeuille": ui.accent()}, yfmt=",.1f", height=300))
 
 # ------------------------------------------------------------------ lignes du modèle
 st.markdown("#### Lignes du portefeuille")
