@@ -228,13 +228,14 @@ created = pd.Timestamp(strat["suivi"].get("date_creation_modele") or "2026-10-29
 tx = tracker.load_transactions()
 hist_reel = tracker.history(tx) if not tx.empty else pd.DataFrame()
 twr_reel = tracker.twr(hist_reel) if len(hist_reel) >= 2 else pd.Series(dtype=float)
-suivi_reel = not twr_reel.empty
+a_journal = not twr_reel.empty
 
-if suivi_reel:
-    debut_origine, min_dispo, fin_dispo = twr_reel.index[0], twr_reel.index[0], twr_reel.index[-1]
+px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
+min_dispo = px.index.min() if not px.empty else twr_reel.index[0]
+fin_dispo = twr_reel.index[-1] if a_journal else px.index.max()
+if a_journal:
+    debut_origine = twr_reel.index[0]
 else:
-    px = ui.eur_prices(tuple(w.index) + (bench_choisi,))
-    min_dispo, fin_dispo = px.index.min(), px.index.max()
     debut_origine = created if len(px[px.index >= created]) >= 5 else fin_dispo - pd.Timedelta(days=365)
 
 if periode_choisie == "Depuis le début":
@@ -256,6 +257,9 @@ else:
     debut = pd.Timestamp(date_choisie)
 debut = max(pd.Timestamp(debut), min_dispo)
 
+# Suivi réel (journal des opérations) dès que la date choisie est dans la période du journal ;
+# avant la première opération enregistrée, repli sur la simulation aux poids actuels.
+suivi_reel = a_journal and debut >= twr_reel.index[0]
 if suivi_reel:
     curve = tracker.courbe_depuis(twr_reel, debut)
 else:
@@ -264,7 +268,12 @@ else:
 nom_indice = INDICES_COMPARAISON[bench_choisi]
 bcurve = bt.benchmark_curve(bench_choisi, curve.index[0]) if not curve.empty else pd.Series(dtype=float)
 if not curve.empty:
-    mode_txt = "suivi réel, achats et ventes à leur date" if suivi_reel else "poids cibles"
+    if suivi_reel:
+        mode_txt = "suivi réel, achats et ventes à leur date"
+    elif a_journal:
+        mode_txt = f"simulation poids actuels — votre journal démarre le {twr_reel.index[0]:%d/%m/%Y}"
+    else:
+        mode_txt = "poids cibles"
     perf_pf = f"portefeuille {ui.pct(curve.iloc[-1] / 100 - 1, signe=True)}"
     if not bcurve.empty:
         perf_ind = f"{nom_indice} {ui.pct(bcurve.iloc[-1] / 100 - 1, signe=True)}"

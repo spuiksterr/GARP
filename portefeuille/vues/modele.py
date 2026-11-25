@@ -215,7 +215,7 @@ with tab_operations:
         op_type = r1[0].selectbox("Opération", ["ACHAT", "VENTE", "REPRISE"],
                                   help="ACHAT : nouvel achat ou renforcement ; VENTE : allègement ou cession ; "
                                        "REPRISE : position déjà détenue au départ.")
-        op_date = r1[1].date_input("Date", value=date.today())
+        op_date = r1[1].date_input("Date", value=date.today(), min_value=date(2000, 1, 1), max_value=date.today())
         op_compte = r1[2].selectbox("Compte", tracker.COMPTES)
         op_ticker = r1[3].selectbox("Valeur", choix_tickers, index=None, placeholder="Nom ou ticker…",
                                     format_func=lambda t: f"{noms_op.get(t, t)} ({t})")
