@@ -222,6 +222,20 @@ with tab_operations:
             st.warning(msg, icon=":material/warning:")
         pos_tx = tracker.positions(tx_journal)
         pos_act = pos_tx[pos_tx["quantite"] > 0].copy() if not pos_tx.empty else pd.DataFrame()
+        manquantes = [t for t in pos_act["ticker"].unique() if t not in mp.index] if not pos_act.empty else []
+        if manquantes:
+            lib_manq = ", ".join(noms_op.get(t, t) for t in manquantes)
+            st.info(f"Ligne(s) dans vos opérations mais absente(s) de la composition affichée : **{lib_manq}**.",
+                    icon=":material/sync:")
+            if st.button("Synchroniser Mon portefeuille avec mes opérations", type="primary", icon=":material/sync:",
+                         key="sync_mp_depuis_op"):
+                lignes = [{"ticker": r["ticker"], "compte": r["compte"], "quantite": float(r["quantite"])}
+                          for _, r in pos_act.iterrows()]
+                positions.enregistrer(lignes)
+                n_sync = ui._synchroniser_modele(mp, noms_op)
+                st.cache_data.clear()
+                st.toast(f"Portefeuille synchronisé ({n_sync} lignes).", icon=":material/check:")
+                st.rerun()
         if not pos_act.empty:
             st.markdown("**Positions et coût moyen (PRU) issus de vos opérations**")
             pos_act["nom"] = [noms_op.get(t, t) for t in pos_act["ticker"]]

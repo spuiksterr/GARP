@@ -746,6 +746,31 @@ _TYPES_OPERATION = {
 }
 
 
+def _synchroniser_modele(mp: pd.DataFrame, noms: dict[str, str]) -> int:
+    """Met à jour `portefeuille_modele.csv` à partir des positions détenues (`positions.positions()`),
+    en conservant les thèses, poches et conditions de vente existantes."""
+    import shutil
+    from datetime import date as _date
+
+    from . import portfolio as _pfo
+    from . import positions as _positions
+    from .config import MODELE_CSV, write_csv_fr
+
+    pos = _positions.positions()
+    if pos.empty:
+        return 0
+    lignes = []
+    for _, r in pos.groupby("ticker", as_index=False).agg(poids=("poids", "sum"), compte=("compte", "first")).iterrows():
+        t = r["ticker"]
+        poche = str(mp.loc[t, "poche"]) if t in mp.index and "poche" in mp.columns and mp.loc[t, "poche"] else "Cœur"
+        lignes.append((t, r["compte"], poche, float(r["poids"]) * 100))
+    nouveau = _pfo.nouvelle_composition(mp, lignes, noms)
+    if MODELE_CSV.exists():
+        shutil.copy2(MODELE_CSV, MODELE_CSV.with_name(f"portefeuille_modele.avant-op-{_date.today():%Y-%m-%d}.csv"))
+    write_csv_fr(nouveau, MODELE_CSV)
+    return len(nouveau)
+
+
 def formulaire_operation(sc: pd.DataFrame, mp: pd.DataFrame, cle: str = "op") -> bool:
     """Formulaire ergonomique pour enregistrer un achat, une vente ou une position initiale à date précise.
 
@@ -816,8 +841,11 @@ def formulaire_operation(sc: pd.DataFrame, mp: pd.DataFrame, cle: str = "op") ->
         r3 = st.columns([2.2, 1.5, 1.3], vertical_alignment="center")
         op_note = r3[0].text_input("Note (facultative)", placeholder="Ex. Renforcement post-résultats",
                                    key=f"{cle}_note")
-        sync_pos = r3[1].checkbox("Synchroniser les quantités", value=True, key=f"{cle}_sync",
-                                  help="Met aussi à jour la photo des quantités détenues (utilisée par Équilibre et Risques).")
+        sync_pos = r3[1].checkbox(
+            "Mettre à jour mon portefeuille", value=True, key=f"{cle}_sync",
+            help="Met aussi à jour vos quantités détenues et les lignes/poids de « Analyse de mon portefeuille » "
+                 "(thèses et conditions de vente conservées).",
+        )
         if r3[2].button("Enregistrer l'opération", type="primary", icon=":material/add:", width="stretch",
                         key=f"{cle}_valider"):
             if not ticker:
@@ -847,6 +875,7 @@ def formulaire_operation(sc: pd.DataFrame, mp: pd.DataFrame, cle: str = "op") ->
                                   for _, r in pos_tx[pos_tx["quantite"] > 0].iterrows()]
                         if lignes:
                             _positions.enregistrer(lignes)
+                            _synchroniser_modele(mp, noms)
                 st.cache_data.clear()
                 st.toast(f"{_TYPES_OPERATION[op_type]} enregistré : {op_qte:g} {noms.get(ticker, ticker)} "
                          f"le {op_date:%d/%m/%Y}.", icon=":material/check:")
